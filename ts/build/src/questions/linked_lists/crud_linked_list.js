@@ -149,11 +149,11 @@ class LinkedList {
     /**
      * If there are no nodes found, returns null.
      * Otherwise an array of found nodes.
+     *
+     * Null check for head is delegated to
+     * the find method.
      */
     find_all(val) {
-        if (!this.head) {
-            return null;
-        }
         const found_nodes = [];
         let current_node = this.head;
         while (current_node) {
@@ -162,7 +162,7 @@ class LinkedList {
                 break;
             }
             found_nodes.push(new_current_node);
-            current_node = new_current_node;
+            current_node = new_current_node.next;
         }
         return found_nodes.length ? found_nodes : null;
     }
@@ -189,6 +189,7 @@ class LinkedList {
             if (current.next.val === val_two && !prev_two) {
                 prev_two = current;
             }
+            current = current.next;
         }
         // If neither node then not possible. If there
         // is a node and the head isn't the other, also

@@ -28,6 +28,9 @@ export declare class LinkedList {
     /**
      * If there are no nodes found, returns null.
      * Otherwise an array of found nodes.
+     *
+     * Null check for head is delegated to
+     * the find method.
      */
     find_all(val: number): Array<LinkedNode> | null;
     /**
