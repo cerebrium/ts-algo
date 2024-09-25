@@ -44,6 +44,10 @@ export class LinkedNode {
 export class LinkedList {
   head: LinkedNode | null = null;
 
+  constructor(val: number) {
+    this.head = new LinkedNode(val);
+  }
+
   /**
    *
    * Returns the node pushed
@@ -77,6 +81,14 @@ export class LinkedList {
    * This can error if there are no nodes.
    */
   delete_all(val: number): void {}
+
+  /**
+   * If no node found, returns null. Otherwise the
+   * found node.
+   */
+  find(val: number, target: LinkedNode | null = this.head): LinkedNode | null {
+    return null;
+  }
 
   /**
    * If there are no nodes found, returns null.

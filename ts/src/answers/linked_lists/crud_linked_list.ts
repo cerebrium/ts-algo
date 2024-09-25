@@ -28,7 +28,7 @@
  to them.
 
  */
- class LinkedNode {
+class LinkedNode {
   readonly val: number;
   next: LinkedNode | null = null;
 
@@ -44,7 +44,7 @@
  left out. 
 
  */
- class LinkedList {
+class LinkedList {
   head: LinkedNode | null = null;
 
   constructor(val: number) {
@@ -282,12 +282,3 @@
     return false;
   }
 }
-
-
-
-
-
-
-
-
-
