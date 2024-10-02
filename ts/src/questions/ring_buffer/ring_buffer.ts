@@ -27,7 +27,7 @@
  * size.
  *
  */
-class RingBuffer<T> {
+export class RingBuffer<T> {
   /**
    *
    * This is initialized with a size, meaning that
@@ -45,7 +45,7 @@ class RingBuffer<T> {
     UNSHIFT: 'unshift',
   } as const;
 
-  constructor(initial_size: number) {
+  constructor(initial_size: number = 5) {
     this.data = new Array(initial_size > 3 ? initial_size : 3);
     this.head = 1;
     this.tail = 1;
@@ -66,14 +66,50 @@ class RingBuffer<T> {
       this._resize('ADD');
     }
 
-    if (this.tail + 1 == this.data.length - 1) {
+    if (this.tail + 1 == this.data.length) {
       this.tail = 0;
       this.data[this.tail] = input;
       return;
     }
 
-    this.tail++;
+    if (this.tail == this.head && !this.data[this.head]) {
+      this.data[this.tail] = input;
+      return;
+    }
+
+    ++this.tail;
     this.data[this.tail] = input;
+    return;
+  }
+
+  /**
+   *
+   * We need to check that the tail is not going to match
+   * the head. If it is we need to resize.
+   *
+   */
+  unshift(input: T): void {
+    console.log('what is head: ', this.head);
+    if (
+      this.head - 1 == this.tail ||
+      (this.tail == this.data.length - 1 && this.head == 0)
+    ) {
+      this._resize('UNSHIFT');
+    }
+
+    if (this.head == 0) {
+      this.head = this.data.length - 1;
+      this.data[this.head] = input;
+      return;
+    }
+
+    if (this.head == this.tail && !this.data[this.tail]) {
+      this.data[this.head] = input;
+      return;
+    }
+
+    --this.head;
+    this.data[this.head] = input;
     return;
   }
 
@@ -89,31 +125,6 @@ class RingBuffer<T> {
 
     --this.tail;
     return this.data[this.tail + 1];
-  }
-
-  /**
-   *
-   * We need to check that the tail is not going to match
-   * the head. If it is we need to resize.
-   *
-   */
-  unshift(input: T): void {
-    if (
-      this.head - 1 == this.tail ||
-      (this.head == 0 && this.tail == this.data.length - 1)
-    ) {
-      this._resize('UNSHIFT');
-    }
-
-    if (this.head == 0) {
-      this.head = this.data.length - 1;
-      this.data[this.head] = input;
-      return;
-    }
-
-    this.head = this.head - 1;
-    this.data[this.head] = input;
-    return;
   }
 
   shift(): T | null {
