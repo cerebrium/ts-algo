@@ -11,11 +11,19 @@ alias test_binary_search="npm run test_binary_search"
 alias test_dfs="npm run test_dfs"
 alias test_dfs_graph="npm run test_dfs_graph"
 alias test_bubble_sort="npm run test_bubble_sort"
+alias test_ring_buffer="npm run test_ring_buffer"
 
 crystal_ball() {
   new_home="$(pwd)"
   cd $ts
   test_crystal_ball
+  cd $new_home
+}
+
+ring_buffer() {
+  new_home="$(pwd)"
+  cd $ts
+  test_ring_buffer
   cd $new_home
 }
 
