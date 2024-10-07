@@ -68,7 +68,6 @@ class RingBuffer {
      *
      */
     unshift(input) {
-        console.log('what is head: ', this.head);
         if (this.head - 1 == this.tail ||
             (this.tail == this.data.length - 1 && this.head == 0)) {
             this._resize('UNSHIFT');
@@ -171,8 +170,8 @@ class RingBuffer {
             return [];
         }
         const rel_data_len = this.head > this.tail
-            ? this.data.length - this.head + this.tail
-            : this.tail - this.head;
+            ? this.data.length + 1 - (this.head + this.tail)
+            : this.tail - this.head + 1;
         const vals_to_return = new Array(rel_data_len);
         let cur_idx = this.head;
         let val_to_return_idx = 0;
@@ -183,8 +182,10 @@ class RingBuffer {
                 continue;
             }
             cur_idx++;
+            val_to_return_idx++;
         } while (cur_idx !== this.tail);
-        this.data = new Array(this.initial_size);
+        // Tail is always skipped
+        vals_to_return[vals_to_return.length - 1] = this.data[this.tail];
         this.head = 1;
         this.tail = 1;
         return vals_to_return;

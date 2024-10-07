@@ -89,7 +89,6 @@ export class RingBuffer<T> {
    *
    */
   unshift(input: T): void {
-    console.log('what is head: ', this.head);
     if (
       this.head - 1 == this.tail ||
       (this.tail == this.data.length - 1 && this.head == 0)
@@ -215,8 +214,8 @@ export class RingBuffer<T> {
 
     const rel_data_len: number =
       this.head > this.tail
-        ? this.data.length - this.head + this.tail
-        : this.tail - this.head;
+        ? this.data.length + 1 - (this.head + this.tail)
+        : this.tail - this.head + 1;
 
     const vals_to_return: Array<T> = new Array(rel_data_len);
 
@@ -224,15 +223,20 @@ export class RingBuffer<T> {
     let val_to_return_idx = 0;
     do {
       vals_to_return[val_to_return_idx] = this.data[cur_idx];
+
       if (cur_idx == this.data.length - 1) {
         cur_idx = 0;
+
         continue;
       }
 
       cur_idx++;
+      val_to_return_idx++;
     } while (cur_idx !== this.tail);
 
-    this.data = new Array(this.initial_size);
+    // Tail is always skipped
+    vals_to_return[vals_to_return.length - 1] = this.data[this.tail];
+
     this.head = 1;
     this.tail = 1;
 
