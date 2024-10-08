@@ -44,21 +44,6 @@ class RingBuffer {
      *
      */
     push(input) {
-        if (this.tail + 1 == this.head ||
-            (this.tail == this.data.length - 1 && this.head == 0)) {
-            this._resize('ADD');
-        }
-        if (this.tail + 1 == this.data.length) {
-            this.tail = 0;
-            this.data[this.tail] = input;
-            return;
-        }
-        if (this.tail == this.head && !this.data[this.head]) {
-            this.data[this.tail] = input;
-            return;
-        }
-        ++this.tail;
-        this.data[this.tail] = input;
         return;
     }
     /**
@@ -68,44 +53,13 @@ class RingBuffer {
      *
      */
     unshift(input) {
-        if (this.head - 1 == this.tail ||
-            (this.tail == this.data.length - 1 && this.head == 0)) {
-            this._resize('UNSHIFT');
-        }
-        if (this.head == 0) {
-            this.head = this.data.length - 1;
-            this.data[this.head] = input;
-            return;
-        }
-        if (this.head == this.tail && !this.data[this.tail]) {
-            this.data[this.head] = input;
-            return;
-        }
-        --this.head;
-        this.data[this.head] = input;
         return;
     }
     pop() {
-        if (this.tail === this.head) {
-            return null;
-        }
-        if (this.tail == 0) {
-            this.tail = this.data.length - 1;
-            return this.data[0];
-        }
-        --this.tail;
-        return this.data[this.tail + 1];
+        return null;
     }
     shift() {
-        if (this.head == this.tail) {
-            return null;
-        }
-        if (this.head == this.data.length - 1) {
-            this.head = 0;
-            return this.data[this.data.length - 1];
-        }
-        ++this.head;
-        return this.data[this.head - 1];
+        return null;
     }
     /**
      *
@@ -121,41 +75,6 @@ class RingBuffer {
         // In arrayLists, the standard method is to double
         // the size when needing a resize. That has been
         // maintained here.
-        const new_data = new Array(this.data.length * 2);
-        // We want the new head and tail to be in the middle of
-        // the new array.
-        const new_head = Math.floor(new_data.length * 0.25);
-        let offset = new_head;
-        let currentIdx = this.head;
-        do {
-            // Go from head to end
-            if (currentIdx < this.data.length) {
-                new_data[offset] = this.data[currentIdx];
-                offset++;
-                currentIdx++;
-                continue;
-            }
-            // Go from end to beginning
-            if (currentIdx == this.data.length) {
-                currentIdx = 0;
-                new_data[offset] = this.data[currentIdx];
-                offset++;
-                currentIdx++;
-                continue;
-            }
-            // Go from beggining to tail
-            if (currentIdx < this.tail) {
-                new_data[offset] = this.data[currentIdx];
-                offset++;
-                currentIdx++;
-                continue;
-            }
-            // Fill all slots in new array, including
-            // index at this.tail.
-        } while (offset - new_head < this.data.length);
-        this.head = new_head;
-        this.tail = new_head + this.data.length - 1;
-        this.data = new_data;
     }
     /**
      *
@@ -166,28 +85,7 @@ class RingBuffer {
      *
      */
     flush() {
-        if (this.tail == this.head) {
-            return [];
-        }
-        const rel_data_len = this.head > this.tail
-            ? this.data.length + 1 - (this.head + this.tail)
-            : this.tail - this.head + 1;
-        const vals_to_return = new Array(rel_data_len);
-        let cur_idx = this.head;
-        let val_to_return_idx = 0;
-        do {
-            vals_to_return[val_to_return_idx] = this.data[cur_idx];
-            if (cur_idx == this.data.length - 1) {
-                cur_idx = 0;
-                continue;
-            }
-            cur_idx++;
-            val_to_return_idx++;
-        } while (cur_idx !== this.tail);
-        // Tail is always skipped
-        vals_to_return[vals_to_return.length - 1] = this.data[this.tail];
-        this.head = 1;
-        this.tail = 1;
+        const vals_to_return = [];
         return vals_to_return;
     }
 }
