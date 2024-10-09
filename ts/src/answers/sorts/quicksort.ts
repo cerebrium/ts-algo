@@ -2,37 +2,49 @@
  *
  * Implement quicksort:
  *
- * Takes args:
- * 1. data (Array<number>)
- * 2. target (number)
- *
- * finds the element in place
- *
- * returns index of element, or -1
- * if not in array.
  *
  */
 
-export function quicksort(data: Array<number>, target: number): number {
-  let bottom = 0;
-  let top = data.length;
-
-  while (bottom < top) {
-    const mid = Math.floor((top - bottom) / 2 + bottom);
-    const current_value = data[mid];
-
-    if (current_value === target) {
-      return mid;
-    }
-
-    // Higher than current location
-    if (current_value < target) {
-      bottom = mid + 1;
-      continue;
-    }
-
-    top = mid;
+export function quicksort(
+  data: Array<number>,
+  start: number,
+  stop: number
+): void {
+  // Base case -> start = stop
+  if (start >= stop) {
+    return;
   }
 
-  return -1;
+  // pre
+  // recursre
+  const pivot = q_sort_helper(data, start, stop);
+
+  quicksort(data, start, pivot - 1);
+  quicksort(data, pivot + 1, stop);
+}
+
+function q_sort_helper(
+  data: Array<number>,
+  start: number,
+  stop: number
+): number {
+  const val = data[stop];
+  let idx = start - 1;
+
+  for (let i = start; i <= stop - 1; i++) {
+    if (data[i] <= val) {
+      ++idx;
+
+      swap(data, i, idx);
+    }
+  }
+
+  ++idx;
+  swap(data, idx, stop);
+
+  return idx;
+}
+
+function swap(data: Array<number>, x: number, y: number) {
+  [data[x], data[y]] = [data[y], data[x]];
 }
