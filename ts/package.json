@@ -16,6 +16,7 @@
     "test_crystal_ball": "npm run compile && jest ./build/src/tests/crystal_ball.test.js -- --verbose=true",
     "test_dfs": "npm run compile && jest ./build/src/tests/binary_tree/dfs.test.js -- --verbose=true",
     "test_validate_b_tree": "npm run compile && jest ./build/src/tests/binary_tree/validate_b_tree.test.js -- --verbose=true",
+    "test_bfs": "npm run compile && jest ./build/src/tests/binary_tree/bfs.test.js -- --verbose=true",
     "test_dfs_graph": "npm run compile && jest ./build/src/tests/graph/adjacency_list/dfs.test.js -- --verbose=true",
     "test_linked_list": "npm run compile && jest ./build/src/tests/linked_lists/crud_linked_lists.test.js -- --verbose=true",
     "test_ring_buffer": "npm run compile && jest ./build/src/tests/ring_buffer/ring_buffer.test.js -- --verbose=true",
