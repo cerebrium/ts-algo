@@ -1,2 +1,2 @@
 import { BNode } from '.';
-export declare function dfs(node: BNode, target: number): boolean;
+export declare function dfs(node: BNode | undefined, target: number): null | BNode;

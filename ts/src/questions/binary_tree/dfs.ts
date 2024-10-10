@@ -8,6 +8,19 @@
 
 import {BNode} from '.';
 
-export function dfs(node: BNode, target: number): boolean {
-  return false;
+export function dfs(node: BNode | undefined, target: number): null | BNode {
+  if (!node) {
+    return null;
+  }
+
+  if (node.val === target) {
+    return node;
+  }
+
+  const foundNode = dfs(node.left, target) || dfs(node.right, target);
+  if (foundNode) {
+    return foundNode;
+  }
+
+  return null;
 }

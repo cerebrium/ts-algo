@@ -1,7 +1,2 @@
-interface BNode {
-    val: number;
-    left?: BNode;
-    right?: BNode;
-}
-export declare function dfs(node: BNode, target: number): boolean;
-export {};
+import { BNode } from '../../questions/binary_tree';
+export declare function dfs(node: BNode | undefined, target: number): BNode | null;
