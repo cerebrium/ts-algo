@@ -5,37 +5,22 @@
  * and it will be decently balanced
  *
  */
-interface BNode {
-  val: number;
-  left?: BNode;
-  right?: BNode;
-}
 
-export function dfs(node: BNode, target: number): boolean {
+import {BNode} from '../../questions/binary_tree';
+
+export function dfs(node: BNode | undefined, target: number): BNode | null {
   if (!node) {
-    return false;
+    return null;
   }
-  const iterate = (node: BNode | undefined) => {
-    if (!node) {
-      return false;
-    }
 
-    if (node?.val === target) {
-      return true;
-    }
+  if (node.val === target) {
+    return node;
+  }
 
-    const is_left = iterate(node.left);
-    if (is_left) {
-      return true;
-    }
+  const foundNode = dfs(node.left, target) || dfs(node.right, target);
+  if (foundNode) {
+    return foundNode;
+  }
 
-    const is_right = iterate(node.right);
-    if (is_right) {
-      return true;
-    }
-
-    return false;
-  };
-
-  return iterate(node);
+  return null;
 }

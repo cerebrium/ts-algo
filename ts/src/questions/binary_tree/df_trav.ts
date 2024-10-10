@@ -13,6 +13,7 @@ export function bfs_rec(node: BNode | undefined, kind: BfsType): Array<number> {
 
   return nodes;
 }
+
 function traverse(
   node: BNode | undefined,
   kind: BfsType,

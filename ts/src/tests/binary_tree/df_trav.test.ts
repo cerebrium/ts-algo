@@ -1,5 +1,5 @@
 import {make_b_tree} from '.';
-import {BfsType, bfs_rec} from '../../questions/binary_tree/bfs';
+import {BfsType, bfs_rec} from '../../questions/binary_tree/df_trav';
 
 test('Breadth first search', () => {
   const b_tree = make_b_tree();

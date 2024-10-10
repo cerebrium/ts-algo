@@ -1,28 +1,25 @@
 "use strict";
+/*
+ *
+ * Given a binary tree. Do a depth first search to locate
+ * if a given node exists. The tree will be using numbers,
+ * and it will be decently balanced
+ *
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.dfs = void 0;
 function dfs(node, target) {
     if (!node) {
-        return false;
+        return null;
     }
-    const iterate = (node) => {
-        if (!node) {
-            return false;
-        }
-        if ((node === null || node === void 0 ? void 0 : node.val) === target) {
-            return true;
-        }
-        const is_left = iterate(node.left);
-        if (is_left) {
-            return true;
-        }
-        const is_right = iterate(node.right);
-        if (is_right) {
-            return true;
-        }
-        return false;
-    };
-    return iterate(node);
+    if (node.val === target) {
+        return node;
+    }
+    const foundNode = dfs(node.left, target) || dfs(node.right, target);
+    if (foundNode) {
+        return foundNode;
+    }
+    return null;
 }
 exports.dfs = dfs;
 //# sourceMappingURL=dfs.js.map
