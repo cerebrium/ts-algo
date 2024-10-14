@@ -1,8 +1,8 @@
 import {BNode} from '.';
 
-export function b_tree_compare(
-  node_one: BNode | undefined,
-  node_two: BNode | undefined
+export function b_tree_compare<T>(
+  node_one: BNode<T> | undefined,
+  node_two: BNode<T> | undefined
 ): boolean {
   // Base cases:
   // if node 1 and not node 2 -> false

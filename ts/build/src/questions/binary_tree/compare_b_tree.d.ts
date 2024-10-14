@@ -1,2 +1,2 @@
 import { BNode } from '.';
-export declare function b_tree_compare(node_one: BNode | undefined, node_two: BNode | undefined): boolean;
+export declare function b_tree_compare<T>(node_one: BNode<T> | undefined, node_two: BNode<T> | undefined): boolean;

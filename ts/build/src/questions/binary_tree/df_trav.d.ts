@@ -4,4 +4,4 @@ export declare enum BfsType {
     'PRE' = "pre",
     'IN' = "in"
 }
-export declare function bfs_rec(node: BNode | undefined, kind: BfsType): Array<number>;
+export declare function bfs_rec(node: BNode<number> | undefined, kind: BfsType): Array<number>;

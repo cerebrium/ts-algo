@@ -20,6 +20,7 @@
     "test_bf_trav": "npm run compile && jest ./build/src/tests/binary_tree/bf_trav.test.js -- --verbose=true",
     "test_bst_search": "npm run compile && jest ./build/src/tests/binary_tree/bst_search.test.js -- --verbose=true",
     "test_comapre_bst": "npm run compile && jest ./build/src/tests/binary_tree/compare_b_tree.test.js -- --verbose=true",
+    "test_crud_bst": "npm run compile && jest ./build/src/tests/binary_tree/crud_bst.test.js -- --verbose=true",
     "test_dfs_graph": "npm run compile && jest ./build/src/tests/graph/adjacency_list/dfs.test.js -- --verbose=true",
     "test_linked_list": "npm run compile && jest ./build/src/tests/linked_lists/crud_linked_lists.test.js -- --verbose=true",
     "test_ring_buffer": "npm run compile && jest ./build/src/tests/ring_buffer/ring_buffer.test.js -- --verbose=true",
