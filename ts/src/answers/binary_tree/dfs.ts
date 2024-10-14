@@ -8,7 +8,10 @@
 
 import {BNode} from '../../questions/binary_tree';
 
-export function dfs(node: BNode | undefined, target: number): BNode | null {
+export function dfs(
+  node: BNode<number> | undefined,
+  target: number
+): BNode<number> | null {
   if (!node) {
     return null;
   }

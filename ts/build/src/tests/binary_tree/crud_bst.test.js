@@ -30,19 +30,18 @@ test('Add Node', () => {
     expect(test_pre_dfs).toEqual([2, 5, 7, 10, 15, 20, 25]);
     // To test this we will do a pre-order depth first search
     // We should find all numbers above within the returned array,
-    // and they should be chronological.
+    // and they should be sorted smallest -> greatest.
     const added_nodes_arr = in_dfs(b_tree);
     const expected_ints = [3, 30, 9, 17, 12, 23];
     // All added ints should be present
     for (let i = 0; i < expected_ints.length; i++) {
         expect(added_nodes_arr.includes(expected_ints[i])).toBeTruthy();
     }
-    // Check that it is chronological
+    // Check that it is sorted ascending
     let prev_ref = -1;
     for (let i = 0; i < added_nodes_arr.length; i++) {
         expect(added_nodes_arr[i] > prev_ref).toBeTruthy();
         prev_ref = added_nodes_arr[i];
     }
-    console.log('in order bst: ', added_nodes_arr);
 });
 //# sourceMappingURL=crud_bst.test.js.map

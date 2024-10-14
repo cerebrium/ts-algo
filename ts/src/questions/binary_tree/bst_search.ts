@@ -1,9 +1,9 @@
 import {BNode} from '.';
 
 export function bst_search(
-  node: BNode | undefined,
+  node: BNode<number> | undefined,
   target: number
-): BNode | null {
+): BNode<number> | null {
   if (!node) {
     return null;
   }

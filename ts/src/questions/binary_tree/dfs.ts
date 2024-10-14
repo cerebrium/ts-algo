@@ -8,7 +8,10 @@
 
 import {BNode} from '.';
 
-export function dfs(node: BNode | undefined, target: number): null | BNode {
+export function dfs(
+  node: BNode<number> | undefined,
+  target: number
+): null | BNode<number> {
   if (!node) {
     return null;
   }

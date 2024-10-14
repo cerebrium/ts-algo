@@ -1,5 +1,5 @@
-export interface BNode {
-    val: number;
-    left?: BNode;
-    right?: BNode;
+export interface BNode<T> {
+    val: T;
+    left?: BNode<T>;
+    right?: BNode<T>;
 }

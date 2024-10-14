@@ -1,6 +1,6 @@
 import {BNode} from '.';
 
-export function bf_trav(node: BNode) {
+export function bf_trav(node: BNode<number>) {
   if (!node) {
     return [];
   }

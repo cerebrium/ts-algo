@@ -6,7 +6,10 @@ export enum BfsType {
   'IN' = 'in',
 }
 
-export function bfs_rec(node: BNode | undefined, kind: BfsType): Array<number> {
+export function bfs_rec(
+  node: BNode<number> | undefined,
+  kind: BfsType
+): Array<number> {
   const nodes: Array<number> = [];
 
   traverse(node, kind, nodes);
@@ -15,7 +18,7 @@ export function bfs_rec(node: BNode | undefined, kind: BfsType): Array<number> {
 }
 
 function traverse(
-  node: BNode | undefined,
+  node: BNode<number> | undefined,
   kind: BfsType,
   visited: Array<number>
 ) {
