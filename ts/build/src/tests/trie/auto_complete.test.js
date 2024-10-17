@@ -19,7 +19,6 @@ test('Autocomplete', () => {
     const animal_and_angie_list = [all_words[1], all_words[4]];
     const add_and_advert_list = [all_words[2], all_words[3]];
     const alphabet_list = [all_words[0]];
-    console.log('animal_and_angie: ', animal_and_angie, animal_and_angie_list);
     for (let i = 0; i < animal_and_angie_list.length; i++) {
         expect(animal_and_angie.includes(animal_and_angie_list[i])).toBeTruthy();
     }
@@ -32,5 +31,13 @@ test('Autocomplete', () => {
         expect(alphabet.includes(alphabet_list[i])).toBeTruthy();
     }
     expect(alphabet.length).toBe(1);
+    const end_word_check = ['barn', 'barnicle'];
+    for (let i = 0; i < end_word_check.length; i++) {
+        autocomplete.add_word(end_word_check[i]);
+    }
+    const retrieved_barn_words = autocomplete.retrieve_words('bar');
+    for (let i = 0; i < end_word_check.length; i++) {
+        expect(retrieved_barn_words.includes(retrieved_barn_words[i])).toBeTruthy();
+    }
 });
 //# sourceMappingURL=auto_complete.test.js.map

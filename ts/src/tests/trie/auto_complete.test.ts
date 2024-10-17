@@ -41,4 +41,16 @@ test('Autocomplete', () => {
   }
 
   expect(alphabet.length).toBe(1);
+
+  const end_word_check = ['barn', 'barnicle'];
+
+  for (let i = 0; i < end_word_check.length; i++) {
+    autocomplete.add_word(end_word_check[i]);
+  }
+
+  const retrieved_barn_words = autocomplete.retrieve_words('bar');
+
+  for (let i = 0; i < end_word_check.length; i++) {
+    expect(retrieved_barn_words.includes(retrieved_barn_words[i])).toBeTruthy();
+  }
 });

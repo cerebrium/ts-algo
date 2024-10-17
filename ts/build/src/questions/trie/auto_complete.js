@@ -24,12 +24,17 @@ class Autocomplete {
     add_word(word) {
         let current_value = null;
         let current_level = this.trie;
+        let current_node = null;
         for (let letter = 0; letter < word.length; letter++) {
             // Search current level in trie for letter
             for (let i = 0; i < current_level.length; i++) {
                 if (current_level[i].value === word[letter]) {
                     current_value = current_level[i].value;
                     current_level = current_level[i].decendents;
+                    current_node = current_level[i];
+                    if (letter === word.length - 1) {
+                        current_level[i].isWord = true;
+                    }
                     // Only break inner loop
                     break;
                 }
@@ -37,15 +42,21 @@ class Autocomplete {
             // Found the value continue to next letter
             if (current_value && current_value === word[letter]) {
                 current_value = null;
+                if (letter === word.length - 1 && current_node) {
+                    current_node.isWord = true;
+                }
                 continue;
             }
             // Did not find value add value
-            current_level.push({ value: word[letter], decendents: [] });
+            current_level.push({
+                value: word[letter],
+                decendents: [],
+                isWord: letter === word.length - 1 ? true : false,
+            });
             // Re-ref to newly created element
             current_level = current_level[current_level.length - 1].decendents;
             current_value = null;
         }
-        const jsoned_trie = JSON.stringify(this.trie);
     }
     retrieve_words(substring) {
         const possible_words = [];
@@ -74,10 +85,9 @@ class Autocomplete {
     }
     _get_nested_words(current_level, possible_words, prefix) {
         for (let i = 0; i < current_level.length; i++) {
-            if (current_level[i].decendents.length <= 0) {
+            if (current_level[i].isWord) {
                 // End of word
                 possible_words.push(prefix + current_level[i].value);
-                continue;
             }
             // Find all children
             this._get_nested_words(current_level[i].decendents, possible_words, prefix + current_level[i].value);
