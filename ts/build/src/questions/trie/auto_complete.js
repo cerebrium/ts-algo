@@ -35,17 +35,17 @@ class Autocomplete {
                 }
             }
             // Found the value continue to next letter
-            // if (current_value && current_value === word[letter]) {
-            //   console.log('continuing: ', current_value);
-            //   continue;
-            // }
+            if (current_value && current_value === word[letter]) {
+                current_value = null;
+                continue;
+            }
             // Did not find value add value
             current_level.push({ value: word[letter], decendents: [] });
             // Re-ref to newly created element
             current_level = current_level[current_level.length - 1].decendents;
+            current_value = null;
         }
         const jsoned_trie = JSON.stringify(this.trie);
-        console.log(jsoned_trie);
     }
     retrieve_words(substring) {
         const possible_words = [];

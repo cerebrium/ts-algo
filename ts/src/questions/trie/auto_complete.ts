@@ -43,7 +43,7 @@ export class Autocomplete {
 
       // Found the value continue to next letter
       if (current_value && current_value === word[letter]) {
-        console.log('continuing: ', current_value);
+        current_value = null;
         continue;
       }
 
@@ -52,10 +52,10 @@ export class Autocomplete {
 
       // Re-ref to newly created element
       current_level = current_level[current_level.length - 1].decendents;
+      current_value = null;
     }
 
     const jsoned_trie = JSON.stringify(this.trie);
-    console.log(jsoned_trie);
   }
 
   public retrieve_words(substring: string): Array<string> {
