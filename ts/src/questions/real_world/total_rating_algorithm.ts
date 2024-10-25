@@ -1,6 +1,7 @@
 import {open} from 'node:fs/promises';
 const path = require('node:path');
 const readline = require('node:readline');
+const fs = require('node:fs');
 
 interface WrongObjCount {
   [key: string]: number;
@@ -15,19 +16,18 @@ interface PercentMap {
 }
 
 async function main() {
-  // const rl = readline.createInterface({
-  //   input: process.stdin,
-  //   output: process.stdout,
-  // });
-  // rl.question(
-  //   `Which station is this?\n`,
-  //   async (station: string): Promise<void> => {
-  //     console.log(`Calulation for staion: ${station}`);
-  //     await calculate_statuses(station);
-  //     rl.close();
-  //   }
-  // );
-  await calculate_statuses('DSN1');
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  rl.question(
+    `Which station is this?\n`,
+    async (station: string): Promise<void> => {
+      await calculate_statuses(station);
+      rl.close();
+    }
+  );
 }
 
 const percent_map: PercentMap = {
@@ -85,14 +85,24 @@ async function calculate_statuses(station: string): Promise<void> {
         'Station is not valid, please choose: DRG2, DSN1, DBS3, DBS2, DEX2, DCF1, DSA1'
       );
   }
-  const file_path = path.join(
+  const file_path: string = path.join(
     __dirname,
     '/..',
     '/..',
     '/..',
     '/..',
     '/assets',
-    '/DSN1.csv'
+    '/DCF1_week_42.csv'
+  );
+
+  const write_file_destination: string = path.join(
+    __dirname,
+    '/..',
+    '/..',
+    '/..',
+    '/..',
+    '/assets',
+    '/finished_DCF1_week_42.csv'
   );
 
   const file = await open(file_path);
@@ -103,18 +113,18 @@ async function calculate_statuses(station: string): Promise<void> {
 
   const wrong_obj: WrongObj = {};
 
-  const fantastic = 20;
-  const great = 16;
-  const fair = 14;
-  const poor = 11;
+  const fantastic = 22;
+  const great = 20.5;
+  const fair = 18;
+  const poor = 13;
   for await (const line of file.readLines()) {
     const dont_include = [];
     total_count++;
     current_rating = 0;
     const [
       _id,
-      status,
-      _total_score,
+      // status,
+      // _total_score,
       _delivered,
       dcr,
       dnr_dpmo,
@@ -129,9 +139,7 @@ async function calculate_statuses(station: string): Promise<void> {
       continue;
     }
     let dcr_val = Number(dcr.split('%')[0]);
-    if (_id.includes('GBWC')) {
-      console.log('DCR VAL: ', dcr_val);
-    }
+
     switch (true) {
       case dcr_val >= 99:
         dcr_val = fantastic;
@@ -175,11 +183,9 @@ async function calculate_statuses(station: string): Promise<void> {
       dont_include.push('pod_val');
     }
     let pod_val = pod == '-' ? 100 : Number(pod.split('%')[0]);
-    if (_id.includes('BA0N')) {
-      console.log('pod val: ', pod_val);
-    }
+
     switch (true) {
-      case pod_val > 98.9:
+      case pod_val >= 98.9:
         pod_val = fantastic;
         break;
       case pod_val > 98:
@@ -302,68 +308,56 @@ async function calculate_statuses(station: string): Promise<void> {
       current_rating += Number((dex_val * (0.1 * multiplicative)).toFixed(2));
     }
 
-    let computed_status = determine_status(current_rating);
-    if (computed_status !== status) {
-      console.log(
-        'computed: ',
-        computed_status,
-        '\tstatus: ',
-        status,
-        '\t rating: ',
-        current_rating,
-        '\t total: ',
-        _total_score,
-        '\tid: ',
-        _id
-      );
-      console.log(
-        'stats\t dcr: \t ',
-        dcr_val,
-        'dnr: \t',
-        dnr_dpmo_val,
-        'pod: \t',
-        pod_val,
-        'cc: \t',
-        cc_val,
-        'ce: \t',
-        ce_val,
-        'dex: \t',
-        dex_val,
-        '\n ---------------------------------------------------- \n'
-      );
+    const status = determine_status(current_rating);
+    const content = [
+      _id,
+      status,
+      _delivered,
+      dcr,
+      dnr_dpmo,
+      pod,
+      cc,
+      ce,
+      dex,
+      _focus_ares,
+      '\n',
+    ].join();
 
-      if (wrong_obj[computed_status]) {
-        if (wrong_obj[computed_status][status]) {
-          wrong_obj[computed_status][status]++;
-        } else {
-          wrong_obj[computed_status][status] = 1;
-        }
+    // @ts-ignore
+    fs.writeFile(write_file_destination, content, {flag: 'a+'}, err => {
+      if (err) {
+        console.error(err);
       } else {
-        wrong_obj[computed_status] = {};
-        wrong_obj[computed_status][status] = 1;
+        console.log('written successfully');
+        // file written successfully
       }
-      wrong_count++;
-    }
-  }
+    });
 
-  console.log(
-    'total count: ',
-    total_count,
-    '\n wrong count: ',
-    wrong_count,
-    '\n wrong obj: ',
-    wrong_obj
-  );
+    // let computed_status = determine_status(current_rating);
+    // if (computed_status !== status && computed_status === 'FANTASTIC_PLUS') {
+    //   if (wrong_obj[computed_status]) {
+    //     if (wrong_obj[computed_status][status]) {
+    //       wrong_obj[computed_status][status]++;
+    //     } else {
+    //       wrong_obj[computed_status][status] = 1;
+    //     }
+    //   } else {
+    //     wrong_obj[computed_status] = {};
+    //     wrong_obj[computed_status][status] = 1;
+    //   }
+    //   wrong_count++;
+    // }
+  }
 }
 function determine_status(rating: number): string {
   switch (true) {
-    case rating > 18.62:
+    case rating > 21.25:
       return 'FANTASTIC_PLUS';
-    case rating > 17.8:
+    case rating > 20.2:
       return 'FANTASTIC';
-    case rating > 17.3:
+    case rating > 18.85:
       return 'GREAT';
-    case rating > 15.6:
+    case rating > 17.951:
       return 'FAIR';
     default:
       return 'POOR';
@@ -371,23 +365,4 @@ function determine_status(rating: number): string {
 }
 main();
 
-// // DCR -> delivery completion rate
-// // DNR DPMO -> Delivery not recieved, deliveries per million opportunities
-//
-//
-//
-//  ALL POSSIBLE FANTASTIC_PLUS IN THIS
-//function determine_status(rating: number): string {
-//   switch (true) {
-//     case rating > 17.55:
-//       return 'FANTASTIC_PLUS';
-//     case rating > 17.8:
-//       return 'FANTASTIC';
-//     case rating > 17.3:
-//       return 'GREAT';
-//     case rating > 15.6:
-//       return 'FAIR';
-//     default:
-//       return 'POOR';
-//   }
-// }
+const content = 'Some content!';
