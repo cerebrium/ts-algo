@@ -25,6 +25,7 @@
     "test_trie": "npm run compile && jest ./build/src/tests/trie/auto_complete.test.js -- --verbose=true",
     "calc_amzn_alg": "npm run compile && node ./build/src/questions/real_world/total_rating_algorithm.js",
     "test_dfs_graph": "npm run compile && jest ./build/src/tests/graph/adjacency_list/dfs.test.js -- --verbose=true",
+    "test_bfs_graph": "npm run compile && jest ./build/src/tests/graph/adjacency_list/bfs.test.js -- --verbose=true",
     "test_linked_list": "npm run compile && jest ./build/src/tests/linked_lists/crud_linked_lists.test.js -- --verbose=true",
     "test_ring_buffer": "npm run compile && jest ./build/src/tests/ring_buffer/ring_buffer.test.js -- --verbose=true",
     "test_maze_solver": "npm run compile && jest ./build/src/tests/graph/maze_solver.test.js -- --verbose=true",
