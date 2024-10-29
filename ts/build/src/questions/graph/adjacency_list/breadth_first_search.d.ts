@@ -15,10 +15,6 @@
  [[7, 6]],
  [[0, 2]],
  ]
- 
-
-
-
 
  */
 export declare function adj_list_bfs(data: Array<number[][]>, target: number): Array<number> | null;

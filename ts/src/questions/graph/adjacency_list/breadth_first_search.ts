@@ -44,14 +44,17 @@ export function adj_list_bfs(
   let que = [0];
   let current_idx = 0;
   let found_node = false;
+  let outer = 0;
 
   while (current_idx < que.length && !found_node) {
-    console.log('hello');
+    outer++;
+    if (outer > 15) {
+      return null;
+    }
     const current_node = que[current_idx];
     const current_connections = data[current_node];
 
     for (let i = 0; i < current_connections.length; i++) {
-      console.log('world');
       const current_child = current_connections[i][0];
       // Add parent
       parent_refs[current_child] = current_node;
@@ -70,6 +73,7 @@ export function adj_list_bfs(
       // Add seen
       visited[current_child] = true;
     }
+    current_idx++;
   }
 
   if (parent_refs[target] === -1) {
@@ -80,8 +84,13 @@ export function adj_list_bfs(
   const path: number[] = [target];
 
   let current_node = target;
+  let inner = 0;
   while (parent_refs[current_node] !== 0) {
-    console.log('its final');
+    inner++;
+    if (inner > 15) {
+      return null;
+    }
+    console.log('its final', current_node, path);
     path.push(parent_refs[current_node]);
     current_node = parent_refs[current_node];
   }

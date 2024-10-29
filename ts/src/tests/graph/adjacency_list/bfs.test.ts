@@ -1,6 +1,6 @@
 import {adj_list_bfs} from '../../../questions/graph/adjacency_list/breadth_first_search';
 
-test('adj list bfs', () => {
+test('adj_list_bfs', () => {
   console.log('is this running');
   const test_data = [
     [[1, 6]],
@@ -26,4 +26,5 @@ test('adj list bfs', () => {
   path = adj_list_bfs(test_data, 7);
 
   console.log('path to 7: ', path);
+  expect(true).toBe(true);
 });

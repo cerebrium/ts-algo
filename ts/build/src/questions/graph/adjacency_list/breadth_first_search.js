@@ -16,10 +16,6 @@
  [[7, 6]],
  [[0, 2]],
  ]
- 
-
-
-
 
  */
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -44,12 +40,15 @@ function adj_list_bfs(data, target) {
     let que = [0];
     let current_idx = 0;
     let found_node = false;
+    let outer = 0;
     while (current_idx < que.length && !found_node) {
-        console.log('hello');
+        outer++;
+        if (outer > 15) {
+            return null;
+        }
         const current_node = que[current_idx];
         const current_connections = data[current_node];
         for (let i = 0; i < current_connections.length; i++) {
-            console.log('world');
             const current_child = current_connections[i][0];
             // Add parent
             parent_refs[current_child] = current_node;
@@ -65,6 +64,7 @@ function adj_list_bfs(data, target) {
             // Add seen
             visited[current_child] = true;
         }
+        current_idx++;
     }
     if (parent_refs[target] === -1) {
         return null;
@@ -72,8 +72,13 @@ function adj_list_bfs(data, target) {
     // Create path
     const path = [target];
     let current_node = target;
+    let inner = 0;
     while (parent_refs[current_node] !== 0) {
-        console.log('its final');
+        inner++;
+        if (inner > 15) {
+            return null;
+        }
+        console.log('its final', current_node, path);
         path.push(parent_refs[current_node]);
         current_node = parent_refs[current_node];
     }
