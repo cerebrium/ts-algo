@@ -40,29 +40,27 @@ function adj_list_bfs(data, target) {
     let que = [0];
     let current_idx = 0;
     let found_node = false;
-    let outer = 0;
     while (current_idx < que.length && !found_node) {
-        outer++;
-        if (outer > 15) {
-            return null;
-        }
         const current_node = que[current_idx];
         const current_connections = data[current_node];
         for (let i = 0; i < current_connections.length; i++) {
             const current_child = current_connections[i][0];
-            // Add parent
-            parent_refs[current_child] = current_node;
             // Check for target
             if (current_child === target) {
+                // Add parent
+                parent_refs[current_child] = current_idx;
                 found_node = true;
                 break;
             }
             // Add Children
-            if (!visited[current_child]) {
-                parent_refs[current_child] = que.push(current_child);
+            if (visited[current_child]) {
+                continue;
             }
-            // Add seen
+            // Add seen and traceback
             visited[current_child] = true;
+            // Add parent
+            parent_refs[current_child] = current_idx;
+            que.push(current_child);
         }
         current_idx++;
     }
@@ -76,9 +74,8 @@ function adj_list_bfs(data, target) {
     while (parent_refs[current_node] !== 0) {
         inner++;
         if (inner > 15) {
-            return null;
+            break;
         }
-        console.log('its final', current_node, path);
         path.push(parent_refs[current_node]);
         current_node = parent_refs[current_node];
     }

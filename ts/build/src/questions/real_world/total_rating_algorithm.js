@@ -65,8 +65,8 @@ async function calculate_statuses(station) {
         default:
             throw new Error('Station is not valid, please choose: DRG2, DSN1, DBS3, DBS2, DEX2, DCF1, DSA1');
     }
-    const file_path = path.join(__dirname, '/..', '/..', '/..', '/..', '/assets', '/DCF1_week_42.csv');
-    const write_file_destination = path.join(__dirname, '/..', '/..', '/..', '/..', '/assets', '/finished_DCF1_week_42.csv');
+    const file_path = path.join(__dirname, '/..', '/..', '/..', '/..', '/assets', '/DSN1_43.csv');
+    const write_file_destination = path.join(__dirname, '/..', '/..', '/..', '/..', '/assets', '/finished_DSN1_43.csv');
     const file = await (0, promises_1.open)(file_path);
     let current_rating = 0;
     let total_count = 0;
@@ -297,5 +297,4 @@ function determine_status(rating) {
     }
 }
 main();
-const content = 'Some content!';
 //# sourceMappingURL=total_rating_algorithm.js.map

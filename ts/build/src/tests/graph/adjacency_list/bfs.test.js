@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const breadth_first_search_1 = require("../../../questions/graph/adjacency_list/breadth_first_search");
 test('adj_list_bfs', () => {
-    console.log('is this running');
     const test_data = [
         [[1, 6]],
         [[2, 3]],
@@ -20,9 +19,9 @@ test('adj_list_bfs', () => {
         [[0, 2]],
     ];
     let path = (0, breadth_first_search_1.adj_list_bfs)(test_data, 4);
-    console.log('path to 4: ', path);
+    expect(path).toStrictEqual([0, 1, 2, 3, 4]);
     path = (0, breadth_first_search_1.adj_list_bfs)(test_data, 7);
     console.log('path to 7: ', path);
-    expect(true).toBe(true);
+    expect(path).toStrictEqual([0, 1, 2, 3, 5, 6, 7]);
 });
 //# sourceMappingURL=bfs.test.js.map

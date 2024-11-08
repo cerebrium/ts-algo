@@ -92,7 +92,7 @@ async function calculate_statuses(station: string): Promise<void> {
     '/..',
     '/..',
     '/assets',
-    '/DCF1_week_42.csv'
+    '/DSN1_43.csv'
   );
 
   const write_file_destination: string = path.join(
@@ -102,7 +102,7 @@ async function calculate_statuses(station: string): Promise<void> {
     '/..',
     '/..',
     '/assets',
-    '/finished_DCF1_week_42.csv'
+    '/finished_DSN1_43.csv'
   );
 
   const file = await open(file_path);
@@ -364,5 +364,3 @@ function determine_status(rating: number): string {
   }
 }
 main();
-
-const content = 'Some content!';
