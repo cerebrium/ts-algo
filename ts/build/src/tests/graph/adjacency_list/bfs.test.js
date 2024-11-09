@@ -21,7 +21,6 @@ test('adj_list_bfs', () => {
     let path = (0, breadth_first_search_1.adj_list_bfs)(test_data, 4);
     expect(path).toStrictEqual([0, 1, 2, 3, 4]);
     path = (0, breadth_first_search_1.adj_list_bfs)(test_data, 7);
-    console.log('path to 7: ', path);
     expect(path).toStrictEqual([0, 1, 2, 3, 5, 6, 7]);
 });
 //# sourceMappingURL=bfs.test.js.map
