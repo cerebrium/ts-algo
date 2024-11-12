@@ -1,78 +1,78 @@
-/*
+/**
  *
- * Graphs are awesome! This one will be using an adjacency list
- * structure. The ahjacency list is one of the most commonly
- * used ways of representing a graph.
  *
- * [
- * [1]
- * [2]
- * [3]
- * [4]
- * [5]
- * [0]
- * ]
- *
- * The list above represents a circle. This is an unweighted
- * Graph though. The way to read an adjacency list is as follows:
- *
- * The index is the node
- * The values are the edges.
- *
- * The following represents a proper graph with weights.
- * [
- * [[1, 2], [4, 12]],
- * [[2, 4]]
- * [[3, 8]]
- * [[4, 9]]
- * [[5, 2]]
- * [[0, 4]]
- * ]
- *
- * This is the proper way to represent an adjacency list. The
- * index still represents the node, but at each node there
- * is an array of tuples which are its children. The children
- * are weighted. The first index is the location of the node,
- * the second index of the tuple is the weight of the edge.
- *
- * The above is a weighted graph of a circle, where the first (0)
- * node also has an edge to the fourth node.
- *
- * What we want to do in this algorith is to determine a path
- * from a given location, to a target (given) location. We
- * are not worried about weights yet, that will come up first
- * in the next algorithm which is an implementation of
- * djikstras.
- *
- * For this fuction, we will expect a path, represented as an
- * array of node values (numbers) from a starting point to
- * an ending pointlist: Array<number[]>.
+ * The first index of the tuple is the node value
+ * the second is the weight
+ 
+ Example data: 
+ [
+ [[1, 6]],
+ [[2, 3]],
+ [[3, 2]],
+ [[4, 12], [5, 7]],
+ [[1, 9], [5, 5]],
+ [[6, 21]],
+ [[7, 6]],
+ [[0, 2]],
+ ]
+
  */
 
-export class dfs {
-  private list: Array<[number, number][]>;
-  private visited: Array<number>;
-  private target = -1;
-  private start = -1;
+export function adj_list_dfs(
+  graph: number[][][],
+  target: number
+): number[] | null {
+  const path: number[] = [];
+  const parent_ref = new Array(graph.length).fill(-1);
+  const visited = new Array(graph.length).fill(false);
+  visited[0] = true;
 
-  constructor({list}: {list: Array<[number, number][]>}) {
-    this.list = list;
-    this.visited = new Array(list.length).fill(-1);
+  const found_node = _walk(graph, parent_ref, 0, target, visited);
+
+  if (!found_node) {
+    return null;
   }
 
-  private traverse({child, parent}: {child: number; parent?: number}): void {}
-
-  private create_path(): number[] | [] {
-    return [];
+  // Walk backwards
+  let curr_node = parent_ref[target];
+  path.push(target);
+  while (curr_node !== -1) {
+    path.push(curr_node);
+    curr_node = parent_ref[curr_node];
   }
 
-  public find_node({
-    start,
-    target,
-  }: {
-    start: number;
-    target: number;
-  }): [] | number[] {
-    return [];
+  return path.reverse();
+}
+
+function _walk(
+  graph: number[][][],
+  parent_ref: number[],
+  node_idx: number,
+  target: number,
+  visited: boolean[]
+): boolean {
+  const node = graph[node_idx];
+
+  for (let i = 0; i < node.length; i++) {
+    const [child, _] = [node[i][0], node[i][1]];
+
+    if (child === target) {
+      // Add to parent ref, and return
+      parent_ref[child] = node_idx;
+      return true;
+    }
+
+    if (visited[child]) {
+      continue;
+    }
+
+    parent_ref[child] = node_idx;
+    visited[child] = true;
+
+    if (_walk(graph, parent_ref, child, target, visited)) {
+      return true;
+    }
   }
+
+  return false;
 }

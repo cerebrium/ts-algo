@@ -1,15 +1,20 @@
-export declare class dfs {
-    private list;
-    private visited;
-    private target;
-    private start;
-    constructor({ list }: {
-        list: Array<[number, number][]>;
-    });
-    private traverse;
-    private create_path;
-    find_node({ start, target, }: {
-        start: number;
-        target: number;
-    }): [] | number[];
-}
+/**
+ *
+ *
+ * The first index of the tuple is the node value
+ * the second is the weight
+ 
+ Example data:
+ [
+ [[1, 6]],
+ [[2, 3]],
+ [[3, 2]],
+ [[4, 12], [5, 7]],
+ [[1, 9], [5, 5]],
+ [[6, 21]],
+ [[7, 6]],
+ [[0, 2]],
+ ]
+
+ */
+export declare function adj_list_dfs(graph: number[][][], target: number): number[] | null;
