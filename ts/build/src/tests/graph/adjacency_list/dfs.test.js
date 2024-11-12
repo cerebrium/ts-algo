@@ -9,6 +9,7 @@ test('adj_list_dfs', () => {
         [
             [4, 12],
             [5, 7],
+            [8, 13],
         ],
         [
             [1, 9],
@@ -17,6 +18,7 @@ test('adj_list_dfs', () => {
         [[6, 21]],
         [[7, 6]],
         [[0, 2]],
+        [[]],
     ];
     let path = (0, dfs_1.adj_list_dfs)(test_data, 4);
     expect(path).toStrictEqual([0, 1, 2, 3, 4]);

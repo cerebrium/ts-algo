@@ -8,6 +8,7 @@ test('adj_list_dfs', () => {
     [
       [4, 12],
       [5, 7],
+      [8, 13],
     ],
     [
       [1, 9],
@@ -16,6 +17,7 @@ test('adj_list_dfs', () => {
     [[6, 21]],
     [[7, 6]],
     [[0, 2]],
+    [[]],
   ];
 
   let path = adj_list_dfs(test_data, 4);
