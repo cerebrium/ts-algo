@@ -63,7 +63,6 @@ function adj_list_bfs(data, target) {
             }
             // Add seen and traceback
             visited[current_child] = true;
-            console.log('parent_refs: ', parent_refs);
             // Add parent
             parent_refs[current_child] = current_node;
             que.push(current_child);
