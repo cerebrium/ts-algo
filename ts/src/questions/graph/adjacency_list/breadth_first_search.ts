@@ -45,17 +45,24 @@ export function adj_list_bfs(
   let current_idx = 0;
   let found_node = false;
 
+  // FIXME: The current_idx is not the correct parent index,
+  // the parent index (especially in terminal nodes)
   while (current_idx < que.length && !found_node) {
     const current_node = que[current_idx];
+
     const current_connections = data[current_node];
 
     for (let i = 0; i < current_connections.length; i++) {
       const current_child = current_connections[i][0];
 
+      if (!current_child) {
+        continue;
+      }
+
       // Check for target
       if (current_child === target) {
         // Add parent
-        parent_refs[current_child] = current_idx;
+        parent_refs[current_child] = current_node;
 
         found_node = true;
         break;
@@ -70,10 +77,11 @@ export function adj_list_bfs(
       visited[current_child] = true;
 
       // Add parent
-      parent_refs[current_child] = current_idx;
+      parent_refs[current_child] = current_node;
 
       que.push(current_child);
     }
+
     current_idx++;
   }
 

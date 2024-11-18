@@ -13,10 +13,12 @@ test('adj_list_bfs', () => {
         [
             [1, 9],
             [5, 5],
+            [8, 13],
         ],
         [[6, 21]],
         [[7, 6]],
         [[0, 2]],
+        [[]],
     ];
     let path = (0, breadth_first_search_1.adj_list_bfs)(test_data, 4);
     expect(path).toStrictEqual([0, 1, 2, 3, 4]);

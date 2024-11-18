@@ -36,7 +36,6 @@ function adj_list_dfs(graph, target) {
         path.push(curr_node);
         curr_node = parent_ref[curr_node];
     }
-    console.log('the parent_ref: ', parent_ref);
     return path.reverse();
 }
 exports.adj_list_dfs = adj_list_dfs;
@@ -50,7 +49,6 @@ function _walk(graph, parent_ref, node_idx, target, visited) {
             return true;
         }
         if (visited[child]) {
-            console.log('we are continuing: ', child);
             continue;
         }
         parent_ref[child] = node_idx;
