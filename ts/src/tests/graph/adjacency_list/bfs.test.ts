@@ -20,10 +20,10 @@ test('adj_list_bfs', () => {
     [[]],
   ];
 
-  // let path = adj_list_bfs(test_data, 4);
-  // expect(path).toStrictEqual([0, 1, 2, 3, 4]);
+  let path = adj_list_bfs(test_data, 4);
+  expect(path).toStrictEqual([0, 1, 2, 3, 4]);
 
-  let path = adj_list_bfs(test_data, 7);
+  path = adj_list_bfs(test_data, 7);
 
   expect(path).toStrictEqual([0, 1, 2, 3, 5, 6, 7]);
 });
