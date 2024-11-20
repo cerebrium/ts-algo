@@ -1,90 +1,57 @@
-/**
- *
- * djikstras is the shortest path algorithm for any graph where
- * each node has a non-negative weight.
- *
- * Go through using a breadth first traversal approach. Assign
- * a weight to the node on each element in the distance array. If
- * there is a shorter path (lower value) available then update the
- * distance array and the prev array to point toward the shortst
- * path for the previous node. This process needs to happen for all
- * nodes, when it does, then reverse path from the target node, and
- * find the shortest path.
- */
-
-export function djikstras(graph: Array<number[][]>, target: number) {
+export function djikstras(
+  graph: Array<number[][]>,
+  target: number
+): null | number[] {
+  const distance = new Uint8Array(graph.length).fill(255);
   const visited = new Uint8Array(graph.length).fill(0);
   const prev = new Int8Array(graph.length).fill(-1);
-  const distance = new Uint8Array(graph.length).fill(256); // max for int 8
 
-  visited[0] = 1;
   distance[0] = 0;
-  distance[target] = 0;
 
-  while (_some(visited)) {
-    const lo = _get_lowest_u(distance);
-  }
-}
+  while (visited.some((v, i) => !v && distance[i] !== 255)) {
+    const current_lo = _lowest_close_child(distance, visited);
+    visited[current_lo] = 1;
 
-function _some(arr: Uint8Array): boolean {
-  for (let i = 0; i < arr.length; i++) {
-    if ((arr[i] & 1) === 0) return true;
-  }
-  return false;
-}
+    for (let i = 0; i < graph[current_lo].length; i++) {
+      const [edge, weight] = graph[current_lo][i];
 
-function _get_lowest_u(arr: Uint8Array) {
-  let curr_value = 257;
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i] < curr_value) {
-      curr_value = arr[i];
+      const prev_distance = weight + distance[current_lo];
+
+      if (prev_distance < distance[edge]) {
+        prev[edge] = current_lo;
+        distance[edge] = prev_distance;
+      }
     }
   }
 
-  return curr_value;
+  if (prev[target] === -1) return [];
+
+  const path = [target];
+
+  let current_node = prev[target];
+  while (current_node !== -1) {
+    path.push(current_node);
+    current_node = prev[current_node];
+  }
+
+  return path.reverse();
 }
 
-/**
- *
- * For the more optimized version, we use a min heap
- *
- */
+function _lowest_close_child(
+  distance: Uint8Array,
+  visited: Uint8Array
+): number {
+  let idx = 0;
+  let current_lo = 255;
 
-class MinHeap {
-  data: number[];
-  length: number;
+  for (let i = 0; i < visited.length; i++) {
+    if (visited[i] || distance[i] === 255) continue;
 
-  constructor() {
-    this.data = [];
-    this.length = 0;
+    if (current_lo > distance[i]) {
+      current_lo = distance[i];
+      idx = i;
+    }
   }
 
-  public push(val: number): void {
-    this.data.push(val);
-    this.length++;
-
-    return this._bubble_up();
-  }
-
-  _bubble_up(): void {}
-
-  /**
-   *
-   * right: 2x + 2
-   * left: 2x + 1
-   * parent: (x-1) / 2
-   *
-   */
-  private _get_right_child(idx: number): number | null {
-    const right_child = 2 * idx + 2;
-    return right_child > this.length ? null : right_child;
-  }
-  private _get_left_child(idx: number): number | null {
-    const left_child = 2 * idx + 1;
-    return left_child > this.length ? null : left_child;
-  }
-  private _get_parent(idx: number): number | null {
-    const parent_idx = Math.floor((idx - 1) / 2);
-    return parent_idx < 0 ? null : parent_idx;
-  }
+  return idx;
 }
