@@ -9,6 +9,10 @@ export class LRU {
   cache: DoublyLinkedList<Entity>;
 
   constructor(first_item: Entity, length: number) {
+    if (length < 3) {
+      throw new Error('LRU length must be greater than 3');
+    }
+
     this.cache = new DoublyLinkedList<Entity>(length);
     this.cache.unshift_and_create(first_item, first_item.id);
   }

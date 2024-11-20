@@ -132,6 +132,11 @@ export class DoublyLinkedList<T> {
     this.id_map.set(id, new_node);
 
     if (this.length > this.max_length) {
+      // Need to remove the item from map
+      // We know tail exists if the length is
+      // greater than max lenght
+      this.id_map.delete(this.tail?.id!);
+
       // Can null coerce due to above check.
       this.tail = this.tail?.prev!;
       this.tail.next = null;
