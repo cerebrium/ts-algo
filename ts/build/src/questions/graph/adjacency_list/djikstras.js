@@ -8,7 +8,6 @@ function djikstras(graph, target) {
     distance[0] = 0;
     while (visited.some((v, i) => !v && distance[i] !== 255)) {
         const current_lo = _lowest_close_child(distance, visited);
-        console.log('running:', current_lo);
         visited[current_lo] = 1;
         for (let i = 0; i < graph[current_lo].length; i++) {
             const [edge, weight] = graph[current_lo][i];
