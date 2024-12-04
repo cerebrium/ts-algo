@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.day_two_part_one_data = void 0;
+exports.day_two_practice = exports.day_two_part_one_data = void 0;
 exports.day_two_part_one_data = [
     [74, 76, 78, 79, 76],
     [38, 40, 43, 44, 44],
@@ -1002,5 +1002,13 @@ exports.day_two_part_one_data = [
     [40, 37, 34, 33, 32, 31],
     [47, 50, 53, 54, 57, 58, 60, 61],
     [59, 58, 55, 53, 52],
+];
+exports.day_two_practice = [
+    [7, 6, 4, 2, 1],
+    [1, 2, 7, 8, 9],
+    [9, 7, 6, 2, 1],
+    [1, 3, 2, 4, 5],
+    [8, 6, 4, 4, 1],
+    [1, 3, 6, 7, 9],
 ];
 //# sourceMappingURL=data.js.map

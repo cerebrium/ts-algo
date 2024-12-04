@@ -1,9 +1,9 @@
 import {
-  day_three_input,
-  day_three_test_two,
-} from './aoc/questions/day_three/data';
-import {day_three_part_two} from './aoc/questions/day_three/part_two/code';
+  day_four_part_one_data,
+  day_four_part_one_test_data,
+} from './aoc/questions/day_four/data';
+import {day_four_part_one} from './aoc/questions/day_four/part_one/code';
 
-const answer = day_three_part_two(day_three_input);
+const answer = day_four_part_one(day_four_part_one_data);
 
 console.log('the answer: ', answer);
