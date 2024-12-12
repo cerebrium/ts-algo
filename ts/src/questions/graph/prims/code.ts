@@ -34,7 +34,7 @@ class Primms<T> {
   }
 }
 
-/*
+/**
  *
  * Three Formula:
  *
@@ -47,7 +47,7 @@ class Primms<T> {
 class MinHeap {
   heap: Array<[string, number]> = [];
   length: number = 0;
-  indexes: Map<string, number> = new Map();
+  private indexes: Map<string, number> = new Map();
 
   // We want to add all the nodes values
   // with indexes and infinite values
@@ -55,6 +55,9 @@ class MinHeap {
 
   public push(new_node: [string, number]) {
     this.heap.push(new_node);
+
+    this.indexes.set(new_node[0], this.length);
+
     ++this.length;
 
     return this.bubble_up();
@@ -83,6 +86,7 @@ class MinHeap {
 
     this.heapify_down();
 
+    this.indexes.delete(node_to_return[0]);
     return node_to_return;
   }
 
@@ -187,6 +191,15 @@ class MinHeap {
   }
 
   private swap(idx_one: number, idx_two: number) {
+    const el_one = this.heap[idx_one][0];
+    const el_two = this.heap[idx_two][0];
+
+    const el_one_current_idx = this.indexes.get(el_one)!;
+    const el_two_current_idx = this.indexes.get(el_two)!;
+
+    this.indexes.set(el_one, el_two_current_idx);
+    this.indexes.set(el_two, el_one_current_idx);
+
     [this.heap[idx_one], this.heap[idx_two]] = [
       this.heap[idx_two],
       this.heap[idx_one],
