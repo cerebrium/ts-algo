@@ -46,8 +46,6 @@ Take a look at the little Elf's word search. How many times does XMAS appear?
 
  *
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.day_four_part_one = void 0;
 const possible_directions = [
     [-1, 0],
     [1, 0],
@@ -58,10 +56,39 @@ const possible_directions = [
     [-1, 1],
     [-1, -1],
 ];
-const next_values = ['M', 'A', 'S'];
+const letters = ['M', 'A', 'S'];
 function day_four_part_one(input) {
-    let found_xmas = 0;
-    return found_xmas;
+    let xmas_found = 0;
+    // Identify starting points
+    for (let row = 0; row < input.length; row++) {
+        for (let column = 0; column < input[row].length; column++) {
+            const current_char = input[row][column];
+            if (current_char !== 'X') {
+                continue;
+            }
+            for (let direction = 0; direction < possible_directions.length; direction++) {
+                const is_xmas = depth_first_search([row, column], possible_directions[direction], 0, input);
+                if (is_xmas) {
+                    ++xmas_found;
+                }
+            }
+        }
+    }
+    return xmas_found;
 }
-exports.day_four_part_one = day_four_part_one;
-//# sourceMappingURL=code.js.map
+function depth_first_search(coords, direction, current_letter, graph) {
+    const [x, y] = [coords[0] + direction[0], coords[1] + direction[1]];
+    // Base case
+    if (x < 0 || x > graph.length || y < 0 || y > graph[0].length) {
+        return false;
+    }
+    if (graph[x][y] !== letters[current_letter]) {
+        return false;
+    }
+    if (letters[current_letter] === 'S') {
+        return true;
+    }
+    // Recurse
+    return depth_first_search([x, y], direction, current_letter + 1, graph);
+}
+//# sourceMappingURL=part_one.js.map

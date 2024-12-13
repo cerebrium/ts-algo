@@ -45,4 +45,7 @@ Take a look at the little Elf's word search. How many times does XMAS appear?
 
  *
  */
-export declare function day_four_part_one(input: Array<string>): number;
+declare const possible_directions: Array<[number, number]>;
+declare const letters: string[];
+declare function day_four_part_one(input: Array<string>): number;
+declare function depth_first_search(coords: [number, number], direction: [number, number], current_letter: number, graph: Array<string>): boolean;

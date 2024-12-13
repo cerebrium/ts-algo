@@ -30,8 +30,33 @@ const diagonals = [
   [1, -1],
 ];
 
-export function day_four_part_two(input: Array<string>): number {
+function day_four_part_two(input: Array<string>): number {
   let x_mas_s = 0;
+
+  // Can ignore 0 and last elements, must have 1 in diagonal
+  // up and left and right and down
+  for (let row = 1; row < input.length - 1; row++) {
+    for (let column = 1; column < input[0].length - 1; column++) {
+      // Must have a in middle
+      if (input[row][column] !== 'A') {
+        continue;
+      }
+
+      const [a, b, c, d] = diagonals.map(([x, y]) => {
+        const [new_x, new_y] = [row + x, column + y];
+        return input[new_x][new_y];
+      });
+
+      if (
+        (a === 'M' && d === 'M' && b === 'S' && c === 'S') ||
+        (d === 'S' && c === 'S' && a === 'M' && b === 'M') ||
+        (d === 'M' && c === 'M' && a === 'S' && b === 'S') ||
+        (c === 'M' && b === 'M' && d === 'S' && a === 'S')
+      ) {
+        ++x_mas_s;
+      }
+    }
+  }
 
   return x_mas_s;
 }
