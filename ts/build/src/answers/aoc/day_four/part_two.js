@@ -23,8 +23,6 @@
 // In this example, an X-MAS appears 9 times.
 //
 // Flip the word search from the instructions back over to the word search side and try again. How many times does an X-MAS appear?
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.day_four_part_two = void 0;
 const diagonals = [
     [-1, -1],
     [-1, 1],
@@ -33,7 +31,26 @@ const diagonals = [
 ];
 function day_four_part_two(input) {
     let x_mas_s = 0;
+    // Can ignore 0 and last elements, must have 1 in diagonal
+    // up and left and right and down
+    for (let row = 1; row < input.length - 1; row++) {
+        for (let column = 1; column < input[0].length - 1; column++) {
+            // Must have a in middle
+            if (input[row][column] !== 'A') {
+                continue;
+            }
+            const [a, b, c, d] = diagonals.map(([x, y]) => {
+                const [new_x, new_y] = [row + x, column + y];
+                return input[new_x][new_y];
+            });
+            if ((a === 'M' && d === 'M' && b === 'S' && c === 'S') ||
+                (d === 'S' && c === 'S' && a === 'M' && b === 'M') ||
+                (d === 'M' && c === 'M' && a === 'S' && b === 'S') ||
+                (c === 'M' && b === 'M' && d === 'S' && a === 'S')) {
+                ++x_mas_s;
+            }
+        }
+    }
     return x_mas_s;
 }
-exports.day_four_part_two = day_four_part_two;
-//# sourceMappingURL=code.js.map
+//# sourceMappingURL=part_two.js.map
