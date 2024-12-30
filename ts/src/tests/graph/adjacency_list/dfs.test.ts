@@ -24,6 +24,5 @@ test('adj_list_dfs', () => {
   expect(path).toStrictEqual([0, 1, 2, 3, 4]);
 
   path = adj_list_dfs(test_data, 7);
-
   expect(path).toStrictEqual([0, 1, 2, 3, 4, 5, 6, 7]);
 });

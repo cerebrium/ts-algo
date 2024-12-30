@@ -32,9 +32,6 @@ function day_nine_part_one(input) {
          *
          * [1, 2, 3, 4, 5];
          */
-        if (idx > final_list.length) {
-            break;
-        }
         for (let i = 0; i < input[start_pointer]; ++i) {
             final_list[idx] = start_idx;
             ++idx;

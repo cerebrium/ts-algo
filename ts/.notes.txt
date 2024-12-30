@@ -1,0 +1,12 @@
+binary search
+depth first graph
+breadth first graph
+depth first tree
+breadth first tree
+validate b tree
+depth first tree
+quicksort
+heap
+maze solver
+
+2 questions

@@ -30,13 +30,6 @@
  *
  */
 
-// export function binary_search(
-//   data: Array<number>,
-//   target: number
-// ): number | null {
-//   return null;
-// }
-
 export function binary_search(
   data: Array<number>,
   target: number
