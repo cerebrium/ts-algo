@@ -17,7 +17,6 @@ function max_subarray(target, data) {
     let min_subbary = data.length + 1;
     for (let start = 0, end = 0; start < data.length; start++) {
         current_sum += data[start];
-        console.log('what is the end: ', end);
         while (current_sum >= target) {
             // Replace the min sub array
             min_subbary = Math.min(min_subbary, start - end + 1);
