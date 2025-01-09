@@ -9,26 +9,56 @@
  * return that
  *
  */
-export function max_subarray(target: number, data: number[]): number {
-  let current_sum = 0;
-  let min_subbary = data.length + 1;
 
-  for (let start = 0, end = 0; start < data.length; start++) {
-    current_sum += data[start];
+export function max_subarray(target: number, nums: number[]): number {
+  /*
+   * We need to see if the numbers and all sub numbers and combinations
+   * of the array add up to the lowest number possible to get the target
+   * or above
+   *
+   */
+  return 1;
+}
 
-    while (current_sum >= target) {
-      // Replace the min sub array
-      min_subbary = Math.min(min_subbary, start - end + 1);
+/*
+ * This is kadanes
+ export function max_subarray(target: number, data: number[]): number {
+  let idx = 0;
+  let local_max = data[0];
+  let global_max = data[0];
 
-      current_sum -= data[end];
-      end++;
+  for (let i = 1; i < data.length; i++) {
+    local_max = Math.max(data[i], local_max + data[i]);
+    if (local_max > global_max) {
+      global_max = local_max;
     }
   }
 
-  return min_subbary === data.length + 1 ? 0 : min_subbary;
+  return 0;
 }
+*/
 
-// export function max_subarray(target: number, nums: number[]): number {
+/*
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ * // export function max_subarray(target: number, nums: number[]): number {
 //   let currentSum = 0;
 //   let minLength = nums.length + 1;
 //
@@ -51,21 +81,4 @@ export function max_subarray(target: number, data: number[]): number {
 //   // Otherwise, return the minLength found
 //   return minLength === nums.length + 1 ? 0 : minLength;
 // }
-
-/*
- * This is kadanes
- export function max_subarray(target: number, data: number[]): number {
-  let idx = 0;
-  let local_max = data[0];
-  let global_max = data[0];
-
-  for (let i = 1; i < data.length; i++) {
-    local_max = Math.max(data[i], local_max + data[i]);
-    if (local_max > global_max) {
-      global_max = local_max;
-    }
-  }
-
-  return 0;
-}
 */
