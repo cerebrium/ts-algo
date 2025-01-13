@@ -1,63 +1,138 @@
 "use strict";
+/*
+ *--- Day 10: Hoof It ---
+You all arrive at a Lava Production Facility on a floating island in the sky. As the others begin to search the massive industrial complex, you feel a small nose boop your leg and look down to discover a reindeer wearing a hard hat.
+
+The reindeer is holding a book titled "Lava Island Hiking Guide". However, when you open the book, you discover that most of it seems to have been scorched by lava! As you're about to ask how you can help,
+the reindeer brings you a blank topographic map of the surrounding area (your puzzle input) and looks up at you excitedly.
+
+Perhaps you can help fill in the missing hiking trails?
+
+The topographic map indicates the height at each position using a scale from 0 (lowest) to 9 (highest). For example:
+
+0123
+1234
+8765
+9876
+Based on un-scorched scraps of the book, you determine that a good hiking trail is as long as possible and has an even, gradual, uphill slope. For all practical purposes,
+this means that a hiking trail is any path that starts at height 0, ends at height 9, and always increases by a height of exactly 1 at each step. Hiking trails never include diagonal steps - only up,
+down, left, or right (from the perspective of the map).
+
+You look up from the map and notice that the reindeer has helpfully begun to construct a small pile of pencils, markers, rulers, compasses, stickers, and other equipment you might need to update the map with hiking trails.
+
+A trailhead is any position that starts one or more hiking trails - here, these positions will always have height 0. Assembling more fragments of pages,
+you establish that a trailhead's score is the number of 9-height positions reachable from that trailhead via a hiking trail. In the above example,
+the single trailhead in the top left corner has a score of 1 because it can reach a single 9 (the one in the bottom left).
+
+This trailhead has a score of 2:
+
+...0...
+...1...
+...2...
+6543456
+7.....7
+8.....8
+9.....9
+(The positions marked . are impassable tiles to simplify these examples; they do not appear on your actual topographic map.)
+
+This trailhead has a score of 4 because every 9 is reachable via a hiking trail except the one immediately to the left of the trailhead:
+
+..90..9
+...1.98
+...2..7
+6543456
+765.987
+876....
+987....
+This topographic map contains two trailheads; the trailhead at the top has a score of 1, while the trailhead at the bottom has a score of 2:
+
+10..9..
+2...8..
+3...7..
+4567654
+...8..3
+...9..2
+.....01
+Here's a larger example:
+
+89010123
+78121874
+87430965
+96549874
+45678903
+32019012
+01329801
+10456732
+This larger example has 9 trailheads. Considering the trailheads in reading order, they have scores of 5, 6, 5, 3, 1, 3, 5, 3, and 5. Adding these scores together, the sum of the scores of all trailheads is 36.
+
+The reindeer gleefully carries over a protractor and adds it to the pile. What is the sum of the scores of all trailheads on your topographic map?
+
+ *
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DayTen = void 0;
 class DayTen {
     constructor() {
         this.data = [];
-        this.trailheads = 0;
+        this.visited_terminations = new Map();
         this.directions = [
             [-1, 0],
-            [0, 1],
             [1, 0],
-            [0, -1], // left
+            [0, -1],
+            [0, 1], // right
         ];
-        this.order = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        this.final_sum = 0;
     }
-    init(input) {
-        this.data = input;
+    init(data) {
+        this.data = data;
     }
     find_trailheads() {
-        for (let row = 0; row < this.data.length; ++row) {
-            for (let column = 0; column < this.data[row].length; ++column) {
-                const node = this.data[row][column];
-                if (node === 0) {
-                    const directions = this.directions.map(([transform_x, transform_y]) => {
-                        return [row + transform_x, column + transform_y];
-                    });
-                    const visited = new Set();
-                    for (const direction of directions) {
-                        this._walk(direction, 0, visited);
-                    }
+        for (let row = 0; row < this.data.length; row++) {
+            for (let column = 0; column < this.data[row].length; column++) {
+                if (this.data[row][column] !== 0) {
+                    continue;
                 }
+                this.walk([row, column], 0, [row, column]);
             }
         }
-        return this.trailheads;
+        return this.final_sum;
     }
-    _walk(coord, order_position, visited) {
+    walk(coord, sum, starting_location, incline = 0) {
+        const found_incline = this.data[coord[0]][coord[1]];
         // Base cases
-        if (coord[0] < 0 ||
-            coord[1] < 0 ||
-            coord[0] > this.data.length - 1 ||
-            coord[1] > this.data[0].length - 1) {
-            return;
-        }
-        if (this.data[coord[0]][coord[1]] !== this.order[order_position]) {
-            return;
-        }
-        if (this.order[order_position] === 9) {
-            if (visited.has(`${coord[0]}${coord[1]}`)) {
+        if (incline === 9 && found_incline === 9) {
+            const found_locations = this.visited_terminations.get(`${coord[0]}${coord[1]}`);
+            if (!found_locations) {
+                this.visited_terminations.set(`${coord[0]}${coord[1]}`, [
+                    `${starting_location[0]}${starting_location[1]}`,
+                ]);
+                this.final_sum++;
                 return;
             }
-            visited.add(`${coord[0]}${coord[1]}`);
-            this.trailheads += 1;
+            if (found_locations.includes(`${starting_location[0]}${starting_location[1]}`)) {
+                return;
+            }
+            found_locations.push(`${starting_location[0]}${starting_location[1]}`);
+            this.final_sum++;
             return;
         }
-        // Recurse
-        const directions = this.directions.map(([transform_x, transform_y]) => {
-            return [coord[0] + transform_x, coord[1] + transform_y];
+        if (found_incline !== incline) {
+            return;
+        }
+        const new_coords = this.directions.map(([x, y]) => {
+            return [x + coord[0], y + coord[1]];
         });
-        for (let direction of directions) {
-            this._walk(direction, order_position + 1, visited);
+        // Recurse
+        for (let new_coord_idx = 0; new_coord_idx < new_coords.length; new_coord_idx++) {
+            const [x, y] = new_coords[new_coord_idx];
+            // bounds check
+            if (x > this.data.length - 1 || x < 0) {
+                continue;
+            }
+            if (y > this.data[x].length || y < 0) {
+                continue;
+            }
+            this.walk([x, y], sum, starting_location, incline + 1);
         }
     }
 }
