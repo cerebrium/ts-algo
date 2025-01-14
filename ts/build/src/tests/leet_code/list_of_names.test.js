@@ -8,7 +8,7 @@ test('list_of_names', () => {
         'frank',
         'catalifornia',
         'carnival',
-        'Catbrastrophe',
+        'catbrastrophe',
     ];
     const answer = (0, list_of_names_1.list_of_words)(word_list, 'cat');
     console.log('answer: ', answer);
