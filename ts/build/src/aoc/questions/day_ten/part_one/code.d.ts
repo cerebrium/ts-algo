@@ -1,10 +1,9 @@
 export declare class DayTen {
-    private data;
-    private trailheads;
+    data: Array<number[]>;
+    private visited_terminations;
     private directions;
-    private order;
-    constructor();
-    init(input: Array<number[]>): void;
+    private final_sum;
+    init(data: Array<number[]>): void;
     find_trailheads(): number;
-    private _walk;
+    private walk;
 }

@@ -6,7 +6,7 @@ export enum BfsType {
   'IN' = 'in',
 }
 
-export function bfs_rec(
+export function dfs_rec(
   node: BNode<number> | undefined,
   kind: BfsType
 ): Array<number> {
@@ -22,27 +22,35 @@ function traverse(
   kind: BfsType,
   visited: Array<number>
 ) {
-  // Base Case
+  /*
+   *
+   * We will go through the trees and add the nodes
+   * in the order that we reach them
+   *
+   */
+
   if (!node) {
     return;
   }
-  // Pre
+
+  // pre
   if (kind === BfsType.PRE) {
     visited.push(node.val);
     traverse(node.left, kind, visited);
     traverse(node.right, kind, visited);
   }
 
-  // Recurse
+  // in
   if (kind === BfsType.IN) {
     traverse(node.left, kind, visited);
     visited.push(node.val);
     traverse(node.right, kind, visited);
   }
-  // Post
+
+  // post
   if (kind === BfsType.POST) {
-    traverse(node.right, kind, visited);
     traverse(node.left, kind, visited);
+    traverse(node.right, kind, visited);
     visited.push(node.val);
   }
 }

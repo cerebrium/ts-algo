@@ -12,8 +12,6 @@
  * nodes, when it does, then reverse path from the target node, and
  * find the shortest path.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.djikstras = void 0;
 function djikstras(graph, target) {
     const visited = new Uint8Array(graph.length).fill(0);
     const prev = new Int8Array(graph.length).fill(-1);
@@ -58,10 +56,14 @@ function djikstras(graph, target) {
     }
     return shortest_path.reverse();
 }
-exports.djikstras = djikstras;
+/*
+ *
+ * Is not visited, and the distance isn't infinite
+ *
+ */
 function _some(visited, distance) {
     for (let i = 0; i < visited.length; i++) {
-        if ((visited[i] & 1) === 0 && distance[i] !== 255)
+        if (visited[i] === 0 && distance[i] !== 255)
             return true;
     }
     return false;

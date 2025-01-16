@@ -1,1 +1,1 @@
-{"version":3,"file":"validate_b_tree.js","sourceRoot":"","sources":["../../../../src/questions/binary_tree/validate_b_tree.ts"],"names":[],"mappings":";;;AAEA,SAAgB,eAAe,CAC7B,IAA+B,EAC/B,MAAc,MAAM,CAAC,SAAS,EAC9B,MAAc,MAAM,CAAC,SAAS;IAE9B,OAAO,IAAI,CAAC;AACd,CAAC;AAND,0CAMC"}
+{"version":3,"file":"validate_b_tree.js","sourceRoot":"","sources":["../../../../src/questions/binary_tree/validate_b_tree.ts"],"names":[],"mappings":";;;AAEA,SAAgB,eAAe,CAC7B,IAA+B,EAC/B,MAAc,MAAM,CAAC,SAAS,EAC9B,MAAc,MAAM,CAAC,SAAS;IAE9B,OAAO,KAAK,CAAC;AACf,CAAC;AAND,0CAMC"}

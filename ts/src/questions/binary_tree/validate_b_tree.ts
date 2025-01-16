@@ -5,5 +5,5 @@ export function validate_b_tree(
   max: number = Number.MAX_VALUE,
   min: number = Number.MIN_VALUE
 ): boolean {
-  return true;
+  return false;
 }

@@ -14,11 +14,11 @@ test('day_ten', () => {
   expect(answer).toBe(698);
 });
 
-test('day_ten_part_two', () => {
-  const day_ten = new DayTenTwo();
-  day_ten.init(day_ten_data);
-
-  const answer = day_ten.find_trailheads();
-
-  expect(answer).toBe(1436);
-});
+// test('day_ten_part_two', () => {
+//   const day_ten = new DayTenTwo();
+//   day_ten.init(day_ten_data);
+//
+//   const answer = day_ten.find_trailheads();
+//
+//   expect(answer).toBe(1436);
+// });

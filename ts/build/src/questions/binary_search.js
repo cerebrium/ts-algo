@@ -32,12 +32,6 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.binary_search = void 0;
-// export function binary_search(
-//   data: Array<number>,
-//   target: number
-// ): number | null {
-//   return null;
-// }
 function binary_search(data, target) {
     return null;
 }

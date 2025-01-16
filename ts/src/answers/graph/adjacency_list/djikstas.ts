@@ -12,10 +12,7 @@
  * find the shortest path.
  */
 
-export function djikstras(
-  graph: Array<number[][]>,
-  target: number
-): null | number[] {
+function djikstras(graph: Array<number[][]>, target: number): null | number[] {
   const visited = new Uint8Array(graph.length).fill(0);
   const prev = new Int8Array(graph.length).fill(-1);
   const distance = new Uint8Array(graph.length).fill(255); // max for int 8
@@ -67,9 +64,14 @@ export function djikstras(
   return shortest_path.reverse();
 }
 
+/*
+ *
+ * Is not visited, and the distance isn't infinite
+ *
+ */
 function _some(visited: Uint8Array, distance: Uint8Array): boolean {
   for (let i = 0; i < visited.length; i++) {
-    if ((visited[i] & 1) === 0 && distance[i] !== 255) return true;
+    if (visited[i] === 0 && distance[i] !== 255) return true;
   }
   return false;
 }

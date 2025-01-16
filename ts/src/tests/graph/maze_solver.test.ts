@@ -21,6 +21,8 @@ test('maze solver, simple maze', () => {
     const [start_x, start_y] = path[0];
     expect(testMaze[start_x][start_y]).toEqual('S');
 
+    console.log('the path: ', path);
+
     // Check end
     const [end_x, end_y] = path[path.length - 1];
     expect(testMaze[end_x][end_y]).toEqual('E');

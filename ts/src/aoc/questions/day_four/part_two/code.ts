@@ -1,6 +1,7 @@
 // The Elf looks quizzically at you. Did you misunderstand the assignment?
 //
-// Looking for the instructions, you flip over the word search to find that this isn't actually an XMAS puzzle; it's an X-MAS puzzle in which you're supposed to find two MAS in the shape of an X. One way to achieve that is like this:
+// Looking for the instructions, you flip over the word search to find that this isn't actually an XMAS puzzle;
+// it's an X-MAS puzzle in which you're supposed to find two MAS in the shape of an X. One way to achieve that is like this:
 //
 // M.S
 // .A.
@@ -24,14 +25,61 @@
 // Flip the word search from the instructions back over to the word search side and try again. How many times does an X-MAS appear?
 
 const diagonals = [
-  [-1, -1], // must be 'm' or 's' and accompanying 2 index
-  [-1, 1],
-  [1, 1],
-  [1, -1],
+  [-1, -1], // u-l
+  [-1, 1], // u-r
+  [1, 1], // d-r
+  [1, -1], // d-l
 ];
 
 export function day_four_part_two(input: Array<string>): number {
   let x_mas_s = 0;
+
+  for (let row = 1; row < input.length - 1; row++) {
+    for (let column = 1; column < input[row].length - 1; column++) {
+      if (input[row][column] !== 'A') {
+        continue;
+      }
+
+      const letters = diagonals.map(([x, y], _) => {
+        return input[x + row][y + column];
+      });
+
+      let m_sum = 0;
+      let s_sum = 0;
+      let should_continue = false;
+
+      for (let i = 0; i < letters.length; i++) {
+        if (letters[i] === 'M') {
+          m_sum++;
+          continue;
+        }
+
+        if (letters[i] === 'S') {
+          s_sum++;
+          continue;
+        }
+
+        should_continue = true;
+        break;
+      }
+
+      if (should_continue || m_sum !== 2 || s_sum !== 2) {
+        continue;
+      }
+
+      const [u_l, u_r, d_r, d_l] = letters;
+
+      // Check for the combos
+      if (
+        (u_l === 'M' && u_r === 'M' && d_l === 'S' && d_r === 'S') ||
+        (d_l === 'M' && d_r === 'M' && u_l === 'S' && u_r === 'S') ||
+        (u_l === 'M' && d_l === 'M' && u_r === 'S' && d_r === 'S') ||
+        (u_r === 'M' && d_r === 'M' && u_l === 'S' && d_l === 'S')
+      ) {
+        x_mas_s++;
+      }
+    }
+  }
 
   return x_mas_s;
 }

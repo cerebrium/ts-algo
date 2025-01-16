@@ -46,21 +46,8 @@ Take a look at the little Elf's word search. How many times does XMAS appear?
  *
  */
 
-const possible_directions = [
-  [-1, 0], // horizontals
-  [1, 0],
-  [0, -1], // verticals
-  [0, 1],
-  [1, 1], // diagonals
-  [1, -1],
-  [-1, 1],
-  [-1, -1],
-];
-
-const next_values = ['M', 'A', 'S'];
-
 export function day_four_part_one(input: Array<string>): number {
-  let found_xmas = 0;
+  let sum = 0;
 
-  return found_xmas;
+  return sum;
 }

@@ -30,12 +30,7 @@
  *
  */
 
-// export function binary_search(
-//   data: Array<number>,
-//   target: number
-// ): number | null {
-//   return null;
-// }
+import {X509Certificate} from 'node:crypto';
 
 export function binary_search(
   data: Array<number>,

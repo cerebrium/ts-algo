@@ -9,5 +9,18 @@
  * We want the function to return a list of tuples, which would
  * be the coordinates from start to end.
  *
+ ex: [
+    ['#', '#', '#', '#', '#', '#', '#', '#', 'E'],
+    ['#', '#', '#', '#', '#', '#', '#', '#', ''],
+    ['#', '#', '#', '#', '#', '#', '#', '#', ''],
+    ['#', '#', '#', '#', '#', '#', '#', '#', ''],
+    ['#', '#', '#', '#', '#', '#', '#', '#', ''],
+    ['#', '#', '#', '#', '#', '#', '#', '#', ''],
+    ['#', '#', '#', '#', '#', '#', '#', '#', ''],
+    ['#', '#', '#', '#', '#', '#', '#', '#', ''],
+    ['S', '', '', '', '', '', '', '', ''],
+  ];
+
+ *
  */
-export declare function maze_solver(maze: Array<Array<string>>): Array<Array<number>> | void;
+export declare function maze_solver(maze: Array<Array<string>>): Array<Array<number>> | null;

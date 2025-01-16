@@ -23,6 +23,7 @@ test('adj_list_dfs', () => {
     let path = (0, dfs_1.adj_list_dfs)(test_data, 4);
     expect(path).toStrictEqual([0, 1, 2, 3, 4]);
     path = (0, dfs_1.adj_list_dfs)(test_data, 7);
+    console.log('the path: ', path);
     expect(path).toStrictEqual([0, 1, 2, 3, 4, 5, 6, 7]);
 });
 //# sourceMappingURL=dfs.test.js.map
