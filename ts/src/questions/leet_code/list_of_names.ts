@@ -1,3 +1,9 @@
+/*
+ * Simplest answer, but every time you want to change the input has
+ * to recompute everything. 'writes' are same speed as 'reads', and
+ * both are fairly slow.
+ *
+ */
 export function list_of_words(input: string[], prefix: string): string[] {
   const final_array: string[] = [];
 
@@ -15,10 +21,10 @@ export function list_of_words(input: string[], prefix: string): string[] {
 }
 
 type Trie = Map<string, TrieNode>;
-type TrieNode = {
+export type TrieNode = {
   isWord: boolean;
   children: Trie;
-  order: Trie[];
+  order: TrieBTree;
 };
 
 export class ListOfWords {
@@ -28,6 +34,16 @@ export class ListOfWords {
     this._make_trie(input);
   }
 
+  /*
+   *
+   * We need to return alphabetized words, to do this,
+   * we traverse the prefix, once we get done with the
+   * prefix, we then complete following letters by using
+   * the in-order list returned from the ordering.
+   *
+   * The above happens in the _make_words
+   *
+   */
   public get_list_of_words(prefix: string) {
     const words_in_trie: string[] = [];
 
@@ -50,195 +66,199 @@ export class ListOfWords {
     return words_in_trie;
   }
 
-  // We want to make sure the letters are entered in alphabetically
-  // The top level does not need to be alphabetized, because we always
-  // will be searching for something, with at least one prefix letter.
+  /*
+   *
+   * The top level does not have to be alphabetized, it is already
+   * always in alphabetical order.
+   *
+   */
   private _make_trie(input: string[]): void {
     for (let i = 0; i < input.length; i++) {
       const word = input[i];
 
       let current_level = this.trie;
+      let current_node: TrieNode | null = null;
       for (let letter_idx = 0; letter_idx < word.length; letter_idx++) {
         const child_node = current_level.get(word[letter_idx]);
 
+        /*
+         *
+         * Already added, no need to update the b-tree, however,
+         * we need to track the parent node here so that we can
+         * update it with added children.
+         *
+         */
         if (child_node) {
           if (letter_idx === word.length - 1) {
             child_node.isWord = true;
             break;
           }
 
+          current_node = child_node;
           current_level = child_node['children'];
           continue;
         }
 
-        // To unsure that the keys (letters) are alphabetized, which
-        // will allow us to return the words in alphabetical order,
-        // we want to sort the keys after each entry. These arrays are
-        // at max 26 as a length, and we are only inserting one element,
-        // so if we add the element, then use bubble sort, we should
-        // be able to do this in O(n) time
-        //
-        // We can't sort the keys in the map, so we will instead keep
-        // an ordering array on the map as well.
+        /*
+         *
+         * Due to how b-trees work, inser here should be log(n).
+         *
+         * Balancing with the avl will be slower, but can be defered
+         * until nothing else is running...
+         * TODO: implement an async que that calls the avl Balancing
+         * when not scheduled for other work.
+         *
+         * With this, we should get n runtime for traversing the nodes
+         * to get the list of alphabetized letters back.
+         *
+         * There is a memory footprint downside though. maybe a more
+         * optimized way of storing the tree would be good, however,
+         * a heap does not allow for an in-order traversal (that i am aware of)
+         *
+         */
 
-        current_level.set(word[letter_idx], {
+        const new_trie_node = {
           isWord: letter_idx === word.length - 1,
           children: new Map(),
-          order: [],
-        });
+          order: new TrieBTree(),
+        };
 
+        current_level.set(word[letter_idx], new_trie_node);
+
+        if (!current_node) {
+          current_node = new_trie_node;
+          current_level = current_level.get(word[letter_idx])!.children;
+          continue;
+        }
+
+        current_node.order.add([word[letter_idx], new_trie_node]);
+        current_node = new_trie_node;
+
+        // Add node to b-tree
         current_level = current_level.get(word[letter_idx])!.children;
       }
     }
   }
 
+  /*
+   *
+   * Instead of using the pure trie for this, we will
+   * walk the returned in-order nodes from the order.
+   *
+   */
   private _make_words(
     current_level: TrieNode,
     current_word: string,
-    word_list: string[]
+    word_list: string[],
+    runs: number = 0
   ): void {
+    if (runs > 10) {
+      return;
+    }
     if (current_level.isWord) {
       word_list.push(current_word);
     }
 
-    current_level.children.forEach((element, key) => {
-      this._make_words(element, current_word + key, word_list);
-    });
+    const in_order_children = current_level.order.return_nodes();
+
+    for (const [letter, node] of in_order_children) {
+      this._make_words(node, current_word + letter, word_list, runs + 1);
+    }
   }
 }
 
-// Min heap implementation
+export type HeapTrieNode = {
+  letter: string;
+  node: TrieNode;
+  left: HeapTrieNode | null;
+  right: HeapTrieNode | null;
+};
 
-class MinHeap<T> {
-  data: Array<T> = [];
+/*
+ *
+ * If we perform a balancing algorithm on this,
+ * then we will have a decently performing tree.
+ *
+ * There will be an avl implementation coming
+ *
+ */
 
-  public add(val: T): void {
-    this.data.push(val);
-    if (this.data.length < 2) {
+// TODO: avl balancing implementation on node addition
+export class TrieBTree {
+  root: null | HeapTrieNode;
+
+  constructor() {
+    this.root = null;
+  }
+
+  // We want to place the nodes in alphabetical order
+  add(trie_val: [string, TrieNode]) {
+    const trie_node = this.make_heap_trie_node(trie_val);
+    if (!this.root) {
+      this.root = trie_node;
       return;
     }
 
-    this.bubble_up();
-  }
-
-  public pop(): T | null {
-    if (this.data.length < 1) {
-      return null;
-    }
-    const val_to_return = this.data[0];
-
-    if (this.data.length < 3) {
+    // right
+    if (trie_node.letter > this.root.letter) {
+      return this.add_walk(this.root.right, trie_node, this.root, 1);
     }
 
-    return val_to_return;
+    // left
+    return this.add_walk(this.root.left, trie_node, this.root, 0);
   }
 
-  private heapify_down() {
-    let parent_idx: number = 0;
-    let smallest_child_idx = this.get_lowest_child(
-      this.get_left_child(parent_idx),
-      this.get_right_child(parent_idx)
-    );
+  // We want to return an array of the letters and their nodes to be
+  // able to walk at the trie level. This means an in order traversal.
+  public return_nodes(): Array<[string, TrieNode]> {
+    const nodes: Array<[string, TrieNode]> = [];
 
-    if (!smallest_child_idx) {
+    this.in_order_walk(this.root, nodes);
+
+    return nodes;
+  }
+
+  private in_order_walk(
+    node: HeapTrieNode | null,
+    node_arr: Array<[string, TrieNode]>
+  ) {
+    if (!node) {
       return;
     }
 
-    while (this.data[smallest_child_idx] < this.data[parent_idx]) {
-      this.swap(smallest_child_idx, parent_idx);
-      const new_smallest_child_idx = this.get_lowest_child(
-        this.get_left_child(smallest_child_idx),
-        this.get_right_child(smallest_child_idx)
-      );
-
-      if (!new_smallest_child_idx) {
-        return;
-      }
-
-      parent_idx = smallest_child_idx;
-      smallest_child_idx = new_smallest_child_idx;
-    }
+    this.in_order_walk(node.left, node_arr);
+    node_arr.push([node.letter, node.node]);
+    this.in_order_walk(node.right, node_arr);
   }
 
-  private bubble_up() {
-    let current_idx: number = this.data.length - 1;
-    let parent_idx = this.get_parent(current_idx);
-
-    if (!parent_idx) {
+  // 0 -> left
+  // 1 -> right
+  // TODO: make this iterative
+  private add_walk(
+    node: HeapTrieNode | null,
+    node_to_add: HeapTrieNode,
+    parent: HeapTrieNode,
+    direction: 0 | 1
+  ): void {
+    if (!node) {
+      direction ? (parent.right = node_to_add) : (parent.left = node_to_add);
       return;
     }
 
-    while (this.data[current_idx] < this.data[parent_idx]) {
-      this.swap(current_idx, parent_idx);
-      const new_parent_idx = this.get_parent(parent_idx);
-      if (!new_parent_idx) {
-        return;
-      }
-
-      current_idx = parent_idx;
-      parent_idx = new_parent_idx;
-    }
-  }
-  // Returns idx of child
-  private get_left_child(parent_idx: number): null | number {
-    const left_child_idx = 2 * parent_idx;
-
-    if (left_child_idx > this.data.length - 1) {
-      return null;
+    // right
+    if (node_to_add.letter > node.letter) {
+      return this.add_walk(node.right, node_to_add, node, 1);
     }
 
-    return left_child_idx;
+    return this.add_walk(node.left, node_to_add, node, 0);
   }
 
-  // Returns idx of child
-  private get_right_child(parent_idx: number): null | number {
-    const right_child_idx = 2 * parent_idx + 1;
-
-    if (right_child_idx > this.data.length - 1) {
-      return null;
-    }
-
-    return right_child_idx;
-  }
-
-  // Returns idx of parent
-  private get_parent(child_idx: number): null | number {
-    const parent_idx = Math.floor((child_idx - 1) / 2);
-
-    if (parent_idx < 0) {
-      return null;
-    }
-
-    return parent_idx;
-  }
-
-  private get_lowest_child(
-    child_idx_one: number | null,
-    child_idx_two: number | null
-  ): number | null {
-    if (!child_idx_one && !child_idx_two) {
-      return null;
-    }
-
-    if (!child_idx_one) {
-      return child_idx_two;
-    }
-
-    if (!child_idx_two) {
-      return child_idx_one;
-    }
-
-    if (this.data[child_idx_one] < this.data[child_idx_two]) {
-      return child_idx_one;
-    }
-
-    return child_idx_two;
-  }
-
-  private swap(idx_one: number, idx_two: number): void {
-    [this.data[idx_one], this.data[idx_two]] = [
-      this.data[idx_two],
-      this.data[idx_one],
-    ];
+  private make_heap_trie_node(trie_val: [string, TrieNode]) {
+    return {
+      letter: trie_val[0],
+      node: trie_val[1],
+      left: null,
+      right: null,
+    };
   }
 }
