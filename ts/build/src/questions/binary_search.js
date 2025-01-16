@@ -33,6 +33,24 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.binary_search = void 0;
 function binary_search(data, target) {
+    if (!data || !data.length || !target) {
+        return null;
+    }
+    let min = 0;
+    let max = data.length;
+    while (min < max) {
+        let idx = Math.floor((max - min) / 2 + min);
+        let guess = data[idx];
+        console.log('idx:', idx, '\n guess:', guess);
+        if (target === guess) {
+            return idx;
+        }
+        if (guess > target) {
+            max = idx;
+            continue;
+        }
+        min = idx + 1;
+    }
     return null;
 }
 exports.binary_search = binary_search;

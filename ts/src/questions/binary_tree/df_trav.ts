@@ -10,11 +10,15 @@ export function dfs_rec(
   node: BNode<number> | undefined,
   kind: BfsType
 ): Array<number> {
-  const nodes: Array<number> = [];
+  if (!node) {
+    return [];
+  }
 
-  traverse(node, kind, nodes);
+  const values: number[] = [];
 
-  return nodes;
+  traverse(node, kind, values);
+
+  return values;
 }
 
 function traverse(
@@ -33,24 +37,20 @@ function traverse(
     return;
   }
 
-  // pre
-  if (kind === BfsType.PRE) {
-    visited.push(node.val);
-    traverse(node.left, kind, visited);
-    traverse(node.right, kind, visited);
-  }
-
-  // in
-  if (kind === BfsType.IN) {
-    traverse(node.left, kind, visited);
-    visited.push(node.val);
-    traverse(node.right, kind, visited);
-  }
-
-  // post
-  if (kind === BfsType.POST) {
-    traverse(node.left, kind, visited);
-    traverse(node.right, kind, visited);
-    visited.push(node.val);
+  switch (kind) {
+    case BfsType.IN:
+      traverse(node.left, kind, visited);
+      visited.push(node.val);
+      traverse(node.right, kind, visited);
+      break;
+    case BfsType.PRE:
+      visited.push(node.val);
+      traverse(node.left, kind, visited);
+      traverse(node.right, kind, visited);
+      break;
+    default:
+      traverse(node.left, kind, visited);
+      traverse(node.right, kind, visited);
+      visited.push(node.val);
   }
 }

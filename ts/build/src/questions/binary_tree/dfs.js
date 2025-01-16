@@ -9,12 +9,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.dfs = void 0;
 function dfs(node, target) {
-    /*
-     *
-     * If the target is larger than node, go right,
-     * if target is less than node, go left.
-     *
-     */
+    // Base cases
     if (!node) {
         return null;
     }
@@ -22,7 +17,13 @@ function dfs(node, target) {
     if (node.val === target) {
         return node;
     }
-    return target < node.val ? dfs(node.left, target) : dfs(node.right, target);
+    if (node.val > target) {
+        const val = dfs(node.left, target);
+        if (val) {
+            return val;
+        }
+    }
+    return dfs(node.right, target);
 }
 exports.dfs = dfs;
 //# sourceMappingURL=dfs.js.map

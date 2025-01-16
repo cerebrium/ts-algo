@@ -7,10 +7,13 @@ var BfsType;
     BfsType["PRE"] = "pre";
     BfsType["IN"] = "in";
 })(BfsType || (exports.BfsType = BfsType = {}));
-function dfs_rec(node, kind) {
-    const nodes = [];
-    traverse(node, kind, nodes);
-    return nodes;
+function bfs_rec(node, kind) {
+    if (!node) {
+        return [];
+    }
+    const values = [];
+    traverse(node, kind, values);
+    return values;
 }
 exports.dfs_rec = dfs_rec;
 function traverse(node, kind, visited) {
@@ -23,23 +26,21 @@ function traverse(node, kind, visited) {
     if (!node) {
         return;
     }
-    // pre
-    if (kind === BfsType.PRE) {
-        visited.push(node.val);
-        traverse(node.left, kind, visited);
-        traverse(node.right, kind, visited);
-    }
-    // in
-    if (kind === BfsType.IN) {
-        traverse(node.left, kind, visited);
-        visited.push(node.val);
-        traverse(node.right, kind, visited);
-    }
-    // post
-    if (kind === BfsType.POST) {
-        traverse(node.left, kind, visited);
-        traverse(node.right, kind, visited);
-        visited.push(node.val);
+    switch (kind) {
+        case BfsType.IN:
+            traverse(node.left, kind, visited);
+            visited.push(node.val);
+            traverse(node.right, kind, visited);
+            break;
+        case BfsType.PRE:
+            visited.push(node.val);
+            traverse(node.left, kind, visited);
+            traverse(node.right, kind, visited);
+            break;
+        default:
+            traverse(node.left, kind, visited);
+            traverse(node.right, kind, visited);
+            visited.push(node.val);
     }
 }
 //# sourceMappingURL=df_trav.js.map

@@ -1,6 +1,6 @@
 import {binary_search} from '../questions/binary_search';
 
-test('Binary Search', () => {
+test('binary_search', () => {
   const test_data = [23, 34, 45, 56, 67, 78, 89, 90, 101, 104, 110, 140, 200];
 
   console.time('binary_search');

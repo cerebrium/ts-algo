@@ -5,21 +5,21 @@ function bf_trav(node) {
     if (!node) {
         return [];
     }
-    const ret_vals = [];
+    const values = [];
+    let traversed = 0;
     const que = [node];
-    let idx = 0;
-    while (idx < que.length) {
-        const currentNode = que[idx];
-        if (currentNode.left) {
-            que.push(currentNode.left);
+    while (traversed < que.length) {
+        const current_node = que[traversed];
+        ++traversed;
+        values.push(current_node.val);
+        if (current_node.left) {
+            que.push(current_node.left);
         }
-        if (currentNode.right) {
-            que.push(currentNode.right);
+        if (current_node.right) {
+            que.push(current_node.right);
         }
-        ret_vals.push(currentNode.val);
-        idx++;
     }
-    return ret_vals;
+    return values;
 }
 exports.bf_trav = bf_trav;
 //# sourceMappingURL=bf_trav.js.map

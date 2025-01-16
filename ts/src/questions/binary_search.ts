@@ -36,5 +36,27 @@ export function binary_search(
   data: Array<number>,
   target: number
 ): number | null {
+  if (!data || !data.length || !target) {
+    return null;
+  }
+
+  let min: number = 0;
+  let max: number = data.length;
+
+  while (min < max) {
+    let idx: number = Math.floor((max - min) / 2 + min);
+    let guess: number = data[idx];
+
+    if (target === guess) {
+      return idx;
+    }
+
+    if (guess > target) {
+      max = idx;
+      continue;
+    }
+
+    min = idx + 1;
+  }
   return null;
 }

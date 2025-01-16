@@ -12,13 +12,7 @@ export function dfs(
   node: BNode<number> | undefined,
   target: number
 ): null | BNode<number> {
-  /*
-   *
-   * If the target is larger than node, go right,
-   * if target is less than node, go left.
-   *
-   */
-
+  // Base cases
   if (!node) {
     return null;
   }
@@ -27,5 +21,12 @@ export function dfs(
     return node;
   }
 
-  return target < node.val ? dfs(node.left, target) : dfs(node.right, target);
+  if (node.val > target) {
+    const val = dfs(node.left, target);
+    if (val) {
+      return val;
+    }
+  }
+
+  return dfs(node.right, target);
 }

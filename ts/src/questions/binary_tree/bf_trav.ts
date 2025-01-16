@@ -5,25 +5,25 @@ export function bf_trav(node: BNode<number>) {
     return [];
   }
 
-  const ret_vals = [];
-  const que = [node];
-  let idx = 0;
+  const values: number[] = [];
 
-  while (idx < que.length) {
-    const currentNode = que[idx];
+  let traversed = 0;
+  const que: BNode<number>[] = [node];
 
-    if (currentNode.left) {
-      que.push(currentNode.left);
+  while (traversed < que.length) {
+    const current_node = que[traversed];
+    ++traversed;
+
+    values.push(current_node.val);
+
+    if (current_node.left) {
+      que.push(current_node.left);
     }
 
-    if (currentNode.right) {
-      que.push(currentNode.right);
+    if (current_node.right) {
+      que.push(current_node.right);
     }
-
-    ret_vals.push(currentNode.val);
-
-    idx++;
   }
 
-  return ret_vals;
+  return values;
 }
