@@ -10,6 +10,28 @@ function quicksort(data, start, stop) {
      * Then we repeat left and right
      *
      */
+    // Base Cases
+    if (start > stop) {
+        return;
+    }
+    const pivot = q_helper(data, start, stop);
+    quicksort(data, start, pivot - 1);
+    quicksort(data, pivot + 1, stop);
 }
 exports.quicksort = quicksort;
+function q_helper(data, start, stop) {
+    let idx = start - 1;
+    for (let i = start; i < stop; i++) {
+        if (data[i] < data[stop]) {
+            idx++;
+            swap(data, i, idx);
+        }
+    }
+    idx++;
+    swap(data, idx, stop);
+    return idx;
+}
+function swap(data, start, stop) {
+    [data[start], data[stop]] = [data[stop], data[start]];
+}
 //# sourceMappingURL=quicksort.js.map
