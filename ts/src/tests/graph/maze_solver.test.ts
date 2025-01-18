@@ -21,8 +21,6 @@ test('maze solver, simple maze', () => {
     const [start_x, start_y] = path[0];
     expect(testMaze[start_x][start_y]).toEqual('S');
 
-    console.log('the path: ', path);
-
     // Check end
     const [end_x, end_y] = path[path.length - 1];
     expect(testMaze[end_x][end_y]).toEqual('E');
@@ -33,6 +31,9 @@ test('maze solver, simple maze', () => {
     // Check no walls in between
     for (let i = 1; i < path.length - 1; i++) {
       const [x, y] = path[i];
+      if (testMaze[x][y] === '#') {
+        console.log('coords: ', x, y, 'were #');
+      }
       expect(testMaze[x][y]).toEqual('');
     }
   }
@@ -67,6 +68,9 @@ test('maze solver, complex maze', () => {
     // Check no walls in between
     for (let i = 1; i < path.length - 1; i++) {
       const [x, y] = path[i];
+      if (testMaze[x][y] === '#') {
+        console.log('coords: ', x, y, 'were #');
+      }
       expect(testMaze[x][y]).toEqual('');
     }
   }

@@ -24,98 +24,105 @@
  *
  */
 
-export function maze_solver(
-  maze: Array<Array<string>>
-): Array<Array<number>> | null {
-  /*
-   *
-   * We want to look at every element in the matrix.
-   * If the element is 'S' then we start from there.
-   *
-   * From that starting point we can go up, down, left,
-   * or right. With the we will need to perform a
-   * depth first search that will walk each direction
-   * starting up, and see if it can find the 'E'
-   *
-   */
-  const visited: Set<string> = new Set();
-  const path: Array<[number, number]> = [];
+const directions: Array<[number, number]> = [
+  [-1, 0],
+  [1, 0],
+  [0, 1],
+  [0, -1],
+];
 
-  for (let i = 0; i < maze.length; i++) {
-    for (let x = 0; x < maze[i].length; x++) {
-      if (maze[i][x] === 'S') {
-        return traverse(maze, path, [i, x], visited);
+function get_possible_coords(
+  curr_coord: [number, number],
+  bounds: [number, number]
+): Array<[number, number]> {
+  return directions
+    .map(([x, y]) => {
+      return [curr_coord[0] + x, curr_coord[1] + y];
+    })
+    .filter(([x, y]) => {
+      return x > -1 && x < bounds[0] && y > -1 && y < bounds[1];
+    }) as Array<[number, number]>;
+}
+
+export function maze_solver(maze: string[][]): number[][] | null {
+  const path: Map<string, string> = new Map();
+  const visited: boolean[][] = new Array(maze.length);
+  for (let row = 0; row < visited.length; row++) {
+    visited[row] = new Array(maze[row].length).fill(false);
+  }
+  const que: Array<[number, number]> = [];
+
+  let curr_que_idx: number = 0;
+  let end_coords: string | null = null;
+
+  for (let row = 0; row < maze.length; row++) {
+    for (let column = 0; column < maze[row].length; column++) {
+      if (maze[row][column] === 'S') {
+        que.push([row, column]);
+        visited[row][column] = true;
+        path.set(`${row},${column}`, 'S');
       }
     }
   }
 
-  return null;
+  while (curr_que_idx < que.length) {
+    const [x, y] = que[curr_que_idx];
+    const possible_coords = get_possible_coords(
+      [x, y],
+      [maze.length, maze[x].length]
+    );
+
+    for (const [child_x, child_y] of possible_coords) {
+      if (visited[child_x][child_y]) {
+        continue;
+      }
+
+      visited[child_x][child_y] = true;
+
+      if (maze[child_x][child_y] === '#') {
+        continue;
+      }
+
+      path.set(`${child_x},${child_y}`, `${x},${y}`);
+
+      if (maze[child_x][child_y] === 'E') {
+        curr_que_idx = que.length + 1;
+        end_coords = `${child_x},${child_y}`;
+        break;
+      }
+
+      que.push([child_x, child_y]);
+    }
+
+    curr_que_idx++;
+  }
+
+  return create_final_path(path, end_coords);
 }
 
-const directions = [
-  [1, 0], // up
-  [-1, 0], // down
-  [0, -1], // left
-  [0, 1], // right
-];
-
-function traverse(
-  maze: Array<Array<string>>,
-  path: Array<[number, number]> = [],
-  currentCoords: [x: number, y: number],
-  visited: Set<string>
-): Array<[number, number]> | null {
-  /*
-   *
-   * We are going to do a depth first search on this map. We will
-   * walk as far as we can through all children. if all children
-   * of a node are visited, then it will be considred visited.
-   *
-   */
-  const [x, y] = currentCoords;
-
-  // Base cases
-  if (visited.has(`${x}${y}`)) {
+function create_final_path(
+  path: Map<string, string>,
+  end_coords: string | null
+): null | Array<[number, number]> {
+  if (!end_coords) {
     return null;
   }
 
-  visited.add(`${x}${y}`);
+  let curr_coord = end_coords;
+  let found_val = path.get(curr_coord);
+  const reversed_final_path: string[] = [curr_coord];
 
-  const val = maze[x][y];
-
-  switch (val) {
-    case 'E':
-      path.push(currentCoords);
-      return path;
-    case '#':
-      return null;
+  while (found_val && found_val !== 'S') {
+    reversed_final_path.push(found_val);
+    found_val = path.get(found_val);
   }
 
-  // next coords
-  const next_locations: Array<[number, number]> = directions.map(
-    ([additive_x, additive_y], idx) => {
-      return [additive_x + x, additive_y + y];
-    }
-  );
+  const final_path: Array<[number, number]> = [];
 
-  for (let [next_x, next_y] of next_locations) {
-    // Bounds check
-    if (
-      next_x > maze.length - 1 ||
-      next_x < 0 ||
-      next_y > maze[0].length - 1 ||
-      next_y < 0
-    ) {
-      continue;
-    }
-
-    path.push(currentCoords);
-    const correct_path = traverse(maze, path, [next_x, next_y], visited);
-    if (correct_path) {
-      return correct_path;
-    }
-    path.pop();
+  for (let i = reversed_final_path.length - 1; i > -1; i--) {
+    const [x, y] = reversed_final_path[i].split(',').map(s => parseInt(s));
+    final_path.push([x, y]);
   }
 
-  return null;
+  return final_path;
 }

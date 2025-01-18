@@ -22,7 +22,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.adj_list_dfs = void 0;
-function adj_list_dfs(graph, target) {
+function adj_list_dfs(graph, target, start = 0) {
     return null;
 }
 exports.adj_list_dfs = adj_list_dfs;

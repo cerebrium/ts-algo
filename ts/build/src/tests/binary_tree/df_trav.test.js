@@ -8,7 +8,7 @@ test('Depth_first_traversal', () => {
     expect(pre).toEqual([10, 5, 2, 7, 20, 15, 25]);
     const in_order = (0, df_trav_1.dfs_rec)(b_tree, df_trav_1.BfsType.IN);
     expect(in_order).toEqual([2, 5, 7, 10, 15, 20, 25]);
-    const post = (0, df_trav_1.bfs_rec)(b_tree, df_trav_1.BfsType.POST);
+    const post = (0, df_trav_1.dfs_rec)(b_tree, df_trav_1.BfsType.POST);
     expect(post).toEqual([2, 7, 5, 15, 25, 20, 10]);
 });
 //# sourceMappingURL=df_trav.test.js.map

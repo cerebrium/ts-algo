@@ -7,7 +7,7 @@ var BfsType;
     BfsType["PRE"] = "pre";
     BfsType["IN"] = "in";
 })(BfsType || (exports.BfsType = BfsType = {}));
-function bfs_rec(node, kind) {
+function dfs_rec(node, kind) {
     if (!node) {
         return [];
     }

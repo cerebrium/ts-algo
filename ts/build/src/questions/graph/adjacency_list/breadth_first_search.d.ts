@@ -17,4 +17,4 @@
  ]
 
  */
-export declare function adj_list_bfs(data: Array<number[][]>, target: number): Array<number> | null;
+export declare function adj_list_bfs(data: Array<number[][]>, target: number, start?: number): Array<number> | null;

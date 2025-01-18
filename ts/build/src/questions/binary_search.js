@@ -41,7 +41,6 @@ function binary_search(data, target) {
     while (min < max) {
         let idx = Math.floor((max - min) / 2 + min);
         let guess = data[idx];
-        console.log('idx:', idx, '\n guess:', guess);
         if (target === guess) {
             return idx;
         }

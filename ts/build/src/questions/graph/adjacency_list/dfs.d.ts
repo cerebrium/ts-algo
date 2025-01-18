@@ -19,4 +19,4 @@
 
 
  */
-export declare function adj_list_dfs(graph: number[][][], target: number): number[] | null;
+export declare function adj_list_dfs(graph: number[][][], target: number, start?: number): number[] | null;

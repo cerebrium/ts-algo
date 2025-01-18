@@ -23,4 +23,4 @@
 
  *
  */
-export declare function maze_solver(maze: Array<Array<string>>): Array<Array<number>> | null;
+export declare function maze_solver(maze: string[][]): number[][] | null;

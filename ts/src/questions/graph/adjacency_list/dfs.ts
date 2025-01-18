@@ -22,7 +22,8 @@
 
 export function adj_list_dfs(
   graph: number[][][],
-  target: number
+  target: number,
+  start: number = 0
 ): number[] | null {
   return null;
 }
