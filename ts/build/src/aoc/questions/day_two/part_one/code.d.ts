@@ -1,4 +1,3 @@
-export declare const test_data: number[][];
 /**
  *
  * day_two_part_one takes one arg

@@ -9,6 +9,6 @@ test('aoc_day_one_part_one', () => {
 });
 test('aoc_day_one_part_two', () => {
     const answer = (0, code_2.day_one_part_two)(data_1.day_one_part_one_data);
-    expect(answer).toBe(3);
+    expect(answer).toBe(23609874);
 });
 //# sourceMappingURL=day_one.test.js.map

@@ -16,130 +16,59 @@ So, in this example, 2 reports are safe.
 
 */
 
-export const test_data = [
-  [7, 6, 4, 2, 1],
-  [1, 2, 7, 8, 9],
-  [9, 7, 6, 2, 1],
-  [1, 3, 2, 4, 5],
-  [8, 6, 4, 4, 1],
-  [1, 3, 6, 7, 9],
-];
-
 /**
  *
  * day_two_part_one takes one arg
  *
  */
 export function day_two_part_one(data: Array<number[]>): number {
-  let safe_reports = 0;
+  let answer = 0;
 
-  for (let report = 0; report < data.length; report++) {
-    let prev = data[report][0];
-    let mistakes = 0;
-    let unsafe = false;
-
-    if (prev < data[report][1]) {
-      // greater path
-
-      for (let i = 1; i < data[report].length; i++) {
-        if (data[report][i] <= prev) {
-          mistakes++;
-
-          if (mistakes > 1) {
-            unsafe = true;
-            break;
-          }
-
-          prev = data[report][i];
-          continue;
-        }
-
-        if (data[report][i] - prev > 3) {
-          mistakes++;
-
-          if (mistakes > 1) {
-            unsafe = true;
-            break;
-          }
-
-          prev = data[report][i];
-          continue;
-        }
-
-        prev = data[report][i];
-      }
-
-      if (unsafe) {
-        console.log(
-          'fail: \n',
-          data[report],
-          '\n report: ',
-          report,
-          '\n ------------ \n'
-        );
-        continue;
-      }
-
-      console.log(
-        'success: \n',
-        data[report],
-        '\n report: ',
-        report,
-        '\n ------------ \n'
-      );
-      safe_reports++;
+  for (const row of data) {
+    if (is_increasing(row[0], row[1]) && increasing_is_safe(row)) {
+      answer++;
       continue;
     }
 
-    // less path
-    for (let i = 0; i < data[report].length; i++) {
-      if (data[report][i] >= prev) {
-        mistakes++;
-
-        if (mistakes > 1) {
-          unsafe = true;
-          break;
-        }
-
-        prev = data[report][i];
-        continue;
-      }
-
-      if (prev - data[report][i] > 3) {
-        mistakes++;
-
-        if (mistakes > 1) {
-          unsafe = true;
-          break;
-        }
-
-        prev = data[report][i];
-        continue;
-      }
-
-      prev = data[report][i];
+    if (decreasing_is_safe(row)) {
+      answer++;
     }
-
-    if (unsafe) {
-      console.log(
-        'fail: \n',
-        data[report],
-        '\n report: ',
-        report,
-        '\n ------------ \n'
-      );
-      continue;
-    }
-
-    console.log(
-      'success: \n ',
-      data[report],
-      '\n report: ',
-      report,
-      '\n ------------ \n'
-    );
-    safe_reports++;
   }
 
-  return safe_reports;
+  return answer;
+}
+
+function is_increasing(a: number, b: number) {
+  return b > a;
+}
+
+function increasing_is_safe(data: number[]): boolean {
+  for (let i = 1; i < data.length; i++) {
+    const [curr, next] = [data[i - 1], data[i]];
+
+    if (curr >= next) {
+      return false;
+    }
+
+    if (next - curr > 3) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function decreasing_is_safe(data: number[]): boolean {
+  for (let i = 1; i < data.length; i++) {
+    const [curr, next] = [data[i - 1], data[i]];
+
+    if (next >= curr) {
+      return false;
+    }
+
+    if (curr - next > 3) {
+      return false;
+    }
+  }
+
+  return true;
 }

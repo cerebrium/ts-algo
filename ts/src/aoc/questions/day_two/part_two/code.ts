@@ -5,75 +5,68 @@
  */
 
 export function day_two_part_two(data: Array<number[]>): number {
-  let safe_reports = 0;
+  let answer = 0;
 
-  /*
-   *
-   * For each row if there is an offending value,
-   * and we remove the value does it make the row
-   * true.
-   *
-   * The naive (inefficient) way to do this is with
-   * a triple loop. We can go through each row n times
-   * and take out one element each time. If any of them
-   * are safe then it is a win
-   *
-   */
+  for (let i = 0; i < data.length; i++) {
+    for (let x = 0; x < data[i].length; x++) {
+      const sub_arr = [...data[i]];
+      sub_arr.splice(x, 1);
 
-  for (let row = 0; row < data.length; row++) {
-    // for each of the elements remove one and check
-    for (let i = 0; i < data[row].length; i++) {
-      const is_unsafe_bool = is_unsafe(data[row], i);
-      if (!is_unsafe_bool) {
-        safe_reports++;
+      const is_increase = is_increasing(sub_arr[0], sub_arr[1]);
+
+      if (is_increase) {
+        if (increasing_is_safe(sub_arr)) {
+          answer++;
+          break;
+        }
+
+        continue;
+      }
+
+      if (decreasing_is_safe(sub_arr)) {
+        answer++;
         break;
       }
     }
   }
 
-  return safe_reports;
+  return answer;
+}
+function is_increasing(a: number, b: number): boolean {
+  if (a > b) {
+    return false;
+  }
+
+  return true;
 }
 
-function is_unsafe(data: number[], discard: number): boolean {
-  const local_arr: number[] = [];
+function increasing_is_safe(data: number[]): boolean {
+  for (let i = 1; i < data.length; i++) {
+    const [curr, next] = [data[i - 1], data[i]];
 
-  for (let i = 0; i < data.length; i++) {
-    if (i === discard) {
-      continue;
+    if (curr >= next) {
+      return false;
     }
 
-    local_arr.push(data[i]);
+    if (next - curr > 3) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function decreasing_is_safe(data: number[]): boolean {
+  for (let i = 1; i < data.length; i++) {
+    const [curr, next] = [data[i - 1], data[i]];
+
+    if (next >= curr) {
+      return false;
+    }
+
+    if (curr - next > 3) {
+      return false;
+    }
   }
 
-  let prev = local_arr[0];
-
-  if (local_arr[1] > prev) {
-    // ascending
-    for (let i = 0; i < local_arr.length; i++) {
-      if (local_arr[i] < prev) {
-        return true;
-      }
-
-      if (local_arr[i] - prev > 3) {
-        return true;
-      }
-
-      prev = local_arr[i];
-    }
-    return false;
-  }
-
-  for (let i = 0; i < local_arr.length; i++) {
-    if (local_arr[i] > prev) {
-      return true;
-    }
-
-    if (prev - local_arr[i] > 3) {
-      return true;
-    }
-
-    return false;
-  }
-
-  return false;
+  return true;
 }
