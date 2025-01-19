@@ -18,12 +18,9 @@ test('aoc_day_five_part_two', () => {
   const answer = day_five_non_graph_part_two(
     day_five_aoc_full_data_one,
     day_five_aoc_full_data
-
-    // day_five_aoc_test_data_one,
-    // day_five_aoc_test_data_two
   );
 
-  expect(answer).toBe(123);
+  expect(answer).toBe(6311);
 });
 
 const day_five_aoc_test_data_one = [
