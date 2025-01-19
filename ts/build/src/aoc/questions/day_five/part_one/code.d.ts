@@ -1,12 +1,14 @@
-declare class DayFive {
-    private formatted_order;
-    private input;
-    init(ordering: Array<[number, number]>, data: Array<number[]>): void;
-    day_five_part_one(): number;
-    private _create_top_ordering;
-    private _format_odering_data;
-    private _is_dag;
-    private _has_cycle;
+export declare class DayFive {
+    private ajacency_list;
+    private are_cycles;
+    private updates;
+    handle_day_five: () => number;
+    constructor(ordering: string[], updates: number[][]);
+    private top_sort;
+    private top_sort_walk;
+    private walk_orders_top_sort;
+    private non_top_sort;
+    private make_adjacency_list;
+    private detect_cycles;
+    private walk;
 }
-declare const day_five_instantiation: DayFive;
-export default day_five_instantiation;

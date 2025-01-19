@@ -23,9 +23,9 @@ export function adj_list_bfs(
   target: number,
   start: number = 0
 ): Array<number> | null {
-  const path: number[] = new Array(data.length).fill(-1);
   const visited: boolean[] = new Array(data.length).fill(false);
-  visited[start] = true;
+  const path: number[] = new Array(data.length).fill(-1);
+
   let curr_que_idx: number = 0;
   const que: number[] = [start];
 
@@ -42,7 +42,7 @@ export function adj_list_bfs(
 
       path[child] = parent;
 
-      if (target === child) {
+      if (child === target) {
         curr_que_idx = que.length + 1;
         break;
       }
@@ -61,12 +61,12 @@ function create_final_path(path: number[], target: number): null | number[] {
     return null;
   }
 
-  let curr_node_idx: number = target;
-  const final_arr: number[] = [curr_node_idx];
+  let current_node = target;
+  const final_arr: number[] = [current_node];
 
-  while (path[curr_node_idx] !== -1) {
-    final_arr.push(path[curr_node_idx]);
-    curr_node_idx = path[curr_node_idx];
+  while (path[current_node] !== -1) {
+    final_arr.push(path[current_node]);
+    current_node = path[current_node];
   }
 
   return final_arr.reverse();

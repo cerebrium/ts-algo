@@ -1,18 +1,8 @@
 export function quicksort(
   data: Array<number>,
-  start: number,
-  stop: number
+  start: number = 0,
+  stop: number = data.length - 1
 ): void {
-  /*
-   *
-   * This works by finding a pivot (the last element) then looking at
-   * all other elements and comparing if the element is lower or higher.
-   *
-   * Then we repeat left and right
-   *
-   */
-
-  // Base Cases
   if (start > stop) {
     return;
   }
@@ -28,16 +18,16 @@ function q_helper(data: Array<number>, start: number, stop: number): number {
   for (let i = start; i < stop; i++) {
     if (data[i] < data[stop]) {
       idx++;
-      swap(data, i, idx);
+      swap(i, idx, data);
     }
   }
 
   idx++;
-  swap(data, idx, stop);
+  swap(idx, stop, data);
 
   return idx;
 }
 
-function swap(data: number[], start: number, stop: number) {
+function swap(start: number, stop: number, data: number[]): void {
   [data[start], data[stop]] = [data[stop], data[start]];
 }

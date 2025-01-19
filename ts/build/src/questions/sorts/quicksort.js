@@ -1,16 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.quicksort = void 0;
-function quicksort(data, start, stop) {
-    /*
-     *
-     * This works by finding a pivot (the last element) then looking at
-     * all other elements and comparing if the element is lower or higher.
-     *
-     * Then we repeat left and right
-     *
-     */
-    // Base Cases
+function quicksort(data, start = 0, stop = data.length - 1) {
     if (start > stop) {
         return;
     }
@@ -24,14 +15,14 @@ function q_helper(data, start, stop) {
     for (let i = start; i < stop; i++) {
         if (data[i] < data[stop]) {
             idx++;
-            swap(data, i, idx);
+            swap(i, idx, data);
         }
     }
     idx++;
-    swap(data, idx, stop);
+    swap(idx, stop, data);
     return idx;
 }
-function swap(data, start, stop) {
+function swap(start, stop, data) {
     [data[start], data[stop]] = [data[stop], data[start]];
 }
 //# sourceMappingURL=quicksort.js.map
