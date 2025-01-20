@@ -22,6 +22,7 @@ test('adj_list_dfs', () => {
     ];
     let path = (0, dfs_1.adj_list_dfs)(test_data, 4, 0);
     expect(path).toStrictEqual([0, 1, 2, 3, 4]);
+    console.log('what is the path: ', path);
     path = (0, dfs_1.adj_list_dfs)(test_data, 7, 0);
     console.log('the path: ', path);
     expect(path).toStrictEqual([0, 1, 2, 3, 4, 5, 6, 7]);

@@ -1,25 +1,28 @@
 export function day_one_part_two(data: Array<[number, number]>): number {
-  let sum = 0;
-  const second: Map<number, number> = new Map();
+  let answer = 0;
+
+  const second_list_map: Map<number, number> = new Map();
 
   for (let i = 0; i < data.length; i++) {
-    const [_, second_value] = data[i];
+    const current_val = second_list_map.get(data[i][1]);
 
-    if (second.has(second_value)) {
-      second.set(second_value, second.get(second_value)! + 1);
+    if (!current_val) {
+      second_list_map.set(data[i][1], 1);
       continue;
     }
 
-    second.set(second_value, 1);
+    second_list_map.set(data[i][1], current_val + 1);
   }
 
   for (let i = 0; i < data.length; i++) {
-    const [first_value, _] = data[i];
+    const second_list_occurences = second_list_map.get(data[i][0]);
 
-    if (second.has(first_value)) {
-      sum += second.get(first_value)! * first_value;
+    if (!second_list_occurences) {
+      continue;
     }
+
+    answer += second_list_occurences * data[i][0];
   }
 
-  return sum;
+  return answer;
 }

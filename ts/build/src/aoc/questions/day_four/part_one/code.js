@@ -48,9 +48,72 @@ Take a look at the little Elf's word search. How many times does XMAS appear?
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.day_four_part_one = void 0;
+const dirs = [
+    [-1, 0],
+    [1, 0],
+    [0, -1],
+    [0, 1],
+    [-1, -1],
+    [-1, 1],
+    [1, -1],
+    [1, 1], // down-right
+];
+const letters = ['M', 'A', 'S'];
 function day_four_part_one(input) {
     let sum = 0;
+    for (let row = 0; row < input.length; row++) {
+        for (let column = 0; column < input[row].length; column++) {
+            if (input[row][column] === 'X') {
+                const possible_directions = get_possible_children([row, column], [input.length - 1, input[row].length - 1]);
+                for (const posiible_direction of possible_directions) {
+                    if (walk(input, posiible_direction, 0)) {
+                        sum++;
+                    }
+                }
+            }
+        }
+    }
     return sum;
 }
 exports.day_four_part_one = day_four_part_one;
+function walk(input, coord, letter_idx) {
+    const [x, y, dir] = coord;
+    const val = input[x][y];
+    // pre
+    if (val !== letters[letter_idx]) {
+        return false;
+    }
+    if (letters[letter_idx] === 'S') {
+        return true;
+    }
+    // recurse
+    const next_dir = get_next_child([x, y], [input.length - 1, input[coord[0]].length - 1], dir);
+    if (!next_dir) {
+        return false;
+    }
+    if (walk(input, next_dir, letter_idx + 1)) {
+        return true;
+    }
+    return false;
+}
+function get_possible_children(coord, bounds) {
+    return dirs
+        .map(([x, y], idx) => {
+        return [x + coord[0], y + coord[1], idx];
+    })
+        .filter(([x, y]) => {
+        if (x < 0 || x > bounds[0] || y < 0 || y > bounds[1]) {
+            return false;
+        }
+        return true;
+    });
+}
+function get_next_child(coord, bounds, dir_idx) {
+    const dir = dirs[dir_idx];
+    const [x, y] = [coord[0] + dir[0], coord[1] + dir[1]];
+    if (x < 0 || x > bounds[0] || y < 0 || y > bounds[1]) {
+        return null;
+    }
+    return [x, y, dir_idx];
+}
 //# sourceMappingURL=code.js.map

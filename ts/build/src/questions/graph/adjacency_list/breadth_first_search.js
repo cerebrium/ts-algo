@@ -21,9 +21,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.adj_list_bfs = void 0;
 function adj_list_bfs(data, target, start = 0) {
-    const path = new Array(data.length).fill(-1);
     const visited = new Array(data.length).fill(false);
-    visited[start] = true;
+    const path = new Array(data.length).fill(-1);
     let curr_que_idx = 0;
     const que = [start];
     while (curr_que_idx < que.length) {
@@ -35,7 +34,7 @@ function adj_list_bfs(data, target, start = 0) {
             }
             visited[child] = true;
             path[child] = parent;
-            if (target === child) {
+            if (child === target) {
                 curr_que_idx = que.length + 1;
                 break;
             }
@@ -50,11 +49,11 @@ function create_final_path(path, target) {
     if (path[target] === -1) {
         return null;
     }
-    let curr_node_idx = target;
-    const final_arr = [curr_node_idx];
-    while (path[curr_node_idx] !== -1) {
-        final_arr.push(path[curr_node_idx]);
-        curr_node_idx = path[curr_node_idx];
+    let current_node = target;
+    const final_arr = [current_node];
+    while (path[current_node] !== -1) {
+        final_arr.push(path[current_node]);
+        current_node = path[current_node];
     }
     return final_arr.reverse();
 }

@@ -45,4 +45,4 @@ Take a look at the little Elf's word search. How many times does XMAS appear?
 
  *
  */
-export declare function day_four_part_one(input: Array<string>): number;
+export declare function day_four_part_one(input: string[]): number;

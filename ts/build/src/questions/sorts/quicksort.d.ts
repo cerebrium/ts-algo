@@ -1,1 +1,1 @@
-export declare function quicksort(data: Array<number>, start: number, stop: number): void;
+export declare function quicksort(data: Array<number>, start?: number, stop?: number): void;
