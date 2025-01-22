@@ -12,7 +12,11 @@ export function quicksort(
   quicksort(data, pivot + 1, stop);
 }
 
-function q_helper(data: Array<number>, start: number, stop: number): number {
+function q_helper(
+  data: Array<number>,
+  start: number = 0,
+  stop: number = data.length - 1
+): number {
   let idx = start - 1;
 
   for (let i = start; i < stop; i++) {
@@ -28,6 +32,6 @@ function q_helper(data: Array<number>, start: number, stop: number): number {
   return idx;
 }
 
-function swap(start: number, stop: number, data: number[]): void {
-  [data[start], data[stop]] = [data[stop], data[start]];
+function swap(a: number, b: number, data: number[]): void {
+  [data[a], data[b]] = [data[b], data[a]];
 }

@@ -23,10 +23,10 @@ exports.adj_list_bfs = void 0;
 function adj_list_bfs(data, target, start = 0) {
     const visited = new Array(data.length).fill(false);
     const path = new Array(data.length).fill(-1);
-    let curr_que_idx = 0;
+    let current_que_idx = 0;
     const que = [start];
-    while (curr_que_idx < que.length) {
-        const parent = que[curr_que_idx];
+    while (current_que_idx < que.length) {
+        const parent = que[current_que_idx];
         const children = data[parent];
         for (const [child, _] of children) {
             if (visited[child]) {
@@ -34,13 +34,13 @@ function adj_list_bfs(data, target, start = 0) {
             }
             visited[child] = true;
             path[child] = parent;
-            if (child === target) {
-                curr_que_idx = que.length + 1;
+            if (target === child) {
+                current_que_idx = que.length + 1;
                 break;
             }
             que.push(child);
         }
-        curr_que_idx++;
+        current_que_idx++;
     }
     return create_final_path(path, target);
 }
@@ -49,11 +49,11 @@ function create_final_path(path, target) {
     if (path[target] === -1) {
         return null;
     }
-    let current_node = target;
-    const final_arr = [current_node];
-    while (path[current_node] !== -1) {
-        final_arr.push(path[current_node]);
-        current_node = path[current_node];
+    let curr_node = target;
+    const final_arr = [curr_node];
+    while (path[curr_node] !== -1) {
+        final_arr.push(path[curr_node]);
+        curr_node = path[curr_node];
     }
     return final_arr.reverse();
 }
