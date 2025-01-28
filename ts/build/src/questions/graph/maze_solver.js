@@ -1,4 +1,6 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.maze_solver = void 0;
 /**
  *
  * Maze solver:
@@ -24,35 +26,36 @@
 
  *
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.maze_solver = void 0;
-function maze_solver(maze) {
-    const path = [];
-    const visited = [];
-    for (let i = 0; i < maze.length; i++) {
-        visited.push(new Array(maze[i].length).fill(false));
-    }
-    for (let row = 0; row < maze.length; row++) {
-        for (let column = 0; column < maze[row].length; column++) {
-            if (maze[row][column] === 'S') {
-                walk(maze, [row, column], path, visited);
-            }
-        }
-    }
-    return path;
-}
-exports.maze_solver = maze_solver;
 const dirs = [
     [-1, 0],
     [1, 0],
     [0, 1],
     [0, -1],
 ];
-function walk(maze, curr_coord, path, visited) {
+function maze_solver(maze) {
+    const visited = [];
+    for (let i = 0; i < maze.length; i++) {
+        visited.push(new Array(maze[i].length).fill(false));
+    }
+    const path = [];
+    for (let i = 0; i < maze.length; i++) {
+        for (let x = 0; x < maze[i].length; x++) {
+            if (maze[i][x] === 'S') {
+                walk(maze, visited, [i, x], path);
+            }
+        }
+    }
+    if (!path.length) {
+        return null;
+    }
+    return path;
+}
+exports.maze_solver = maze_solver;
+function walk(maze, visited, curr_coord, path) {
     // pre
     const [x, y] = curr_coord;
-    const val = maze[x][y];
     visited[x][y] = true;
+    const val = maze[x][y];
     if (val === '#') {
         return false;
     }
@@ -61,18 +64,20 @@ function walk(maze, curr_coord, path, visited) {
         return true;
     }
     // recurse
-    const possible_next_coords = dirs.map(([d_x, d_y]) => {
-        return [x + d_x, y + d_y];
+    const possible_coords = dirs.map(([n_x, n_y]) => {
+        return [x + n_x, y + n_y];
     });
-    for (const [n_x, n_y] of possible_next_coords) {
+    for (const [n_x, n_y] of possible_coords) {
         if (n_x < 0 ||
             n_y < 0 ||
             n_x > maze.length - 1 ||
-            n_y > maze[x].length - 1 ||
-            visited[n_x][n_y]) {
+            n_y > maze[x].length - 1) {
             continue;
         }
-        if (walk(maze, [n_x, n_y], path, visited)) {
+        if (visited[n_x][n_y]) {
+            continue;
+        }
+        if (walk(maze, visited, [n_x, n_y], path)) {
             return true;
         }
     }

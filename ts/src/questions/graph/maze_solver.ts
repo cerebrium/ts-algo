@@ -23,26 +23,6 @@
 
  *
  */
-
-export function maze_solver(maze: string[][]): number[][] | null {
-  const path: number[][] = [];
-  const visited: boolean[][] = [];
-
-  for (let i = 0; i < maze.length; i++) {
-    visited.push(new Array(maze[i].length).fill(false));
-  }
-
-  for (let row = 0; row < maze.length; row++) {
-    for (let column = 0; column < maze[row].length; column++) {
-      if (maze[row][column] === 'S') {
-        walk(maze, [row, column], path, visited);
-      }
-    }
-  }
-
-  return path;
-}
-
 const dirs = [
   [-1, 0],
   [1, 0],
@@ -50,18 +30,40 @@ const dirs = [
   [0, -1],
 ];
 
+export function maze_solver(maze: string[][]): number[][] | null {
+  const visited: boolean[][] = [];
+  for (let i = 0; i < maze.length; i++) {
+    visited.push(new Array(maze[i].length).fill(false));
+  }
+  const path: number[][] = [];
+
+  for (let i = 0; i < maze.length; i++) {
+    for (let x = 0; x < maze[i].length; x++) {
+      if (maze[i][x] === 'S') {
+        walk(maze, visited, [i, x], path);
+      }
+    }
+  }
+
+  if (!path.length) {
+    return null;
+  }
+
+  return path;
+}
+
 function walk(
   maze: string[][],
+  visited: boolean[][],
   curr_coord: [number, number],
-  path: number[][],
-  visited: boolean[][]
+  path: number[][]
 ): boolean {
   // pre
 
   const [x, y] = curr_coord;
-  const val = maze[x][y];
-
   visited[x][y] = true;
+
+  const val = maze[x][y];
 
   if (val === '#') {
     return false;
@@ -74,29 +76,31 @@ function walk(
   }
 
   // recurse
-  const possible_next_coords = dirs.map(([d_x, d_y]) => {
-    return [x + d_x, y + d_y];
+
+  const possible_coords = dirs.map(([n_x, n_y]) => {
+    return [x + n_x, y + n_y];
   });
 
-  for (const [n_x, n_y] of possible_next_coords) {
+  for (const [n_x, n_y] of possible_coords) {
     if (
       n_x < 0 ||
       n_y < 0 ||
       n_x > maze.length - 1 ||
-      n_y > maze[x].length - 1 ||
-      visited[n_x][n_y]
+      n_y > maze[x].length - 1
     ) {
       continue;
     }
 
-    if (walk(maze, [n_x, n_y], path, visited)) {
+    if (visited[n_x][n_y]) {
+      continue;
+    }
+
+    if (walk(maze, visited, [n_x, n_y], path)) {
       return true;
     }
   }
-
   // post
   path.pop();
-
   return false;
 }
 
