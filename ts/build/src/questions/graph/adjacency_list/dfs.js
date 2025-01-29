@@ -23,7 +23,34 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.adj_list_dfs = void 0;
 function adj_list_dfs(graph, target, start = 0) {
-    return null;
+    const path = [];
+    const visited = new Array(graph.length).fill(false);
+    walk(graph, start, target, visited, path);
+    if (!path.length) {
+        return null;
+    }
+    return path;
 }
 exports.adj_list_dfs = adj_list_dfs;
+function walk(graph, curr_val, target, visited, path) {
+    // pre
+    visited[curr_val] = true;
+    path.push(curr_val);
+    if (curr_val === target) {
+        return true;
+    }
+    // recurse
+    const children = graph[curr_val];
+    for (const [child, _] of children) {
+        if (visited[child]) {
+            continue;
+        }
+        if (walk(graph, child, target, visited, path)) {
+            return true;
+        }
+    }
+    // post
+    path.pop();
+    return false;
+}
 //# sourceMappingURL=dfs.js.map

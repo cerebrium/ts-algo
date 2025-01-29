@@ -10,11 +10,8 @@ test('aoc_day_five_part_one', () => {
     expect(answer).toBe(4996);
 });
 test('aoc_day_five_part_two', () => {
-    const answer = (0, code_2.day_five_non_graph_part_two)(day_five_aoc_full_data_one, day_five_aoc_full_data
-    // day_five_aoc_test_data_one,
-    // day_five_aoc_test_data_two
-    );
-    expect(answer).toBe(123);
+    const answer = (0, code_2.day_five_non_graph_part_two)(day_five_aoc_full_data_one, day_five_aoc_full_data);
+    expect(answer).toBe(6311);
 });
 const day_five_aoc_test_data_one = [
     '47|53',

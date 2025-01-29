@@ -25,5 +25,48 @@ export function adj_list_dfs(
   target: number,
   start: number = 0
 ): number[] | null {
-  return null;
+  const path: number[] = [];
+  const visited: boolean[] = new Array(graph.length).fill(false);
+
+  walk(graph, start, target, visited, path);
+
+  if (!path.length) {
+    return null;
+  }
+
+  return path;
+}
+
+function walk(
+  graph: number[][][],
+  curr_val: number,
+  target: number,
+  visited: boolean[],
+  path: number[]
+): boolean {
+  // pre
+  visited[curr_val] = true;
+
+  path.push(curr_val);
+
+  if (curr_val === target) {
+    return true;
+  }
+
+  // recurse
+  const children = graph[curr_val];
+  for (const [child, _] of children) {
+    if (visited[child]) {
+      continue;
+    }
+
+    if (walk(graph, child, target, visited, path)) {
+      return true;
+    }
+  }
+
+  // post
+  path.pop();
+
+  return false;
 }
