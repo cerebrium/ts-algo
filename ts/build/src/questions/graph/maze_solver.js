@@ -38,10 +38,10 @@ function maze_solver(maze) {
         visited.push(new Array(maze[i].length).fill(false));
     }
     const path = [];
-    for (let i = 0; i < maze.length; i++) {
-        for (let x = 0; x < maze[i].length; x++) {
-            if (maze[i][x] === 'S') {
-                walk(maze, visited, [i, x], path);
+    for (let row = 0; row < maze.length; row++) {
+        for (let column = 0; column < maze[row].length; column++) {
+            if (maze[row][column] === 'S') {
+                walk(maze, [row, column], visited, path);
             }
         }
     }
@@ -51,37 +51,36 @@ function maze_solver(maze) {
     return path;
 }
 exports.maze_solver = maze_solver;
-function walk(maze, visited, curr_coord, path) {
+function walk(maze, curr_coord, visited, path) {
     // pre
     const [x, y] = curr_coord;
     visited[x][y] = true;
-    const val = maze[x][y];
-    if (val === '#') {
+    if (maze[x][y] === '#') {
         return false;
     }
     path.push(curr_coord);
-    if (val === 'E') {
+    if (maze[x][y] === 'E') {
         return true;
     }
     // recurse
-    const possible_coords = dirs.map(([n_x, n_y]) => {
-        return [x + n_x, y + n_y];
+    const possible_directions = dirs.map(([n_x, n_y]) => {
+        return [n_x + x, n_y + y];
     });
-    for (const [n_x, n_y] of possible_coords) {
+    for (const [n_x, n_y] of possible_directions) {
         if (n_x < 0 ||
             n_y < 0 ||
             n_x > maze.length - 1 ||
-            n_y > maze[x].length - 1) {
+            n_y > maze[n_x].length - 1) {
             continue;
         }
         if (visited[n_x][n_y]) {
             continue;
         }
-        if (walk(maze, visited, [n_x, n_y], path)) {
+        if (walk(maze, [n_x, n_y], visited, path)) {
             return true;
         }
     }
-    // post
+    //post
     path.pop();
     return false;
 }
