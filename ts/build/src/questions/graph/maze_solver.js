@@ -33,56 +33,64 @@ const dirs = [
     [0, -1],
 ];
 function maze_solver(maze) {
+    let que_idx = 0;
+    const que = [];
     const visited = [];
+    const path = new Map(); // [is_found, p_x, p_y]
+    let final_location = null;
     for (let i = 0; i < maze.length; i++) {
         visited.push(new Array(maze[i].length).fill(false));
-    }
-    const path = [];
-    for (let row = 0; row < maze.length; row++) {
-        for (let column = 0; column < maze[row].length; column++) {
-            if (maze[row][column] === 'S') {
-                walk(maze, [row, column], visited, path);
+        for (let x = 0; x < maze[i].length; x++) {
+            path.set(`${i}_${x}`, [-1, 0, 0]);
+            if (maze[i][x] === 'S') {
+                que.push([i, x]);
+                visited[i][x] = true;
             }
         }
     }
-    if (!path.length) {
+    while (que_idx < que.length) {
+        const [x, y] = que[que_idx];
+        const children = dirs.map(([n_x, n_y]) => {
+            return [x + n_x, y + n_y];
+        });
+        for (const [n_x, n_y] of children) {
+            if (n_y < 0 ||
+                n_x < 0 ||
+                n_x > maze.length - 1 ||
+                n_y > maze[n_x].length - 1) {
+                continue;
+            }
+            if (visited[n_x][n_y]) {
+                continue;
+            }
+            visited[n_x][n_y] = true;
+            if (maze[n_x][n_y] === '#') {
+                continue;
+            }
+            path.set(`${n_x}_${n_y}`, [1, x, y]);
+            if (maze[n_x][n_y] === 'E') {
+                final_location = [1, n_x, n_y];
+                break;
+            }
+            que.push([n_x, n_y]);
+        }
+        que_idx++;
+    }
+    if (!final_location) {
         return null;
     }
-    return path;
+    return make_path(path, final_location);
 }
 exports.maze_solver = maze_solver;
-function walk(maze, curr_coord, visited, path) {
-    // pre
-    const [x, y] = curr_coord;
-    visited[x][y] = true;
-    if (maze[x][y] === '#') {
-        return false;
+function make_path(path, final_location) {
+    // We know that the first node exists
+    let curr_node = final_location;
+    const final_path = [];
+    while (curr_node[0] !== -1) {
+        final_path.push([curr_node[1], curr_node[2]]);
+        curr_node = path.get(`${curr_node[1]}_${curr_node[2]}`);
     }
-    path.push(curr_coord);
-    if (maze[x][y] === 'E') {
-        return true;
-    }
-    // recurse
-    const possible_directions = dirs.map(([n_x, n_y]) => {
-        return [n_x + x, n_y + y];
-    });
-    for (const [n_x, n_y] of possible_directions) {
-        if (n_x < 0 ||
-            n_y < 0 ||
-            n_x > maze.length - 1 ||
-            n_y > maze[n_x].length - 1) {
-            continue;
-        }
-        if (visited[n_x][n_y]) {
-            continue;
-        }
-        if (walk(maze, [n_x, n_y], visited, path)) {
-            return true;
-        }
-    }
-    //post
-    path.pop();
-    return false;
+    return final_path.reverse();
 }
 // c nst directions: Array<[number, number]> = [
 //   [-1, 0],

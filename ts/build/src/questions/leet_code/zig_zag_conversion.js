@@ -130,7 +130,7 @@ function convert(s, numRows) {
     for (const letter of s) {
         // Non-diagonal
         if (!is_diagonal && row_fill < numRows) {
-            final_matrix[row_fill] += letter;
+            final_matrix[row_fill].concat(letter);
             if (row_fill + 1 === numRows) {
                 current_column++;
                 is_diagonal = true;
@@ -141,7 +141,7 @@ function convert(s, numRows) {
             continue;
         }
         // Diagonal -> fill diagonally up and right one value
-        final_matrix[current_diagonal_row_fill] += letter;
+        final_matrix[current_diagonal_row_fill].concat(letter);
         current_column++;
         current_diagonal_row_fill--;
         if (current_diagonal_row_fill === 0) {
