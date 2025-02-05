@@ -33,15 +33,15 @@ const dirs = [
     [0, -1],
 ];
 function maze_solver(maze) {
-    const path = [];
     const visited = [];
     for (let i = 0; i < maze.length; i++) {
         visited.push(new Array(maze[i].length).fill(false));
     }
-    for (let i = 0; i < maze.length; i++) {
-        for (let x = 0; x < maze[i].length; x++) {
-            if (maze[i][x] === 'S') {
-                walk([i, x], maze, path, visited);
+    const path = [];
+    for (let row = 0; row < maze.length; row++) {
+        for (let column = 0; column < maze[row].length; column++) {
+            if (maze[row][column] === 'S') {
+                walk(maze, visited, path, [row, column]);
             }
         }
     }
@@ -51,23 +51,22 @@ function maze_solver(maze) {
     return path;
 }
 exports.maze_solver = maze_solver;
-function walk(curr_node, maze, path, visited) {
-    //pre
-    const [x, y] = curr_node;
-    const val = maze[x][y];
+function walk(maze, visited, path, curr_coord) {
+    const [x, y] = curr_coord;
     visited[x][y] = true;
+    const val = maze[x][y];
     if (val === '#') {
         return false;
     }
-    path.push(curr_node);
+    path.push(curr_coord);
     if (val === 'E') {
         return true;
     }
-    const children = dirs.map(([n_x, n_y]) => {
-        return [x + n_x, y + n_y];
+    // recurse
+    const possible_directions = dirs.map(([n_x, n_y]) => {
+        return [n_x + x, n_y + y];
     });
-    //recurse
-    for (const [n_x, n_y] of children) {
+    for (const [n_x, n_y] of possible_directions) {
         if (n_x < 0 ||
             n_y < 0 ||
             n_x > maze.length - 1 ||
@@ -77,11 +76,10 @@ function walk(curr_node, maze, path, visited) {
         if (visited[n_x][n_y]) {
             continue;
         }
-        if (walk([n_x, n_y], maze, path, visited)) {
+        if (walk(maze, visited, path, [n_x, n_y])) {
             return true;
         }
     }
-    // post
     path.pop();
     return false;
 }
@@ -152,8 +150,8 @@ function walk(curr_node, maze, path, visited) {
 // function make_path(
 //   path: Map<string, [number, number, number]>,
 //   final_location: [number, number, number]
-// ): null | number[][] {
 //   // We know that the first node exists
+// ): null | number[][] {
 //
 //   let curr_node: [number, number, number] = final_location;
 //   const final_path: number[][] = [];

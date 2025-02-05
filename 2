@@ -1,0 +1,85 @@
+/*
+
+  Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+
+  An input string is valid if:
+
+  Open brackets must be closed by the same type of brackets.
+  Open brackets must be closed in the correct order.
+  Every close bracket has a corresponding open bracket of the same type.
+
+*/
+
+export function isValidParenthesis(s: string): boolean {
+  if (s.length % 2 !== 0) {
+    return false;
+  }
+  let left: string[] = [];
+  let right: string[] = [];
+
+  const left_options = ['(', '{', '['];
+  const right_options = [')', '}', ']'];
+
+  let dir = left_options.includes(s[0]) ? 1 : 0; // 1 -> left, 0 -> right
+
+  for (let i = 0; i < s.length; i++) {
+    const left_idx = left_options.indexOf(s[i]);
+
+    if (left_idx >= 0) {
+      if (dir) {
+        left.push(s[i]);
+        continue;
+      }
+
+      dir = 1;
+
+      if (!right.length) {
+        left.push(s[i]);
+        continue;
+      }
+
+      if (right[right.length - 1] === right_options[left_idx]) {
+        right.pop();
+        continue;
+      }
+    }
+
+    // Right
+    const right_idx = right_options.indexOf(s[i]);
+
+    console.log('right idx: ', right_idx);
+
+    if (!dir) {
+      right.push(s[i]);
+      continue;
+    }
+
+    // Is right
+    dir = 0;
+
+    if (!left.length) {
+      right.push(s[i]);
+      return false;
+    }
+
+    console.log(
+      'what is the left:',
+      left[left.length - 1],
+      '\n and next: ',
+      left_options[right_idx]
+    );
+    if (left[left.length - 1] !== left_options[right_idx]) {
+      return false;
+    }
+
+    left.pop();
+  }
+
+  console.log('left: ', left, '\nright', right);
+
+  if (right.length || left.length) {
+    return false;
+  }
+
+  return true;
+}

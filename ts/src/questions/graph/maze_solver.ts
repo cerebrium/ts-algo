@@ -31,16 +31,16 @@ const dirs = [
 ];
 
 export function maze_solver(maze: string[][]): number[][] | null {
-  const path: number[][] = [];
   const visited: boolean[][] = [];
   for (let i = 0; i < maze.length; i++) {
     visited.push(new Array(maze[i].length).fill(false));
   }
+  const path: number[][] = [];
 
-  for (let i = 0; i < maze.length; i++) {
-    for (let x = 0; x < maze[i].length; x++) {
-      if (maze[i][x] === 'S') {
-        walk([i, x], maze, path, visited);
+  for (let row = 0; row < maze.length; row++) {
+    for (let column = 0; column < maze[row].length; column++) {
+      if (maze[row][column] === 'S') {
+        walk(maze, visited, path, [row, column]);
       }
     }
   }
@@ -53,33 +53,32 @@ export function maze_solver(maze: string[][]): number[][] | null {
 }
 
 function walk(
-  curr_node: [number, number],
   maze: string[][],
+  visited: boolean[][],
   path: number[][],
-  visited: boolean[][]
+  curr_coord: [number, number]
 ): boolean {
-  //pre
-
-  const [x, y] = curr_node;
-  const val: string = maze[x][y];
-
+  const [x, y] = curr_coord;
   visited[x][y] = true;
+
+  const val: string = maze[x][y];
 
   if (val === '#') {
     return false;
   }
 
-  path.push(curr_node);
+  path.push(curr_coord);
 
   if (val === 'E') {
     return true;
   }
 
-  const children = dirs.map(([n_x, n_y]) => {
-    return [x + n_x, y + n_y];
+  // recurse
+  const possible_directions = dirs.map(([n_x, n_y]) => {
+    return [n_x + x, n_y + y];
   });
-  //recurse
-  for (const [n_x, n_y] of children) {
+
+  for (const [n_x, n_y] of possible_directions) {
     if (
       n_x < 0 ||
       n_y < 0 ||
@@ -93,12 +92,11 @@ function walk(
       continue;
     }
 
-    if (walk([n_x, n_y], maze, path, visited)) {
+    if (walk(maze, visited, path, [n_x, n_y])) {
       return true;
     }
   }
 
-  // post
   path.pop();
   return false;
 }
@@ -170,8 +168,8 @@ function walk(
 // function make_path(
 //   path: Map<string, [number, number, number]>,
 //   final_location: [number, number, number]
-// ): null | number[][] {
 //   // We know that the first node exists
+// ): null | number[][] {
 //
 //   let curr_node: [number, number, number] = final_location;
 //   const final_path: number[][] = [];
