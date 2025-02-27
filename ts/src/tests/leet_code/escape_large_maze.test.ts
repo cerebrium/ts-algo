@@ -1,6 +1,6 @@
 import {isEscapePossible} from '../../questions/leet_code/escape_large_maze';
 
-test('escape_large_maze', () => {
+test('escape_large_mase', () => {
   /*
 
     Example 1:

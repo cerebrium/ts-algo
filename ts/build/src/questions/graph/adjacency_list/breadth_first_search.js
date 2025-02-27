@@ -21,22 +21,23 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.adj_list_bfs = void 0;
 function adj_list_bfs(data, target, start = 0) {
-    const visited = [];
+    const visited = new Set();
     const path = new Array(data.length).fill(-1);
     let curr_que_idx = 0;
     const que = [start];
     while (curr_que_idx < que.length) {
+        // We visit on the child in bfs
         const parent = que[curr_que_idx];
         const children = data[parent];
-        if (!children) {
+        if (!children || !children.length) {
             curr_que_idx++;
             continue;
         }
         for (const [child, _] of children) {
-            if (visited[child]) {
+            if (visited.has(child)) {
                 continue;
             }
-            visited[child] = true;
+            visited.add(child);
             path[child] = parent;
             if (child === target) {
                 break;
@@ -53,7 +54,7 @@ function create_path(path, target) {
         return null;
     }
     let curr_node = target;
-    const final_path = [curr_node];
+    const final_path = [target];
     while (path[curr_node] !== -1) {
         final_path.push(path[curr_node]);
         curr_node = path[curr_node];

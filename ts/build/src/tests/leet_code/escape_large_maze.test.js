@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const escape_large_maze_1 = require("../../questions/leet_code/escape_large_maze");
-test('escape_large_maze', () => {
+test('escape_large_mase', () => {
     /*
   
       Example 1:

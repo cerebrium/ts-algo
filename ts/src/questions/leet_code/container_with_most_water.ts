@@ -28,22 +28,6 @@ n == height.length
 0 <= height[i] <= 104
 
 */
-// export function maxArea(height: number[]): number {
-//   let max_height: number = 0;
-//   if (height.length < 2) {
-//     return 0;
-//   }
-//
-//   for (let i = 0; i < height.length; i++) {
-//     for (let x = 1; x < height.length; x++) {
-//       const width = x - i;
-//       const local_height = Math.min(height[i], height[x]);
-//
-//       max_height = Math.max(width * local_height, max_height);
-//     }
-//   }
-//   return max_height;
-// }
 
 export function maxArea(heights: number[]): number {
   let max_height: number = 0;

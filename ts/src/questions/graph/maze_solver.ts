@@ -31,16 +31,13 @@ const dirs = [
 ];
 
 export function maze_solver(maze: string[][]): number[][] | null {
-  const visited: boolean[][] = [];
-  for (let i = 0; i < maze.length; i++) {
-    visited.push(new Array(maze[i].length).fill(false));
-  }
+  const visited: Set<string> = new Set();
   const path: number[][] = [];
 
   for (let row = 0; row < maze.length; row++) {
     for (let column = 0; column < maze[row].length; column++) {
       if (maze[row][column] === 'S') {
-        walk(maze, visited, path, [row, column]);
+        walk(maze, path, visited, [row, column]);
       }
     }
   }
@@ -54,31 +51,33 @@ export function maze_solver(maze: string[][]): number[][] | null {
 
 function walk(
   maze: string[][],
-  visited: boolean[][],
   path: number[][],
+  visited: Set<string>,
   curr_coord: [number, number]
 ): boolean {
   const [x, y] = curr_coord;
-  visited[x][y] = true;
+  // We do the visiting on the node itself, not children with dfs
+  if (visited.has(`${x}_${y}`)) {
+    return false;
+  }
 
-  const val: string = maze[x][y];
+  visited.add(`${x}_${y}`);
 
-  if (val === '#') {
+  if (maze[x][y] === '#') {
     return false;
   }
 
   path.push(curr_coord);
 
-  if (val === 'E') {
+  if (maze[x][y] === 'E') {
     return true;
   }
 
-  // recurse
-  const possible_directions = dirs.map(([n_x, n_y]) => {
-    return [n_x + x, n_y + y];
+  const children = dirs.map(([n_x, n_y]) => {
+    return [x + n_x, y + n_y];
   });
 
-  for (const [n_x, n_y] of possible_directions) {
+  for (const [n_x, n_y] of children) {
     if (
       n_x < 0 ||
       n_y < 0 ||
@@ -88,11 +87,7 @@ function walk(
       continue;
     }
 
-    if (visited[n_x][n_y]) {
-      continue;
-    }
-
-    if (walk(maze, visited, path, [n_x, n_y])) {
+    if (walk(maze, path, visited, [n_x, n_y])) {
       return true;
     }
   }

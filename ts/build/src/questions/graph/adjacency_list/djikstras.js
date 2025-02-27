@@ -13,45 +13,46 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.djikstras = void 0;
 function djikstras(graph, target) {
-    const visited = new Array(graph.length).fill(false);
     const path = new Array(graph.length).fill(-1);
+    const visited = new Array(graph.length).fill(false);
     const distances = new Array(graph.length).fill(Number.MAX_SAFE_INTEGER);
+    // So we have somewhere to start
     distances[0] = 0;
-    while (visited.some((v, i) => {
-        return !v && distances[i] !== Number.MAX_SAFE_INTEGER;
-    })) {
-        const parent = get_lowest_close_child(visited, distances);
+    while (visited.some((v, i) => !v && distances[i] !== Number.MAX_SAFE_INTEGER)) {
+        const parent = find_lowest_closest_child(visited, distances);
         visited[parent] = true;
         const children = graph[parent];
         for (const [child, weight] of children) {
-            let prev_distance = weight + distances[parent];
-            if (prev_distance < distances[child]) {
-                distances[child] = prev_distance;
+            let proposed_weight = distances[parent] + weight;
+            if (proposed_weight < distances[child]) {
                 path[child] = parent;
+                distances[child] = proposed_weight;
             }
         }
     }
-    return create_path(target, path);
+    return create_path(path, target);
 }
 exports.djikstras = djikstras;
-function get_lowest_close_child(visited, distances) {
+function find_lowest_closest_child(visited, distances) {
     let idx = 0;
-    let curr_low = Number.MAX_SAFE_INTEGER;
+    let curr_min = Number.MAX_SAFE_INTEGER;
     for (let i = 0; i < visited.length; i++) {
-        if (!visited[i] && distances[i] !== Number.MAX_SAFE_INTEGER) {
-            if (curr_low > distances[i]) {
-                idx = i;
-            }
+        if (visited[i] || distances[i] === Number.MAX_SAFE_INTEGER) {
+            continue;
+        }
+        if (distances[i] < curr_min) {
+            curr_min = distances[i];
+            idx = i;
         }
     }
     return idx;
 }
-function create_path(target, path) {
+function create_path(path, target) {
     if (path[target] === -1) {
         return null;
     }
     let curr_node = target;
-    const final_path = [curr_node];
+    const final_path = [target];
     while (path[curr_node] !== -1) {
         final_path.push(path[curr_node]);
         curr_node = path[curr_node];

@@ -24,32 +24,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.adj_list_dfs = void 0;
 function adj_list_dfs(graph, target, start = 0) {
     const path = [];
-    const visited = new Array(graph.length).fill(false);
-    walk(graph, start, target, visited, path);
+    const visited = new Set();
+    walk(graph, target, visited, path, start);
     if (!path.length) {
         return null;
     }
     return path;
 }
 exports.adj_list_dfs = adj_list_dfs;
-function walk(graph, curr_val, target, visited, path) {
-    // pre
-    visited[curr_val] = true;
-    path.push(curr_val);
-    if (curr_val === target) {
+function walk(graph, target, visited, path, curr_node) {
+    path.push(curr_node);
+    if (curr_node === target) {
         return true;
     }
-    // recurse
-    const children = graph[curr_val];
+    visited.add(curr_node);
+    const children = graph[curr_node];
     for (const [child, _] of children) {
-        if (visited[child]) {
+        if (visited.has(child)) {
             continue;
         }
-        if (walk(graph, child, target, visited, path)) {
+        if (walk(graph, target, visited, path, child)) {
             return true;
         }
     }
-    // post
     path.pop();
     return false;
 }

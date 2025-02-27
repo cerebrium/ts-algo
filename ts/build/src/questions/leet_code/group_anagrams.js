@@ -126,7 +126,6 @@ function groupAnagrams(strs) {
                 }
             });
             if (is_match) {
-                console.log('i: ', i, '\n idx: ', idx);
                 // Found one
                 visited.push(i, idx);
                 current_group.push(curr_string, strs[i]);
@@ -138,7 +137,6 @@ function groupAnagrams(strs) {
         else {
             groups.push([curr_string]);
         }
-        console.log('curr_string: ', curr_string, '\n curr group: ', current_group);
         current_group = [];
         idx++;
     }

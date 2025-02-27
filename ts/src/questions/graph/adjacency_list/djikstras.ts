@@ -14,63 +14,61 @@ export function djikstras(
   graph: Array<number[][]>,
   target: number
 ): null | number[] {
-  const visited: boolean[] = new Array(graph.length).fill(false);
   const path: number[] = new Array(graph.length).fill(-1);
+  const visited: boolean[] = new Array(graph.length).fill(false);
   const distances: number[] = new Array(graph.length).fill(
     Number.MAX_SAFE_INTEGER
   );
 
+  // So we have somewhere to start
   distances[0] = 0;
 
   while (
-    visited.some((v, i) => {
-      return !v && distances[i] !== Number.MAX_SAFE_INTEGER;
-    })
+    visited.some((v, i) => !v && distances[i] !== Number.MAX_SAFE_INTEGER)
   ) {
-    const parent: number = get_lowest_close_child(visited, distances);
+    const parent = find_lowest_closest_child(visited, distances);
     visited[parent] = true;
 
     const children = graph[parent];
 
     for (const [child, weight] of children) {
-      let prev_distance = weight + distances[parent];
+      let proposed_weight = distances[parent] + weight;
 
-      if (prev_distance < distances[child]) {
-        distances[child] = prev_distance;
+      if (proposed_weight < distances[child]) {
         path[child] = parent;
+        distances[child] = proposed_weight;
       }
     }
   }
 
-  return create_path(target, path);
+  return create_path(path, target);
 }
 
-function get_lowest_close_child(
-  visited: boolean[],
-  distances: number[]
-): number {
+function find_lowest_closest_child(visited: boolean[], distances: number[]) {
   let idx = 0;
-  let curr_low = Number.MAX_SAFE_INTEGER;
+  let curr_min = Number.MAX_SAFE_INTEGER;
 
   for (let i = 0; i < visited.length; i++) {
-    if (!visited[i] && distances[i] !== Number.MAX_SAFE_INTEGER) {
-      if (curr_low > distances[i]) {
-        idx = i;
-      }
+    if (visited[i] || distances[i] === Number.MAX_SAFE_INTEGER) {
+      continue;
+    }
+
+    if (distances[i] < curr_min) {
+      curr_min = distances[i];
+      idx = i;
     }
   }
 
   return idx;
 }
 
-function create_path(target: number, path: number[]): number[] | null {
+function create_path(path: number[], target: number): null | number[] {
   if (path[target] === -1) {
     return null;
   }
 
-  let curr_node: number = target;
-  const final_path: number[] = [curr_node];
-
+  let curr_node = target;
+  const final_path: number[] = [target];
   while (path[curr_node] !== -1) {
     final_path.push(path[curr_node]);
     curr_node = path[curr_node];
