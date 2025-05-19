@@ -9,12 +9,17 @@
  * left-child: 2x+1
  * right-child: 2x+2
  * parent: (x-1)/2
+ *
+ * We need to be able to update the weights of the nodes
+ * as we go. So as we add a node to the heap, we want to
+ * keep a record of where the node is in the tree.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DjikHeap = void 0;
 class DjikHeap {
     constructor() {
         this.data = [];
+        this.map = new Map();
     }
     has_nodes() {
         return !!this.data.length;
@@ -26,12 +31,27 @@ class DjikHeap {
      *
      *
      */
-    add_node(d_node) {
-        this.data.push(d_node);
+    add_node(node) {
+        const [node_idx, weight] = node;
+        const djikNode = [node_idx, weight];
+        this.map.set(node_idx, this.data.length);
+        this.data.push(djikNode);
         if (this.data.length === 1) {
             return;
         }
         this.bubble_up();
+    }
+    update_weight(node, weight) {
+        const heap_idx = this.map.get(node);
+        if (!heap_idx || heap_idx > this.data.length - 1) {
+            throw new Error('updating node that does not exist');
+        }
+        const previous_weight = this.data[heap_idx][1];
+        this.data[heap_idx][1] = weight;
+        if (weight > previous_weight) {
+            return this.heapify_down(heap_idx);
+        }
+        return this.bubble_up(heap_idx);
     }
     /*
      *
@@ -40,8 +60,8 @@ class DjikHeap {
      * node is less than the parent, we swap them.
      *
      */
-    bubble_up() {
-        let bub_idx = this.data.length - 1;
+    bubble_up(idx = null) {
+        let bub_idx = idx ? idx : this.data.length - 1;
         let parent_idx = this.get_parent_idx(bub_idx);
         if (typeof parent_idx !== 'number') {
             return;
@@ -71,17 +91,20 @@ class DjikHeap {
         }
         let val_to_return = this.data[0];
         if (this.data.length === 1) {
+            this.map.delete(val_to_return[0]);
             return this.data.pop();
         }
         this.data[0] = this.data.pop();
         if (this.data.length === 1) {
+            this.map.delete(val_to_return[0]);
             return val_to_return;
         }
         this.heapify_down();
+        this.map.delete(val_to_return[0]);
         return val_to_return;
     }
-    heapify_down() {
-        let curr_node_idx = 0;
+    heapify_down(idx = null) {
+        let curr_node_idx = idx ? idx : 0;
         let lowest_child_idx = this.get_lowest_child(curr_node_idx);
         if (typeof lowest_child_idx !== 'number') {
             return;
@@ -134,6 +157,15 @@ class DjikHeap {
         return parent_idx;
     }
     swap(idx_one, idx_two) {
+        // Update the map idx
+        const node_one = this.map.get(this.data[idx_one][0]);
+        const node_two = this.map.get(this.data[idx_two][0]);
+        if (typeof node_one !== 'number' || typeof node_two !== 'number') {
+            throw new Error('Map is broken on swap');
+        }
+        this.map.set(node_one, idx_two);
+        this.map.set(node_two, idx_one);
+        // Swap
         [this.data[idx_one], this.data[idx_two]] = [
             this.data[idx_two],
             this.data[idx_one],
