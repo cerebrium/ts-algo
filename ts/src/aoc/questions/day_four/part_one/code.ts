@@ -57,23 +57,16 @@ const dirs: [number, number][] = [
   [1, 1], // down-right
 ];
 
-const letters = ['M', 'A', 'S'];
+const letters = ['X', 'M', 'A', 'S'];
 
 export function day_four_part_one(input: string[]): number {
   let sum = 0;
 
-  for (let row = 0; row < input.length; row++) {
-    for (let column = 0; column < input[row].length; column++) {
-      if (input[row][column] === 'X') {
-        const possible_directions = get_possible_children(
-          [row, column],
-          [input.length - 1, input[row].length - 1]
-        );
-
-        for (const posiible_direction of possible_directions) {
-          if (walk(input, posiible_direction, 0)) {
-            sum++;
-          }
+  for (let column = 0; column < input.length; column++) {
+    for (let row = 0; row < input[column].length; row++) {
+      if (input[column][row] === 'X') {
+        for (let i = 0; i < dirs.length; i++) {
+          sum += walk(input, [column, row], 0, i);
         }
       }
     }
@@ -83,67 +76,36 @@ export function day_four_part_one(input: string[]): number {
 }
 
 function walk(
-  input: string[],
-  coord: [number, number, number],
-  letter_idx: number
-): boolean {
-  const [x, y, dir] = coord;
-  const val = input[x][y];
+  maze: string[],
+  curr_coord: [number, number],
+  letter: number,
+  direction: number
+): number {
+  const [x, y] = curr_coord;
 
-  // pre
-  if (val !== letters[letter_idx]) {
-    return false;
+  const found_val = maze[x][y];
+
+  if (found_val !== letters[letter]) {
+    return 0;
   }
 
-  if (letters[letter_idx] === 'S') {
-    return true;
+  if (found_val === 'S') {
+    return 1;
   }
 
-  // recurse
-  const next_dir = get_next_child(
-    [x, y],
-    [input.length - 1, input[coord[0]].length - 1],
-    dir
-  );
+  const next_coord: [number, number] = [
+    x + dirs[direction][0],
+    y + dirs[direction][1],
+  ];
 
-  if (!next_dir) {
-    return false;
+  if (
+    next_coord[0] < 0 ||
+    next_coord[0] > maze.length - 1 ||
+    next_coord[1] < 0 ||
+    next_coord[1] > maze[next_coord[0]].length - 1
+  ) {
+    return 0;
   }
 
-  if (walk(input, next_dir, letter_idx + 1)) {
-    return true;
-  }
-
-  return false;
-}
-
-function get_possible_children(
-  coord: [number, number],
-  bounds: [number, number]
-) {
-  return dirs
-    .map(([x, y], idx) => {
-      return [x + coord[0], y + coord[1], idx];
-    })
-    .filter(([x, y]) => {
-      if (x < 0 || x > bounds[0] || y < 0 || y > bounds[1]) {
-        return false;
-      }
-      return true;
-    }) as [number, number, number][];
-}
-
-function get_next_child(
-  coord: [number, number],
-  bounds: [number, number],
-  dir_idx: number
-): [number, number, number] | null {
-  const dir = dirs[dir_idx];
-  const [x, y] = [coord[0] + dir[0], coord[1] + dir[1]];
-
-  if (x < 0 || x > bounds[0] || y < 0 || y > bounds[1]) {
-    return null;
-  }
-
-  return [x, y, dir_idx];
+  return walk(maze, next_coord, letter + 1, direction);
 }

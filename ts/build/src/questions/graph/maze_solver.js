@@ -33,39 +33,39 @@ const dirs = [
     [0, -1],
 ];
 function maze_solver(maze) {
-    const visited = new Set();
     const path = [];
-    for (let row = 0; row < maze.length; row++) {
-        for (let column = 0; column < maze[row].length; column++) {
-            if (maze[row][column] === 'S') {
-                walk(maze, path, visited, [row, column]);
+    const visited = new Set();
+    for (let x = 0; x < maze.length; x++) {
+        for (let y = 0; y < maze[x].length; y++) {
+            if (maze[x][y] !== 'S') {
+                continue;
             }
+            walk(maze, path, visited, [x, y]);
         }
     }
-    if (!path.length) {
+    if (path.length == 0) {
         return null;
     }
     return path;
 }
 exports.maze_solver = maze_solver;
-function walk(maze, path, visited, curr_coord) {
-    const [x, y] = curr_coord;
-    // We do the visiting on the node itself, not children with dfs
-    if (visited.has(`${x}_${y}`)) {
+function walk(maze, path, visited, curr_postion) {
+    const [x, y] = curr_postion;
+    const str_x_y = `${x}_${y}`;
+    if (visited.has(str_x_y)) {
         return false;
     }
-    visited.add(`${x}_${y}`);
-    if (maze[x][y] === '#') {
+    visited.add(str_x_y);
+    const val = maze[x][y];
+    if (val === '#') {
         return false;
     }
-    path.push(curr_coord);
-    if (maze[x][y] === 'E') {
+    path.push(curr_postion);
+    if (val === 'E') {
         return true;
     }
-    const children = dirs.map(([n_x, n_y]) => {
-        return [x + n_x, y + n_y];
-    });
-    for (const [n_x, n_y] of children) {
+    const possible_next_coords = dirs.map(([n_x, n_y]) => [x + n_x, y + n_y]);
+    for (const [n_x, n_y] of possible_next_coords) {
         if (n_x < 0 ||
             n_y < 0 ||
             n_x > maze.length - 1 ||
@@ -79,84 +79,4 @@ function walk(maze, path, visited, curr_coord) {
     path.pop();
     return false;
 }
-// export function maze_solver(maze: string[][]): number[][] | null {
-//   let que_idx: number = 0;
-//   const que: number[][] = [];
-//   const visited: boolean[][] = [];
-//   const path: Map<string, [number, number, number]> = new Map(); // [is_found, p_x, p_y]
-//   let final_location: [number, number, number] | null = null;
-//
-//   for (let i = 0; i < maze.length; i++) {
-//     visited.push(new Array(maze[i].length).fill(false));
-//     for (let x = 0; x < maze[i].length; x++) {
-//       path.set(`${i}_${x}`, [-1, 0, 0]);
-//       if (maze[i][x] === 'S') {
-//         que.push([i, x]);
-//         visited[i][x] = true;
-//       }
-//     }
-//   }
-//
-//   while (que_idx < que.length) {
-//     const [x, y] = que[que_idx];
-//
-//     const children = dirs.map(([n_x, n_y]) => {
-//       return [x + n_x, y + n_y];
-//     });
-//
-//     for (const [n_x, n_y] of children) {
-//       if (
-//         n_y < 0 ||
-//         n_x < 0 ||
-//         n_x > maze.length - 1 ||
-//         n_y > maze[n_x].length - 1
-//       ) {
-//         continue;
-//       }
-//
-//       if (visited[n_x][n_y]) {
-//         continue;
-//       }
-//
-//       visited[n_x][n_y] = true;
-//
-//       if (maze[n_x][n_y] === '#') {
-//         continue;
-//       }
-//
-//       path.set(`${n_x}_${n_y}`, [1, x, y]);
-//       if (maze[n_x][n_y] === 'E') {
-//         final_location = [1, n_x, n_y];
-//         break;
-//       }
-//
-//       que.push([n_x, n_y]);
-//     }
-//
-//     que_idx++;
-//   }
-//
-//   if (!final_location) {
-//     return null;
-//   }
-//
-//   return make_path(path, final_location);
-// }
-//
-// function make_path(
-//   path: Map<string, [number, number, number]>,
-//   final_location: [number, number, number]
-//   // We know that the first node exists
-// ): null | number[][] {
-//
-//   let curr_node: [number, number, number] = final_location;
-//   const final_path: number[][] = [];
-//
-//   while (curr_node[0] !== -1) {
-//     final_path.push([curr_node[1], curr_node[2]]);
-//     curr_node = path.get(`${curr_node[1]}_${curr_node[2]}`)!;
-//   }
-//
-//   return final_path.reverse();
-// }
 //# sourceMappingURL=maze_solver.js.map

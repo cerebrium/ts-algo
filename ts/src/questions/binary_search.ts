@@ -35,9 +35,25 @@ export function binary_search(
   target: number
 ): number | null {
   let low = 0;
-  let high = data.length;
+  let high = data.length - 1;
 
-  while (low < high) {
-    let mid = Math.floor((high - low) / 2) + low;
+  while (low <= high) {
+    const mid = Math.floor((high - low) / 2 + low);
+    const val = data[mid];
+
+    if (target === val) {
+      return mid;
+    }
+
+    if (target > val) {
+      // Search top of the list
+      low = mid + 1;
+      continue;
+    }
+
+    // Search bottom
+    high = mid;
   }
+
+  return null;
 }
