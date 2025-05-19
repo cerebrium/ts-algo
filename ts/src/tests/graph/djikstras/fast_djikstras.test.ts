@@ -16,7 +16,7 @@
  *
  */
 
-import {djikstras} from '../../../questions/graph/adjacency_list/djikstras';
+import {djikstras_fast} from '../../../questions/graph/djikstras/fast_djikstras';
 
 test('djikstras_fast', () => {
   const test_graph = [
@@ -45,7 +45,9 @@ test('djikstras_fast', () => {
     [[]],
   ];
 
-  const shortest_path = djikstras(test_graph, 9);
-  console.log('shortest path: ', shortest_path);
+  console.time('fast_djikstras');
+  const shortest_path = djikstras_fast(test_graph, 9);
+  console.timeEnd('fast_djikstras');
+
   expect(shortest_path).toEqual([0, 1, 2, 3, 5, 9]);
 });

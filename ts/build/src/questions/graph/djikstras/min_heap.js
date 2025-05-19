@@ -10,9 +10,9 @@
  * right-child: 2x+2
  * parent: (x-1)/2
  *
- * We need to be able to update the weights of the nodes
- * as we go. So as we add a node to the heap, we want to
- * keep a record of where the node is in the tree.
+ * Updating the values is not relevant. But is nice to have an
+ * implementation sitting around, so will leave it.
+ *
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DjikHeap = void 0;
@@ -41,17 +41,21 @@ class DjikHeap {
         }
         this.bubble_up();
     }
-    update_weight(node, weight) {
+    check_and_update_weight(node, weight) {
         const heap_idx = this.map.get(node);
-        if (!heap_idx || heap_idx > this.data.length - 1) {
+        if (typeof heap_idx !== 'number') {
             throw new Error('updating node that does not exist');
         }
-        const previous_weight = this.data[heap_idx][1];
-        this.data[heap_idx][1] = weight;
-        if (weight > previous_weight) {
-            return this.heapify_down(heap_idx);
+        if (heap_idx > this.data.length - 1) {
+            return false;
         }
-        return this.bubble_up(heap_idx);
+        const previous_weight = this.data[heap_idx][1];
+        if (weight > previous_weight) {
+            return false;
+        }
+        this.data[heap_idx][1] = weight;
+        this.bubble_up(heap_idx);
+        return true;
     }
     /*
      *
@@ -91,16 +95,13 @@ class DjikHeap {
         }
         let val_to_return = this.data[0];
         if (this.data.length === 1) {
-            this.map.delete(val_to_return[0]);
             return this.data.pop();
         }
         this.data[0] = this.data.pop();
         if (this.data.length === 1) {
-            this.map.delete(val_to_return[0]);
             return val_to_return;
         }
         this.heapify_down();
-        this.map.delete(val_to_return[0]);
         return val_to_return;
     }
     heapify_down(idx = null) {

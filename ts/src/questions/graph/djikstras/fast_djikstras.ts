@@ -7,19 +7,42 @@
 
 import {DjikHeap} from './min_heap';
 
-function djikstras_fast(graph: Array<number[][]>, target: number) {
+export function djikstras_fast(graph: Array<number[][]>, target: number) {
   const min_heap = new DjikHeap();
-
   const path: number[] = new Array(graph.length).fill(-1);
-  // We need to have 0 be 0
-  for (let i = 0; i < graph.length; i++) {
-    for (const [x] of graph[i]) {
-      min_heap.add_node([x, Number.MAX_SAFE_INTEGER]);
-    }
-  }
+  const distances: number[] = new Array(graph.length).fill(
+    Number.MAX_SAFE_INTEGER
+  );
+  distances[0] = 0;
+  const visited: Set<number> = new Set();
+
+  min_heap.add_node([0, 0]);
 
   while (min_heap.has_nodes()) {
     const parent = min_heap.remove_node();
+
+    if (!parent) {
+      break;
+    }
+
+    visited.add(parent[0]);
+
+    const children = graph[parent[0]];
+    for (const [child, weight] of children) {
+      if (!child) {
+        continue;
+      }
+
+      const prospective_weight = weight + parent[1];
+      if (prospective_weight < distances[child]) {
+        distances[child] = prospective_weight;
+        path[child] = parent[0];
+      }
+
+      if (!visited.has(child)) {
+        min_heap.add_node([child, distances[child]]);
+      }
+    }
   }
 
   return create_path(target, path);

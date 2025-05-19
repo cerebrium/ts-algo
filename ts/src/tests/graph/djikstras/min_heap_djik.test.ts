@@ -46,9 +46,9 @@ test('min_heap_d update', () => {
 
   expect(min_heap.has_nodes()).toBe(true);
 
-  min_heap.update_weight(5, 11);
+  min_heap.check_and_update_weight(5, 1);
 
-  const pop_check = [1, 2, 3, 4, 6, 7, 8, 9, 10, 11];
+  const pop_check = [1, 1, 2, 3, 4, 6, 7, 8, 9, 10];
   for (let i = 0; i < pop_check.length; i++) {
     const val = min_heap.remove_node();
 
