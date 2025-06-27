@@ -13,34 +13,35 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isValidParenthesis = void 0;
 function isValidParenthesis(s) {
-    if (s.length % 2 !== 0) {
+    if (s.length === 0) {
+        return true;
+    }
+    if (s.length === 1) {
         return false;
     }
-    let left = [];
-    let right = [];
-    const left_options = ['(', '{', '['];
-    const right_options = [')', '}', ']'];
+    const bracket_stack = [];
+    // Type guard to narrow type to BracketStackType
+    const left_brackets = ['(', '{', '['];
+    const bracket_map = {
+        ')': '(',
+        '}': '{',
+        ']': '[',
+    };
     for (let i = 0; i < s.length; i++) {
-        const left_idx = left_options.indexOf(s[i]);
-        if (left_idx >= 0) {
-            // If we have a match remove it, continue
-            if (right.length &&
-                right_options.indexOf(right[right.length - 1]) === left_idx) {
-                right.pop();
-                continue;
-            }
-            left.push(s[i]);
+        if (left_brackets.includes(s[i])) {
+            bracket_stack.push(s[i]);
             continue;
         }
-        // Left has to come first
-        if (!left.length ||
-            left_options.indexOf(left[left.length - 1]) !==
-                right_options.indexOf(s[i])) {
+        const comparison = bracket_stack.pop();
+        if (!comparison) {
             return false;
         }
-        left.pop();
+        if (bracket_map[s[i]] === comparison) {
+            continue;
+        }
+        return false;
     }
-    if (right.length || left.length) {
+    if (bracket_stack.length > 0) {
         return false;
     }
     return true;

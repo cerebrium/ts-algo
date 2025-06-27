@@ -33,125 +33,61 @@
 */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.convert = void 0;
-// export function convert(s: string, numRows: number): string {
-//   if (numRows === 1) {
-//     return s;
-//   }
-//
-//   if (numRows === 2) {
-//     let final_string = '';
-//
-//     for (let i = 0; i < s.length; i += 2) {
-//       final_string += s[i];
-//     }
-//
-//     for (let i = 1; i < s.length; i += 2) {
-//       final_string += s[i];
-//     }
-//
-//     return final_string;
-//   }
-//   // Make matrix
-//   const final_matrix: Array<string[]> = [];
-//   for (let i = 0; i < numRows; i++) {
-//     final_matrix.push(new Array(s.length).fill(null));
-//   }
-//
-//   let current_column = 0;
-//   let row_fill = 0;
-//   let is_diagonal = false;
-//   let current_diagonal_row_fill = numRows - 2;
-//
-//   for (const letter of s) {
-//     // Non-diagonal
-//     if (!is_diagonal && row_fill < numRows) {
-//       final_matrix[row_fill][current_column] = letter;
-//
-//       if (row_fill + 1 === numRows) {
-//         current_column++;
-//         is_diagonal = true;
-//         row_fill = 0;
-//         continue;
-//       }
-//
-//       row_fill++;
-//
-//       continue;
-//     }
-//
-//     // Diagonal -> fill diagonally up and right one value
-//     final_matrix[current_diagonal_row_fill][current_column] = letter;
-//     current_column++;
-//     current_diagonal_row_fill--;
-//
-//     if (current_diagonal_row_fill === 0) {
-//       is_diagonal = false;
-//       current_diagonal_row_fill = numRows - 2;
-//     }
-//   }
-//
-//   let final_string: string = '';
-//
-//   // Loop through the matrix and create our string
-//   for (let row = 0; row < final_matrix.length; row++) {
-//     for (let column = 0; column < final_matrix[row].length; column++) {
-//       if (final_matrix[row][column]) {
-//         final_string += final_matrix[row][column];
-//       }
-//     }
-//   }
-//
-//   return final_string;
-// }
-//
 function convert(s, numRows) {
     if (numRows === 1) {
         return s;
     }
-    if (numRows === 2) {
-        let final_string = '';
-        for (let i = 0; i < s.length; i += 2) {
-            final_string += s[i];
-        }
-        for (let i = 1; i < s.length; i += 2) {
-            final_string += s[i];
-        }
-        return final_string;
+    /*
+     *
+     * write the letters where they belong. Then map through and
+     * read them out.
+     *
+     * with the number of rows, pre allocate a matrix.
+     *
+     * Walk down, then up. Keep a bool for up and down.
+     *
+     * If going up, also go right one.
+     * if going down, just go down.
+     *
+     *
+     */
+    let is_down = true;
+    const width = Math.ceil(s.length / numRows + (numRows - 2) * Math.ceil(s.length / numRows));
+    const matrix = new Array(numRows);
+    for (let i = 0; i < matrix.length; i++) {
+        matrix[i] = new Array(width).fill('');
     }
-    // Make matrix
-    const final_matrix = [];
-    for (let i = 0; i < numRows; i++) {
-        final_matrix.push('');
-    }
-    let current_column = 0;
-    let row_fill = 0;
-    let is_diagonal = false;
-    let current_diagonal_row_fill = numRows - 2;
-    for (const letter of s) {
-        // Non-diagonal
-        if (!is_diagonal && row_fill < numRows) {
-            final_matrix[row_fill].concat(letter);
-            if (row_fill + 1 === numRows) {
-                current_column++;
-                is_diagonal = true;
-                row_fill = 0;
+    let col = 0;
+    let row = 0;
+    for (let i = 0; i < s.length; i++) {
+        if (is_down) {
+            matrix[row][col] = s[i];
+            if (row === numRows - 1) {
+                is_down = false;
+                col++;
+                row--;
                 continue;
             }
-            row_fill++;
+            row++;
             continue;
         }
-        // Diagonal -> fill diagonally up and right one value
-        final_matrix[current_diagonal_row_fill].concat(letter);
-        current_column++;
-        current_diagonal_row_fill--;
-        if (current_diagonal_row_fill === 0) {
-            is_diagonal = false;
-            current_diagonal_row_fill = numRows - 2;
+        matrix[row][col] = s[i];
+        if (row === 0) {
+            is_down = true;
+            row++;
+            continue;
         }
+        col++;
+        row--;
     }
+    // Walk through the rows and create the string to return
     let final_string = '';
-    for (let i = 0; i < final_matrix.length; i++) {
-        final_string = final_string.concat(final_matrix[i]);
+    for (let x = 0; x < matrix.length; x++) {
+        for (let y = 0; y < matrix[x].length; y++) {
+            if (matrix[x][y]) {
+                final_string += matrix[x][y];
+            }
+        }
     }
     return final_string;
 }

@@ -30,7 +30,6 @@ function adj_list_bfs(data, target, start = 0) {
         const children = data[parent];
         if (!children || !children.length) {
             curr_idx++;
-            continue;
         }
         for (const [child, _] of children) {
             if (visited.has(child)) {
@@ -39,7 +38,6 @@ function adj_list_bfs(data, target, start = 0) {
             visited.add(child);
             path[child] = parent;
             if (child === target) {
-                // break
                 curr_idx = que.length + 1;
                 break;
             }
@@ -47,10 +45,10 @@ function adj_list_bfs(data, target, start = 0) {
         }
         curr_idx++;
     }
-    return create_path(target, path);
+    return create_final_path(target, path);
 }
 exports.adj_list_bfs = adj_list_bfs;
-function create_path(target, path) {
+function create_final_path(target, path) {
     if (path[target] === -1) {
         return null;
     }

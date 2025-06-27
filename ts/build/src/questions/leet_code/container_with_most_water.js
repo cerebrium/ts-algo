@@ -32,22 +32,22 @@ n == height.length
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.maxArea = void 0;
 function maxArea(heights) {
-    let max_height = 0;
-    if (heights.length < 2) {
+    if (!heights || heights.length < 2) {
         return 0;
     }
+    let max_water = 0;
     let min_pointer = 0;
     let max_pointer = heights.length - 1;
     while (min_pointer < max_pointer) {
-        max_height = Math.max(max_height, (max_pointer - min_pointer) *
-            Math.min(heights[min_pointer], heights[max_pointer]));
-        if (heights[min_pointer] > heights[max_pointer]) {
+        max_water = Math.max(max_water, Math.min(heights[max_pointer], heights[min_pointer]) *
+            (max_pointer - min_pointer));
+        if (heights[max_pointer] < heights[min_pointer]) {
             max_pointer--;
             continue;
         }
         min_pointer++;
     }
-    return max_height;
+    return max_water;
 }
 exports.maxArea = maxArea;
 //# sourceMappingURL=container_with_most_water.js.map

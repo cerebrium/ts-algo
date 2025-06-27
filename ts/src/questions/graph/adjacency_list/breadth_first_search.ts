@@ -25,7 +25,7 @@ export function adj_list_bfs(
 ): Array<number> | null {
   const path: number[] = new Array(data.length).fill(-1);
   const visited: Set<number> = new Set();
-  let curr_idx = 0;
+  let curr_idx: number = 0;
   const que: number[] = [start];
 
   while (curr_idx < que.length) {
@@ -34,7 +34,6 @@ export function adj_list_bfs(
 
     if (!children || !children.length) {
       curr_idx++;
-      continue;
     }
 
     for (const [child, _] of children) {
@@ -45,11 +44,8 @@ export function adj_list_bfs(
       visited.add(child);
 
       path[child] = parent;
-
       if (child === target) {
-        // break
         curr_idx = que.length + 1;
-
         break;
       }
 
@@ -59,16 +55,16 @@ export function adj_list_bfs(
     curr_idx++;
   }
 
-  return create_path(target, path);
+  return create_final_path(target, path);
 }
 
-function create_path(target: number, path: number[]): null | number[] {
+function create_final_path(target: number, path: number[]): number[] | null {
   if (path[target] === -1) {
     return null;
   }
 
   let curr_node = target;
-  const final_path = [curr_node];
+  const final_path: number[] = [curr_node];
 
   while (path[curr_node] !== -1) {
     final_path.push(path[curr_node]);

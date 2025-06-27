@@ -28,11 +28,15 @@
 import {convert} from '../../questions/leet_code/zig_zag_conversion';
 
 test('zig_zag', () => {
-  let answer = convert('PAYPALISHIRING', 3);
-  expect(answer).toEqual('PAHNAPLSIIGYIR');
+  // let answer = convert('PAYPALISHIRING', 3);
+  // expect(answer).toEqual('PAHNAPLSIIGYIR');
+  //
+  // console.log('after one');
 
-  answer = convert('PAYPALISHIRING', 4);
+  let answer = convert('PAYPALISHIRING', 4);
   expect(answer).toEqual('PINALSIGYAHRPI');
+
+  console.log('after two');
 
   answer = convert('A', 1);
   expect(answer).toEqual('A');

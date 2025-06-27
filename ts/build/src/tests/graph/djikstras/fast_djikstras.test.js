@@ -44,7 +44,6 @@ test('djikstras_fast', () => {
         [[6, 1]],
         [[]],
     ];
-    console.log('fast_djikstras');
     console.time('fast_djikstras');
     const shortest_path = (0, fast_djikstras_1.djikstras_fast)(test_graph, 9);
     console.timeEnd('fast_djikstras');

@@ -10,45 +10,47 @@
 
 */
 
+type BracketStackType = '{' | '(' | '[';
+
 export function isValidParenthesis(s: string): boolean {
-  if (s.length % 2 !== 0) {
+  if (s.length === 0) {
+    return true;
+  }
+
+  if (s.length === 1) {
     return false;
   }
-  let left: string[] = [];
-  let right: string[] = [];
 
-  const left_options = ['(', '{', '['];
-  const right_options = [')', '}', ']'];
+  const bracket_stack: Array<BracketStackType> = [];
+  // Type guard to narrow type to BracketStackType
+
+  const left_brackets: Array<BracketStackType> = ['(', '{', '['];
+
+  const bracket_map = {
+    ')': '(',
+    '}': '{',
+    ']': '[',
+  };
 
   for (let i = 0; i < s.length; i++) {
-    const left_idx = left_options.indexOf(s[i]);
-    if (left_idx >= 0) {
-      // If we have a match remove it, continue
-      if (
-        right.length &&
-        right_options.indexOf(right[right.length - 1]) === left_idx
-      ) {
-        right.pop();
-        continue;
-      }
-
-      left.push(s[i]);
+    if (left_brackets.includes(s[i] as BracketStackType)) {
+      bracket_stack.push(s[i] as BracketStackType);
       continue;
     }
 
-    // Left has to come first
-    if (
-      !left.length ||
-      left_options.indexOf(left[left.length - 1]) !==
-        right_options.indexOf(s[i])
-    ) {
+    const comparison = bracket_stack.pop();
+    if (!comparison) {
       return false;
     }
 
-    left.pop();
+    if (bracket_map[s[i] as keyof typeof bracket_map] === comparison) {
+      continue;
+    }
+
+    return false;
   }
 
-  if (right.length || left.length) {
+  if (bracket_stack.length > 0) {
     return false;
   }
 

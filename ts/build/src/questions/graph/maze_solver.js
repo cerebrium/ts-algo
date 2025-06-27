@@ -1,6 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.maze_solver = void 0;
 /**
  *
  * Maze solver:
@@ -26,53 +24,55 @@ exports.maze_solver = void 0;
 
  *
  */
-const dirs = [
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.maze_solver = void 0;
+const coords = [
     [-1, 0],
-    [1, 0],
     [0, 1],
+    [1, 0],
     [0, -1],
 ];
 function maze_solver(maze) {
-    const path = [];
     const visited = new Set();
+    const path = [];
     for (let x = 0; x < maze.length; x++) {
         for (let y = 0; y < maze[x].length; y++) {
-            if (maze[x][y] !== 'S') {
-                continue;
+            if (maze[x][y] === 'S') {
+                walk(maze, [x, y], path, visited);
             }
-            walk(maze, path, visited, [x, y]);
         }
     }
-    if (path.length == 0) {
-        return null;
+    if (path.length) {
+        return path;
     }
-    return path;
+    return null;
 }
 exports.maze_solver = maze_solver;
-function walk(maze, path, visited, curr_postion) {
-    const [x, y] = curr_postion;
-    const str_x_y = `${x}_${y}`;
-    if (visited.has(str_x_y)) {
+function walk(maze, curr_coords, path, visited) {
+    const [x, y] = curr_coords;
+    if (visited.has(`${x}_${y}`)) {
         return false;
     }
-    visited.add(str_x_y);
+    visited.add(`${x}_${y}`);
     const val = maze[x][y];
     if (val === '#') {
         return false;
     }
-    path.push(curr_postion);
+    path.push([x, y]);
     if (val === 'E') {
         return true;
     }
-    const possible_next_coords = dirs.map(([n_x, n_y]) => [x + n_x, y + n_y]);
-    for (const [n_x, n_y] of possible_next_coords) {
+    const possible_directions = coords.map(([n_x, n_y]) => {
+        return [n_x + x, n_y + y];
+    });
+    for (const [n_x, n_y] of possible_directions) {
         if (n_x < 0 ||
             n_y < 0 ||
             n_x > maze.length - 1 ||
             n_y > maze[n_x].length - 1) {
             continue;
         }
-        if (walk(maze, path, visited, [n_x, n_y])) {
+        if (walk(maze, [n_x, n_y], path, visited)) {
             return true;
         }
     }

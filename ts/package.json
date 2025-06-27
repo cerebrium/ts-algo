@@ -10,7 +10,7 @@
     "lint": "gts lint",
     "clean": "gts clean",
     "compile": "tsc",
-    "test": "jest",
+    "test": "npm run compile && jest",
     "test_binary_search": "npm run compile && jest ./build/src/tests/binary_search.test.js -- --verbose=true --detectOpenHandles --forceExit",
     "test_bubble_sort": "npm run compile && jest ./build/src/tests/sorts/bubble_sort.test.js -- --verbose=true --detectOpenHandles --forceExit",
     "test_crystal_ball": "npm run compile && jest ./build/src/tests/crystal_ball.test.js -- --verbose=true --detectOpenHandles --forceExit",

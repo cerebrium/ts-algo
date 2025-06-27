@@ -61,13 +61,26 @@ const letters = ['X', 'M', 'A', 'S'];
 
 export function day_four_part_one(input: string[]): number {
   let sum = 0;
+  for (let x = 0; x < input.length; x++) {
+    for (let y = 0; y < input[x].length; y++) {
+      if (input[x][y] !== 'X') {
+        continue;
+      }
 
-  for (let column = 0; column < input.length; column++) {
-    for (let row = 0; row < input[column].length; row++) {
-      if (input[column][row] === 'X') {
-        for (let i = 0; i < dirs.length; i++) {
-          sum += walk(input, [column, row], 0, i);
+      const possible_directions = dirs.map(([n_x, n_y]) => [x + n_x, y + n_y]);
+
+      for (let i = 0; i < possible_directions.length; i++) {
+        const [n_x, n_y] = possible_directions[i];
+        if (
+          n_x < 0 ||
+          n_y < 0 ||
+          n_x > input.length - 1 ||
+          n_y > input[n_x].length - 1
+        ) {
+          continue;
         }
+
+        sum += walk(input, [n_x, n_y], 1, i);
       }
     }
   }
@@ -76,36 +89,31 @@ export function day_four_part_one(input: string[]): number {
 }
 
 function walk(
-  maze: string[],
-  curr_coord: [number, number],
-  letter: number,
+  input: string[],
+  curr_coors: [number, number],
+  let_idx: number,
   direction: number
 ): number {
-  const [x, y] = curr_coord;
+  const [x, y] = curr_coors;
 
-  const found_val = maze[x][y];
-
-  if (found_val !== letters[letter]) {
+  if (input[x][y] !== letters[let_idx]) {
     return 0;
   }
 
-  if (found_val === 'S') {
+  if (let_idx === 3) {
     return 1;
   }
 
-  const next_coord: [number, number] = [
-    x + dirs[direction][0],
-    y + dirs[direction][1],
-  ];
+  const [n_x, n_y] = [x + dirs[direction][0], y + dirs[direction][1]];
 
   if (
-    next_coord[0] < 0 ||
-    next_coord[0] > maze.length - 1 ||
-    next_coord[1] < 0 ||
-    next_coord[1] > maze[next_coord[0]].length - 1
+    n_x < 0 ||
+    n_y < 0 ||
+    n_x > input.length - 1 ||
+    n_y > input[n_x].length - 1
   ) {
     return 0;
   }
 
-  return walk(maze, next_coord, letter + 1, direction);
+  return walk(input, [n_x, n_y], let_idx + 1, direction);
 }

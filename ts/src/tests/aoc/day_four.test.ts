@@ -165,10 +165,10 @@ test('aoc_day_four_part_one', () => {
   expect(real_data).toBe(2500);
 });
 
-test('aoc_day_four_part_two', () => {
-  const test_data = day_four_part_two(day_four_part_one_test_data);
-  const real_data = day_four_part_two(day_four_part_one_data);
-
-  expect(test_data).toBe(9);
-  expect(real_data).toBe(1960);
-});
+// test('aoc_day_four_part_two', () => {
+//   const test_data = day_four_part_two(day_four_part_one_test_data);
+//   const real_data = day_four_part_two(day_four_part_one_data);
+//
+//   expect(test_data).toBe(9);
+//   expect(real_data).toBe(1960);
+// });

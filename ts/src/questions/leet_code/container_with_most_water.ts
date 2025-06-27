@@ -30,22 +30,22 @@ n == height.length
 */
 
 export function maxArea(heights: number[]): number {
-  let max_height: number = 0;
-  if (heights.length < 2) {
+  if (!heights || heights.length < 2) {
     return 0;
   }
 
+  let max_water: number = 0;
   let min_pointer: number = 0;
   let max_pointer: number = heights.length - 1;
 
   while (min_pointer < max_pointer) {
-    max_height = Math.max(
-      max_height,
-      (max_pointer - min_pointer) *
-        Math.min(heights[min_pointer], heights[max_pointer])
+    max_water = Math.max(
+      max_water,
+      Math.min(heights[max_pointer], heights[min_pointer]) *
+        (max_pointer - min_pointer)
     );
 
-    if (heights[min_pointer] > heights[max_pointer]) {
+    if (heights[max_pointer] < heights[min_pointer]) {
       max_pointer--;
       continue;
     }
@@ -53,5 +53,5 @@ export function maxArea(heights: number[]): number {
     min_pointer++;
   }
 
-  return max_height;
+  return max_water;
 }

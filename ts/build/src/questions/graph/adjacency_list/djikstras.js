@@ -13,46 +13,55 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.djikstras = void 0;
 function djikstras(graph, target) {
-    const path = new Array(graph.length).fill(-1);
+    const visited = new Array(graph.length).fill(false);
     const distances = new Array(graph.length).fill(Number.MAX_SAFE_INTEGER);
     distances[0] = 0;
-    const visited = new Array(graph.length).fill(false);
+    const path = new Array(graph.length).fill(-1);
+    let x = 0;
+    console.log('before');
     while (visited.some((v, i) => !v && distances[i] !== Number.MAX_SAFE_INTEGER)) {
-        const parent = get_lowest_closest_child(distances, visited);
+        x++;
+        if (x > 10) {
+            console.log('insitde the while');
+            return null;
+        }
+        const parent = find_lowest_closest_child(visited, distances);
+        console.log('what is the parent: ', parent);
         visited[parent] = true;
-        for (const [child, weight] of graph[parent]) {
-            const prospective_min_distance = distances[parent] + weight;
-            if (prospective_min_distance < distances[child]) {
+        const children = graph[parent];
+        for (const [child, weight] of children) {
+            const prospective_replacment = weight + distances[parent];
+            if (prospective_replacment < distances[child]) {
+                distances[child] = prospective_replacment;
                 path[child] = parent;
-                distances[child] = prospective_min_distance;
             }
         }
     }
-    return create_path(target, path);
+    return create_final_list(path, target);
 }
 exports.djikstras = djikstras;
-function get_lowest_closest_child(distances, visited) {
-    let curr_node = 0;
-    let curr_min = Number.MAX_SAFE_INTEGER;
+function find_lowest_closest_child(visited, distances) {
+    let idx = 0;
+    let curr_low = Number.MAX_SAFE_INTEGER;
     for (let i = 0; i < visited.length; i++) {
         if (!visited[i] &&
             distances[i] !== Number.MAX_SAFE_INTEGER &&
-            curr_min > distances[i]) {
-            curr_min = distances[i];
-            curr_node = i;
+            curr_low > distances[i]) {
+            curr_low = distances[i];
+            idx = i;
         }
     }
-    return curr_node;
+    return idx;
 }
-function create_path(target, path) {
+function create_final_list(path, target) {
     if (path[target] === -1) {
         return null;
     }
-    let curr_node = target;
-    const final_path = [curr_node];
-    while (path[curr_node] !== -1) {
-        final_path.push(path[curr_node]);
-        curr_node = path[curr_node];
+    let curr_idx = target;
+    const final_path = [curr_idx];
+    while (path[curr_idx] !== -1) {
+        final_path.push(path[curr_idx]);
+        curr_idx = path[curr_idx];
     }
     return final_path.reverse();
 }

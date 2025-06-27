@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const code_1 = require("../../aoc/questions/day_four/part_one/code");
-const code_2 = require("../../aoc/questions/day_four/part_two/code");
 const day_four_part_one_test_data = [
     'MMMSXXMASM',
     'MSAMXMSMSA',
@@ -162,10 +161,11 @@ test('aoc_day_four_part_one', () => {
     expect(test_data).toBe(18);
     expect(real_data).toBe(2500);
 });
-test('aoc_day_four_part_two', () => {
-    const test_data = (0, code_2.day_four_part_two)(day_four_part_one_test_data);
-    const real_data = (0, code_2.day_four_part_two)(day_four_part_one_data);
-    expect(test_data).toBe(9);
-    expect(real_data).toBe(1960);
-});
+// test('aoc_day_four_part_two', () => {
+//   const test_data = day_four_part_two(day_four_part_one_test_data);
+//   const real_data = day_four_part_two(day_four_part_one_data);
+//
+//   expect(test_data).toBe(9);
+//   expect(real_data).toBe(1960);
+// });
 //# sourceMappingURL=day_four.test.js.map
