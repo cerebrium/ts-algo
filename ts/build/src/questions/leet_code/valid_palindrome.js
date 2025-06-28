@@ -28,7 +28,6 @@ function isPalindrome(s) {
         .replace(/[^a-zA-Z\d]/g, '')
         .trim()
         .toLowerCase();
-    console.log('workableStr: ', workableStr);
     if (!workableStr.length) {
         return true;
     }
