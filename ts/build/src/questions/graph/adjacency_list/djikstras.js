@@ -17,16 +17,8 @@ function djikstras(graph, target) {
     const distances = new Array(graph.length).fill(Number.MAX_SAFE_INTEGER);
     distances[0] = 0;
     const path = new Array(graph.length).fill(-1);
-    let x = 0;
-    console.log('before');
     while (visited.some((v, i) => !v && distances[i] !== Number.MAX_SAFE_INTEGER)) {
-        x++;
-        if (x > 10) {
-            console.log('insitde the while');
-            return null;
-        }
         const parent = find_lowest_closest_child(visited, distances);
-        console.log('what is the parent: ', parent);
         visited[parent] = true;
         const children = graph[parent];
         for (const [child, weight] of children) {

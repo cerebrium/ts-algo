@@ -1,4 +1,4 @@
-class TreeNode {
+export class TreeNode {
   val: number;
   left: TreeNode | null;
   right: TreeNode | null;
@@ -18,16 +18,18 @@ export function diameterOfBinaryTree(root: TreeNode | null): number {
     return 0;
   }
 
-  return traverse(root.right, 0) + traverse(root.left, 0);
-}
+  let diameter: number = 0;
 
-function traverse(node: TreeNode | null, count: number): number {
-  if (!node) {
-    return count;
-  }
+  const traverse = (node: TreeNode | null): number => {
+    if (!node) {
+      return 0;
+    }
 
-  return Math.max(
-    traverse(node.right, count + 1),
-    traverse(node.left, count + 1)
-  );
+    const left = traverse(node.left);
+    const right = traverse(node.right);
+
+    return Math.max(left, right) + 1;
+  };
+
+  return diameter;
 }
