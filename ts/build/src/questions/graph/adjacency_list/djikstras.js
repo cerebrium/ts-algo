@@ -7,23 +7,54 @@
  * as the nodes are traveresed. In the end the path to the target
  * node with the aggregate smallest weights is found.
  *
+ * There is a more optimzed version of this that uses a heap
+ *
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.djikstras = void 0;
 function djikstras(graph, target) {
+    const visited = new Array(graph.length).fill(false);
     const distances = new Array(graph.length).fill(Number.MAX_SAFE_INTEGER);
-    const path = new Array(graph.length).fill(-1);
-    const visited = new Array(graph.length).fill(0);
     distances[0] = 0;
-    while (visited.some((val, idx) => {
-        return val === 0 && distances[idx] !== Number.MAX_SAFE_INTEGER;
-    })) {
-        const closest_child = _lowest_close_child(distances, visited);
+    const path = new Array(graph.length).fill(-1);
+    while (visited.some((v, i) => !v && distances[i] !== Number.MAX_SAFE_INTEGER)) {
+        const parent = find_lowest_closest_child(visited, distances);
+        visited[parent] = true;
+        const children = graph[parent];
+        for (const [child, weight] of children) {
+            const prospective_replacment = weight + distances[parent];
+            if (prospective_replacment < distances[child]) {
+                distances[child] = prospective_replacment;
+                path[child] = parent;
+            }
+        }
     }
-    return path;
+    return create_final_list(path, target);
 }
 exports.djikstras = djikstras;
-function _lowest_close_child(visited, distances) {
-    return 1;
+function find_lowest_closest_child(visited, distances) {
+    let idx = 0;
+    let curr_low = Number.MAX_SAFE_INTEGER;
+    for (let i = 0; i < visited.length; i++) {
+        if (!visited[i] &&
+            distances[i] !== Number.MAX_SAFE_INTEGER &&
+            curr_low > distances[i]) {
+            curr_low = distances[i];
+            idx = i;
+        }
+    }
+    return idx;
+}
+function create_final_list(path, target) {
+    if (path[target] === -1) {
+        return null;
+    }
+    let curr_idx = target;
+    const final_path = [curr_idx];
+    while (path[curr_idx] !== -1) {
+        final_path.push(path[curr_idx]);
+        curr_idx = path[curr_idx];
+    }
+    return final_path.reverse();
 }
 //# sourceMappingURL=djikstras.js.map

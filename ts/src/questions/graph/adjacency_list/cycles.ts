@@ -1,41 +1,41 @@
 export function find_cycles(graph: Map<string, string[]>): boolean {
   let are_cycles = false;
 
-  const visited: string[] = [];
   graph.forEach((_, key) => {
     if (are_cycles) {
       return;
     }
 
-    if (walk(graph, key, visited)) {
+    const visited: string[] = [];
+
+    if (has_cycles(graph, key, visited)) {
       are_cycles = true;
+      return;
     }
   });
 
   return are_cycles;
 }
 
-function walk(
+function has_cycles(
   graph: Map<string, string[]>,
-  curr_node: string,
+  key: string,
   visited: string[]
 ): boolean {
-  // pre
-  if (visited.includes(curr_node)) {
+  if (visited.includes(key)) {
     return true;
   }
 
-  visited.push(curr_node);
+  visited.push(key);
 
-  // recurse
-  const children = graph.get(curr_node)!;
+  const children = graph.get(key)!;
+
   for (const child of children) {
-    if (walk(graph, child, visited)) {
+    if (has_cycles(graph, child, visited)) {
       return true;
     }
   }
 
-  // post
   visited.pop();
 
   return false;

@@ -8,52 +8,17 @@
  * 3. 2i + 2
  *
  */
-export declare class MinHeap<T> {
-    data: Array<T>;
+export declare class MinHeap {
+    data: Array<number>;
     length: number;
     constructor();
-    /**
-     *
-     * @param node
-     * 1. Add the node to the end of the data
-     * 2. updated length
-     *
-     */
-    add(node: T): void;
-    pop(): T | null;
-    /**
-     *
-     * Called when adding a node
-     * steps:
-     * 1. get parent
-     *   a. If parent larger -> swap -> continue
-     *   b. If parent smaller or equal -> exit
-     *
-     */
-    private _bubble_up;
-    /**
-     *
-     * Take the last node, put it at the top. From there, compare
-     * each left and right branch, whichever is smaller compare to
-     * current node, if smaller -> swap.
-     *
-     * repeat down the tree until placed wherever it needs to be.
-     *
-     */
-    private _heapify_down;
-    private _get_parent;
-    private _get_left_child;
-    private _get_right_child;
-    /**
-     *
-     * @param idx: number
-     * @returns [Node, Index of node] | null
-     *
-     * @description This finds the lesser of the two possible children
-     * nodes. Then returns it, and its index. If no children, it
-     * returns null.
-     *
-     */
-    private _get_bounded_lesser_child;
-    private _swap;
+    add(node: number): void;
+    pop(): number | null;
+    private bubble_up;
+    private heapify_down;
+    private find_lowest_child_idx;
+    private find_parent_idx;
+    private find_right_child_idx;
+    private find_left_child_idx;
+    private swap;
 }

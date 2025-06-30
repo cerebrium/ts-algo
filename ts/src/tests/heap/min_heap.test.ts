@@ -1,7 +1,7 @@
 import {MinHeap} from '../../questions/heap/min_heap';
 
 test('min_heap', () => {
-  const min_heap = new MinHeap<number>();
+  const min_heap = new MinHeap();
 
   min_heap.add(10);
   min_heap.add(9);

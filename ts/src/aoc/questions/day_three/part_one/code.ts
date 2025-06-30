@@ -37,8 +37,6 @@ export function day_three_part_one(input: string): number {
       const parserd_x = parseInt(x);
       const parserd_y = parseInt(y);
 
-      console.log('our nums: ', x, y);
-
       if (parserd_x || parserd_y) {
         answer += parserd_x * parserd_y;
       }

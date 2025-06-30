@@ -13,8 +13,16 @@ export function bst_search(
   }
 
   if (target > node.val) {
-    return bst_search(node.right, target);
+    const val = bst_search(node.right, target);
+    if (val) {
+      return val;
+    }
+  } else {
+    const val = bst_search(node.left, target);
+    if (val) {
+      return val;
+    }
   }
 
-  return bst_search(node.left, target);
+  return null;
 }

@@ -9,9 +9,18 @@ function bst_search(node, target) {
         return node;
     }
     if (target > node.val) {
-        return bst_search(node.right, target);
+        const val = bst_search(node.right, target);
+        if (val) {
+            return val;
+        }
     }
-    return bst_search(node.left, target);
+    else {
+        const val = bst_search(node.left, target);
+        if (val) {
+            return val;
+        }
+    }
+    return null;
 }
 exports.bst_search = bst_search;
 //# sourceMappingURL=bst_search.js.map

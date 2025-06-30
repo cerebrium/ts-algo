@@ -45,7 +45,9 @@ test('djikstras', () => {
     [[]],
   ];
 
+  console.time('slow_djikstras');
   const shortest_path = djikstras(test_graph, 9);
-  console.log('shortest path: ', shortest_path);
+  console.timeEnd('slow_djikstras');
+
   expect(shortest_path).toEqual([0, 1, 2, 3, 5, 9]);
 });

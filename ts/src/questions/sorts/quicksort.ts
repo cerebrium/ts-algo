@@ -7,31 +7,27 @@ export function quicksort(
     return;
   }
 
-  const pivot = q_helper(data, start, stop);
+  let pivot = q_helper(data, start, stop);
   quicksort(data, start, pivot - 1);
   quicksort(data, pivot + 1, stop);
 }
 
-function q_helper(
-  data: Array<number>,
-  start: number = 0,
-  stop: number = data.length - 1
-): number {
+function q_helper(data: Array<number>, start: number, stop: number): number {
   let idx = start - 1;
 
   for (let i = start; i < stop; i++) {
     if (data[i] < data[stop]) {
       idx++;
-      swap(i, idx, data);
+      swap(data, i, idx);
     }
   }
 
   idx++;
-  swap(idx, stop, data);
+  swap(data, idx, stop);
 
   return idx;
 }
 
-function swap(a: number, b: number, data: number[]): void {
-  [data[a], data[b]] = [data[b], data[a]];
+function swap(data: Array<number>, start: number, stop: number): void {
+  [data[start], data[stop]] = [data[stop], data[start]];
 }

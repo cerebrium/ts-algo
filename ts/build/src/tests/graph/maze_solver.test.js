@@ -14,6 +14,7 @@ test('maze solver, simple maze', () => {
         ['S', '', '', '', '', '', '', '', ''],
     ];
     const path = (0, maze_solver_1.maze_solver)(testMaze);
+    console.log('what is the path: ', path);
     expect(path).toBeTruthy();
     if (path) {
         // Check start

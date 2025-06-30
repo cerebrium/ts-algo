@@ -23,50 +23,49 @@ export function adj_list_bfs(
   target: number,
   start: number = 0
 ): Array<number> | null {
-  const visited: boolean[] = [];
   const path: number[] = new Array(data.length).fill(-1);
-
-  let curr_que_idx: number = 0;
+  const visited: Set<number> = new Set();
+  let curr_idx: number = 0;
   const que: number[] = [start];
 
-  while (curr_que_idx < que.length) {
-    const parent = que[curr_que_idx];
+  while (curr_idx < que.length) {
+    const parent = que[curr_idx];
     const children = data[parent];
 
-    if (!children) {
-      curr_que_idx++;
-      continue;
+    if (!children || !children.length) {
+      curr_idx++;
     }
 
     for (const [child, _] of children) {
-      if (visited[child]) {
+      if (visited.has(child)) {
         continue;
       }
 
-      visited[child] = true;
+      visited.add(child);
 
       path[child] = parent;
-
       if (child === target) {
+        curr_idx = que.length + 1;
         break;
       }
 
       que.push(child);
     }
 
-    curr_que_idx++;
+    curr_idx++;
   }
 
-  return create_path(path, target);
+  return create_final_path(target, path);
 }
 
-function create_path(path: number[], target: number): null | number[] {
+function create_final_path(target: number, path: number[]): number[] | null {
   if (path[target] === -1) {
     return null;
   }
 
   let curr_node = target;
   const final_path: number[] = [curr_node];
+
   while (path[curr_node] !== -1) {
     final_path.push(path[curr_node]);
     curr_node = path[curr_node];

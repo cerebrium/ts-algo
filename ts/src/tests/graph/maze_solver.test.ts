@@ -13,6 +13,7 @@ test('maze solver, simple maze', () => {
     ['S', '', '', '', '', '', '', '', ''],
   ];
   const path = maze_solver(testMaze);
+  console.log('what is the path: ', path);
 
   expect(path).toBeTruthy();
 

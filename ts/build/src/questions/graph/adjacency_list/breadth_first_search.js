@@ -21,34 +21,34 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.adj_list_bfs = void 0;
 function adj_list_bfs(data, target, start = 0) {
-    const visited = [];
     const path = new Array(data.length).fill(-1);
-    let curr_que_idx = 0;
+    const visited = new Set();
+    let curr_idx = 0;
     const que = [start];
-    while (curr_que_idx < que.length) {
-        const parent = que[curr_que_idx];
+    while (curr_idx < que.length) {
+        const parent = que[curr_idx];
         const children = data[parent];
-        if (!children) {
-            curr_que_idx++;
-            continue;
+        if (!children || !children.length) {
+            curr_idx++;
         }
         for (const [child, _] of children) {
-            if (visited[child]) {
+            if (visited.has(child)) {
                 continue;
             }
-            visited[child] = true;
+            visited.add(child);
             path[child] = parent;
             if (child === target) {
+                curr_idx = que.length + 1;
                 break;
             }
             que.push(child);
         }
-        curr_que_idx++;
+        curr_idx++;
     }
-    return create_path(path, target);
+    return create_final_path(target, path);
 }
 exports.adj_list_bfs = adj_list_bfs;
-function create_path(path, target) {
+function create_final_path(target, path) {
     if (path[target] === -1) {
         return null;
     }
