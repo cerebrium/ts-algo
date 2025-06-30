@@ -75,37 +75,6 @@ test('lowest_common_ancestor', () => {
         expect(val.val).toBe(3);
     }
 });
-test('lowest_common_ancestor', () => {
-    const nums = [
-        37,
-        -34,
-        -48,
-        null,
-        -100,
-        -101,
-        48,
-        null,
-        null,
-        null,
-        null,
-        -54,
-        null,
-        -71,
-        -22,
-        null,
-        null,
-        null,
-        8,
-    ];
-    const p = -101;
-    const q = -71;
-    const [root, pNode, qNode] = makeTreeNodes(nums, p, q);
-    const val = (0, lowest_common_ancestor_b_tree_1.lowestCommonAncestor)(root, pNode, qNode);
-    expect(val).toBeTruthy();
-    if (val) {
-        expect(val.val).toBe(3);
-    }
-});
 // Explanation: The LCA of nodes 5 and 4 is 5, since a node can be a descendant of itself according to the LCA definition.
 test('lowest_common_ancestor', () => {
     const nums = [3, 5, 1, 6, 2, 0, 8, null, null, 7, 4];

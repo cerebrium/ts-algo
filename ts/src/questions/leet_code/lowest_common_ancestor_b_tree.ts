@@ -16,180 +16,67 @@ export class TreeNode {
   }
 }
 
-type RowMetadata = {
-  row: null | Array<TreeNode | null>;
-  rowIdx: number;
-  idxInRow: number;
-  isLeft: boolean;
-  rowPossibleLength: number;
-  isRoot: boolean;
-};
-
 export function lowestCommonAncestor(
   root: TreeNode | null,
   p: TreeNode | null,
   q: TreeNode | null
 ): TreeNode | null {
-  if (!p || !q || !root) {
+  if (!root) {
     return null;
   }
-
-  if (p === root) {
+  if (!q) {
     return p;
   }
 
-  if (q === root) {
+  if (!p) {
     return q;
   }
 
-  // bfs, stratify each layer into arrays
-  // check using math lowest conversion node
+  const left = traverse(root.left, p, q);
+  const right = traverse(root.left, p, q);
 
-  let qRow: RowMetadata = {
-    row: null,
-    rowIdx: -1,
-    idxInRow: -1,
-    isLeft: false,
-    rowPossibleLength: -1,
-    isRoot: false,
-  };
-  let pRow: RowMetadata = {
-    row: null,
-    rowIdx: -1,
-    idxInRow: -1,
-    isLeft: false,
-    rowPossibleLength: -1,
-    isRoot: false,
-  };
-
-  const rows: Array<TreeNode | null>[] = [[root]];
-  let idx = 0;
-
-  while (idx < rows.length) {
-    const currentRow = rows[idx];
-    const nextRow: Array<TreeNode | null> = [];
-
-    for (let i = 0; i < currentRow.length; i++) {
-      const currNode = currentRow[i];
-      if (!currNode) {
-        continue;
-      }
-
-      if (currNode === q) {
-        qRow.row = currentRow;
-        qRow.rowIdx = idx;
-        qRow.idxInRow = i;
-        qRow.isRoot = !!!idx;
-      }
-
-      if (currNode === p) {
-        pRow.row = currentRow;
-        pRow.rowIdx = idx;
-        pRow.idxInRow = i;
-        qRow.isRoot = !!!idx;
-      }
-
-      if (currNode === p) {
-        pRow.row = currentRow;
-        pRow.rowIdx = idx;
-      }
-
-      nextRow.push(currNode.left, currNode.right);
-    }
-
-    if (nextRow.length) {
-      rows.push(nextRow);
-    }
-    idx++;
+  if (!left && !right) {
+    return root;
   }
 
-  if (qRow.idxInRow < 0 || qRow.rowIdx === -1 || qRow.idxInRow === -1) {
-    throw new Error('Did not find the row');
+  if (left) {
+    return left;
   }
 
-  if (pRow.idxInRow < 0 || pRow.rowIdx === -1 || pRow.idxInRow === -1) {
-    throw new Error('Did not find the row');
+  if (right) {
+    return right;
   }
 
-  updateValues(qRow);
-  updateValues(pRow);
-
-  /*
-   *
-   * Walk up the matrix. If the parent is null, pick the other.
-   * The parent is always one row up, and math.floor(idx/2) or
-   * if 0, parent is 0
-   *
-   */
-
-  let qNodeIdx = qRow.idxInRow;
-  let qNodeRow = qRow.rowIdx;
-
-  let pNodeIdx = pRow.idxInRow;
-  let pNodeRow = pRow.rowIdx;
-
-  // Get to same row -> if on same row and idx matches, then
-  // one is decendant of the other
-  if (qNodeRow > pNodeRow) {
-    while (qNodeRow > pNodeRow) {
-      if (qNodeIdx !== 0) {
-        qNodeIdx = Math.floor(qNodeIdx / 2);
-      }
-
-      qNodeRow--;
-    }
-  } else {
-    while (pNodeRow > qNodeRow) {
-      if (pNodeIdx !== 0) {
-        pNodeIdx = Math.floor(pNodeIdx / 2);
-      }
-
-      pNodeRow--;
-    }
-  }
-
-  // One is decendant of the other
-  if (qNodeIdx === pNodeIdx) {
-    return rows[pNodeRow][qNodeIdx];
-  }
-
-  while (qNodeIdx !== pNodeIdx) {
-    if (qNodeIdx !== 0) {
-      qNodeIdx = Math.floor(qNodeIdx / 2);
-    }
-
-    if (pNodeIdx !== 0) {
-      pNodeIdx = Math.floor(pNodeIdx / 2);
-    }
-
-    qNodeRow--;
-    pNodeRow--;
-  }
-
-  return rows[pNodeRow][qNodeIdx];
+  return null;
 }
 
-function returnRowLength(rowIdx: number): number {
-  if (rowIdx === 0) {
-    return 1;
+const traverse = (
+  currNode: TreeNode | null,
+  p: TreeNode | null,
+  q: TreeNode | null
+): TreeNode | null => {
+  if (!currNode) {
+    return null;
   }
 
-  if (rowIdx === 1) {
-    return 2;
+  if (currNode === p || currNode === q) {
+    return currNode;
   }
 
-  return rowIdx ** 2;
-}
+  const left = traverse(currNode.left, p, q);
+  const right = traverse(currNode.right, p, q);
 
-function updateValues(value: RowMetadata): void {
-  value.rowPossibleLength = returnRowLength(value.rowIdx);
-  value.isLeft = isLeft(value);
-}
-
-function isLeft(value: RowMetadata): boolean {
-  if (value.isRoot) {
-    return false;
+  if (!left && !right) {
+    return null;
   }
 
-  return value.idxInRow < value.rowPossibleLength / 2;
-}
+  if (left) {
+    return left;
+  }
+
+  if (right) {
+    return right;
+  }
+
+  return null;
+};
