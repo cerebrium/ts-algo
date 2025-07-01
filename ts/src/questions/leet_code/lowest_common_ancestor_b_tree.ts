@@ -21,62 +21,18 @@ export function lowestCommonAncestor(
   p: TreeNode | null,
   q: TreeNode | null
 ): TreeNode | null {
-  if (!root) {
-    return null;
-  }
-  if (!q) {
-    return p;
-  }
-
-  if (!p) {
-    return q;
-  }
-
-  const left = traverse(root.left, p, q);
-  const right = traverse(root.left, p, q);
-
-  if (!left && !right) {
+  // Base -> if null -> end of the tree, return null
+  // if found a node we want to keep cursor there
+  if (!root || root === q || root === p) {
     return root;
   }
 
-  if (left) {
-    return left;
+  const left = lowestCommonAncestor(root.left, p, q);
+  const right = lowestCommonAncestor(root.right, p, q);
+
+  if (left && right) {
+    return root;
   }
 
-  if (right) {
-    return right;
-  }
-
-  return null;
+  return left ? left : right;
 }
-
-const traverse = (
-  currNode: TreeNode | null,
-  p: TreeNode | null,
-  q: TreeNode | null
-): TreeNode | null => {
-  if (!currNode) {
-    return null;
-  }
-
-  if (currNode === p || currNode === q) {
-    return currNode;
-  }
-
-  const left = traverse(currNode.left, p, q);
-  const right = traverse(currNode.right, p, q);
-
-  if (!left && !right) {
-    return null;
-  }
-
-  if (left) {
-    return left;
-  }
-
-  if (right) {
-    return right;
-  }
-
-  return null;
-};
