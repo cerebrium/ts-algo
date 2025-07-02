@@ -1,23 +1,3 @@
-// Given two nodes of a binary tree p and q, return their lowest common ancestor (LCA).
-//
-// Each node will have a reference to its parent node. The definition for Node is below:
-//
-// class Node {
-//     public int val;
-//     public Node left;
-//     public Node right;
-//     public Node parent;
-// }
-// According to the definition of LCA on Wikipedia: "The lowest common ancestor of two nodes
-// p and q in a tree T is the lowest node that has both p and q as descendants
-// (where we allow a node to be a descendant of itself)."
-//
-// The number of nodes in the tree is in the range [2, 105].
-// -109 <= Node.val <= 109
-// All Node.val are unique.
-// p != q
-// p and q exist in the tree.
-
 import {
   _Node,
   lowestCommonAncestorThree,
@@ -106,7 +86,10 @@ test('lowest_common_ancestor_3', () => {
   const [_, p, q] = makeTree(nums, pVal, qVal);
 
   const ancestor = lowestCommonAncestorThree(p, q);
-  expect(ancestor).toBe(3);
+  expect(ancestor).toBeTruthy();
+  if (ancestor) {
+    expect(ancestor.val).toBe(3);
+  }
 });
 
 // Explanation: The LCA of nodes 5 and 4 is 5 since a node can be a descendant of itself according to the LCA definition.
@@ -117,7 +100,10 @@ test('lowest_common_ancestor_3', () => {
   const [_, p, q] = makeTree(nums, pVal, qVal);
 
   const ancestor = lowestCommonAncestorThree(p, q);
-  expect(ancestor).toBe(5);
+  expect(ancestor).toBeTruthy();
+  if (ancestor) {
+    expect(ancestor.val).toBe(5);
+  }
 });
 
 // Input: root = [1,2], p = 1, q = 2
@@ -128,5 +114,34 @@ test('lowest_common_ancestor_3', () => {
   const [_, p, q] = makeTree(nums, pVal, qVal);
 
   const ancestor = lowestCommonAncestorThree(p, q);
-  expect(ancestor).toBe(1);
+  expect(ancestor).toBeTruthy();
+  if (ancestor) {
+    expect(ancestor.val).toBe(1);
+  }
+});
+
+test('lowest_common_ancestor_3', () => {
+  const nums = [1, 2];
+  const pVal = 2;
+  const qVal = 1;
+  const [_, p, q] = makeTree(nums, pVal, qVal);
+
+  const ancestor = lowestCommonAncestorThree(p, q);
+  expect(ancestor).toBeTruthy();
+  if (ancestor) {
+    expect(ancestor.val).toBe(1);
+  }
+});
+
+test('lowest_common_ancestor_3', () => {
+  const nums = [-1, 0, 3, -2, 4, null, null, 8];
+  const pVal = 8;
+  const qVal = 4;
+  const [_, p, q] = makeTree(nums, pVal, qVal);
+
+  const ancestor = lowestCommonAncestorThree(p, q);
+  expect(ancestor).toBeTruthy();
+  if (ancestor) {
+    expect(ancestor.val).toBe(0);
+  }
 });

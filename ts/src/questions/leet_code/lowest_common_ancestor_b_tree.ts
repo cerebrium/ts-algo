@@ -21,9 +21,7 @@ export function lowestCommonAncestor(
   p: TreeNode | null,
   q: TreeNode | null
 ): TreeNode | null {
-  // Base -> if null -> end of the tree, return null
-  // if found a node we want to keep cursor there
-  if (!root || root === q || root === p) {
+  if (!root || p === root || q === root) {
     return root;
   }
 

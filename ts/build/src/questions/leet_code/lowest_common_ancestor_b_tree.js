@@ -16,9 +16,7 @@ class TreeNode {
 }
 exports.TreeNode = TreeNode;
 function lowestCommonAncestor(root, p, q) {
-    // Base -> if null -> end of the tree, return null
-    // if found a node we want to keep cursor there
-    if (!root || root === q || root === p) {
+    if (!root || p === root || q === root) {
         return root;
     }
     const left = lowestCommonAncestor(root.left, p, q);
