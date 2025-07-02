@@ -1,4 +1,6 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validWordAbbreviation = void 0;
 // A string can be abbreviated by replacing any number of non-adjacent,
 // non-empty substrings with their lengths. The lengths should not have leading zeros.
 //
@@ -17,30 +19,6 @@
 // Given a string word and an abbreviation abbr, return whether the string matches the given abbreviation.
 //
 // A substring is a contiguous non-empty sequence of characters within a string.
-//
-//
-//
-// Example 1:
-//
-// Input: word = "internationalization", abbr = "i12iz4n"
-// Output: true
-// Explanation: The word "internationalization" can be abbreviated as "i12iz4n" ("i nternational iz atio n").
-// Example 2:
-//
-// Input: word = "apple", abbr = "a2e"
-// Output: false
-// Explanation: The word "apple" cannot be abbreviated as "a2e".
-//
-//
-// Constraints:
-//
-// 1 <= word.length <= 20
-// word consists of only lowercase English letters.
-// 1 <= abbr.length <= 10
-// abbr consists of lowercase English letters and digits.
-// All the integers in abbr will fit in a 32-bit integer.
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.validWordAbbreviation = void 0;
 function validWordAbbreviation(word, abbr) {
     const splitAbbr = abbr.match(/[a-zA-Z]+|\d+/g);
     if (!splitAbbr) {
@@ -49,7 +27,6 @@ function validWordAbbreviation(word, abbr) {
     let strIdx = 0;
     for (const split of splitAbbr) {
         if (isNaN(parseInt(split))) {
-            console.log('split: ', split, 'strIdx: ', strIdx);
             // Is string must match each one
             for (let i = 0; i < split.length; i++) {
                 if (word[strIdx] !== split[i]) {
@@ -64,7 +41,6 @@ function validWordAbbreviation(word, abbr) {
         }
         // is number
         const jump = parseInt(split);
-        console.log('what is the jump: ', jump, 'currIDX: ', strIdx);
         if (strIdx + jump > word.length) {
             return false;
         }
