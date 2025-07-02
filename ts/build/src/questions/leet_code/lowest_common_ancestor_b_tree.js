@@ -16,47 +16,15 @@ class TreeNode {
 }
 exports.TreeNode = TreeNode;
 function lowestCommonAncestor(root, p, q) {
-    if (!root) {
-        return null;
-    }
-    if (!q) {
-        return p;
-    }
-    if (!p) {
-        return q;
-    }
-    const left = traverse(root.left, p, q);
-    const right = traverse(root.left, p, q);
-    if (!left && !right) {
+    if (!root || p === root || q === root) {
         return root;
     }
-    if (left) {
-        return left;
+    const left = lowestCommonAncestor(root.left, p, q);
+    const right = lowestCommonAncestor(root.right, p, q);
+    if (left && right) {
+        return root;
     }
-    if (right) {
-        return right;
-    }
-    return null;
+    return left ? left : right;
 }
 exports.lowestCommonAncestor = lowestCommonAncestor;
-const traverse = (currNode, p, q) => {
-    if (!currNode) {
-        return null;
-    }
-    if (currNode === p || currNode === q) {
-        return currNode;
-    }
-    const left = traverse(currNode.left, p, q);
-    const right = traverse(currNode.right, p, q);
-    if (!left && !right) {
-        return null;
-    }
-    if (left) {
-        return left;
-    }
-    if (right) {
-        return right;
-    }
-    return null;
-};
 //# sourceMappingURL=lowest_common_ancestor_b_tree.js.map
