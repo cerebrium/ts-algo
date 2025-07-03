@@ -21,7 +21,7 @@ export function lowestCommonAncestor(
   p: TreeNode | null,
   q: TreeNode | null
 ): TreeNode | null {
-  if (!root || p === root || q === root) {
+  if (!root || root === p || root === q) {
     return root;
   }
 

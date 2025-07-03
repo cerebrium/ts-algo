@@ -39,21 +39,28 @@ export function lowestCommonAncestorThree(
   if (!p || !q) {
     return null;
   }
-  const eldersOfQ = new Map();
-  let currNode: _Node | null = q;
 
-  while (currNode) {
-    eldersOfQ.set(currNode.val, currNode);
-    currNode = currNode.parent;
+  if (p === q) {
+    return p;
   }
 
-  currNode = p;
-  while (currNode) {
-    const hasNode = eldersOfQ.get(currNode.val);
+  const traversedMap: Map<number, _Node> = new Map();
+
+  while (p) {
+    traversedMap.set(p.val, p);
+    if (p === q) {
+      return p;
+    }
+    p = p.parent;
+  }
+
+  while (q) {
+    const hasNode = traversedMap.get(q.val);
     if (hasNode) {
       return hasNode;
     }
-    currNode = currNode.parent;
+
+    q = q.parent;
   }
 
   return null;
