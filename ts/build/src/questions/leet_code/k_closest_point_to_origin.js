@@ -22,11 +22,9 @@ function kClosest(points, k) {
     for (let i = 0; i < points.length; i++) {
         minHeap.push(points[i]);
     }
-    console.log('Initial data: ', minHeap.data);
     const kPoints = [];
     while (k > 0) {
         kPoints.push(minHeap.pop());
-        console.log('data after pop: ', minHeap.data);
         k--;
     }
     return kPoints;
@@ -91,7 +89,7 @@ class MinHeap {
         }
     }
     getDistanceFromOrigin(point) {
-        return point[0] ** 2 + point[1] ** 2;
+        return Math.pow(point[0], 2) + Math.pow(point[1], 2);
     }
     getLeftChildIdx(idx) {
         const prospectiveChildIdx = idx * 2 + 1;
@@ -117,8 +115,6 @@ class MinHeap {
     getLowestChildIdx(idx) {
         const leftChildIdx = this.getLeftChildIdx(idx);
         const rightChildIdx = this.getRightChildIdx(idx);
-        console.log('leftChildIdx: ', leftChildIdx);
-        console.log('rightChildIdx: ', rightChildIdx);
         if (leftChildIdx < 0 && rightChildIdx < 0) {
             return -1;
         }

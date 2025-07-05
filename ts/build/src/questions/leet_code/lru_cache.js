@@ -14,97 +14,102 @@ class lRUCache {
     constructor(capacity) {
         this.head = null;
         this.tail = null;
-        this.currentDataLength = 0;
-        this.dataMap = new Map();
+        this.nodeMap = new Map();
+        this.currentNodeLength = 0;
         this.capacity = capacity;
     }
+    put(key, value) {
+        const hasNode = this.nodeMap.get(key);
+        if (hasNode) {
+            hasNode.value = value;
+            this.moveToHead(hasNode);
+            return;
+        }
+        const newNode = new DLNode(key, value);
+        this.currentNodeLength++;
+        this.nodeMap.set(key, newNode);
+        if (!this.head) {
+            this.head = newNode;
+            this.tail = newNode;
+            this.evictNode();
+            return;
+        }
+        newNode.next = this.head;
+        this.head.prev = newNode;
+        this.head = newNode;
+        this.evictNode();
+    }
     get(key) {
-        const lNode = this.dataMap.get(key);
-        if (!lNode) {
+        const hasNode = this.nodeMap.get(key);
+        if (!hasNode) {
             return -1;
         }
-        this.moveToFront(lNode);
-        return lNode.value;
+        this.moveToHead(hasNode);
+        return hasNode.value;
     }
-    moveToFront(lNode) {
-        if (this.currentDataLength < 2 || !lNode.prev) {
+    logNodes() {
+        var _a, _b;
+        let currNode = this.head;
+        console.log('------------- start -----------------');
+        while (currNode) {
+            console.log('key: ', currNode.key, '\nvalue: ', currNode.value, '\nnext: ', (_a = currNode.next) === null || _a === void 0 ? void 0 : _a.key, '\nprev: ', (_b = currNode.prev) === null || _b === void 0 ? void 0 : _b.key);
+            currNode = currNode.next;
+        }
+        console.log('------------- end -----------------');
+    }
+    evictNode() {
+        if (this.currentNodeLength > this.capacity) {
+            if (!this.tail || !this.tail.prev) {
+                this.logNodes();
+                throw new Error('EVICT NO TAIL OR PREV');
+            }
+            this.nodeMap.delete(this.tail.key);
+            this.tail = this.tail.prev;
+            this.tail.next = null;
+        }
+    }
+    moveToHead(dlNode) {
+        // HEAD
+        if (this.head === dlNode) {
             return;
         }
-        // Need to remove the prev link to it
-        if (lNode.next && lNode.next.prev === lNode) {
-            lNode.next.prev = lNode.prev;
-        }
-        // point prev of lnode to next of lnode
-        lNode.prev.next = lNode.next;
-        if (!lNode.prev.next) {
-            this.tail = lNode.prev;
-        }
-        // point lnode next to head
-        lNode.next = this.head;
         if (!this.head) {
-            throw new Error('no head move to front');
+            throw new Error('NO HEAD IN MOVE TO HEAD');
         }
-        this.head.prev = lNode;
-        lNode.prev = null;
-        // set current head as lnode
-        this.head = lNode;
-    }
-    put(key, value) {
-        const lNode = this.dataMap.get(key);
-        if (lNode) {
-            lNode.value = value;
-            this.moveToFront(lNode);
-            return null;
-        }
-        const newNode = this.createAndAppendNewNode(value, key);
-        this.dataMap.set(key, newNode);
-        // Evict if needed
-        this.checkAndEvict();
-        return null;
-    }
-    createAndAppendNewNode(value, key) {
-        const node = new LinkedNode(value, key);
-        if (!this.head) {
-            this.head = node;
-            this.tail = node;
-            this.currentDataLength++;
-            return node;
-        }
-        // Make node head
-        node.next = this.head;
-        this.head.prev = node;
-        this.head = node;
-        // Check if old head needs to be tail
-        if (!this.head.next) {
-            this.tail = this.head.next;
-        }
-        this.currentDataLength++;
-        return node;
-    }
-    checkAndEvict() {
-        if (this.currentDataLength <= this.capacity) {
+        // TAIL
+        if (dlNode === this.tail) {
+            if (!dlNode.prev) {
+                this.logNodes();
+                throw new Error('NO PREV AND IS TAIL');
+            }
+            dlNode.prev.next = null;
+            this.tail = dlNode.prev;
+            dlNode.next = this.head;
+            this.head.prev = dlNode;
+            this.head = dlNode;
+            this.head.prev = null;
             return;
         }
-        if (!this.tail) {
-            throw new Error('no tail, and nodes past capacity error');
+        // MIDDLE
+        if (!dlNode.prev || !dlNode.next) {
+            this.logNodes();
+            throw new Error('MIDDLE NO PREV OR NEXT');
         }
-        if (!this.tail.prev) {
-            throw new Error('no tail.prev but at capacity');
-        }
-        this.dataMap.delete(this.tail.key);
-        const newTail = this.tail.prev;
-        this.tail = newTail;
-        newTail.next = null;
-        this.currentDataLength--;
+        dlNode.prev.next = dlNode.next;
+        dlNode.next.prev = dlNode.prev;
+        dlNode.next = this.head;
+        this.head.prev = dlNode;
+        dlNode.prev = null;
+        this.head = dlNode;
     }
 }
 exports.lRUCache = lRUCache;
-class LinkedNode {
-    constructor(value, key, prev = null, next = null) {
+class DLNode {
+    constructor(key, value, next = null, prev = null) {
         this.value = value;
         this.key = key;
-        this.prev = prev;
         this.next = next;
+        this.prev = prev;
     }
 }
 //# sourceMappingURL=lru_cache.js.map
