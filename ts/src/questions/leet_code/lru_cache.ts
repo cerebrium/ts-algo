@@ -10,34 +10,31 @@
 
 export class lRUCache {
   capacity: number;
-  head: DLNode | null = null;
-  tail: DLNode | null = null;
-  nodeMap: Map<number, DLNode> = new Map();
-  currentNodeLength: number = 0;
+  head: TNode | null = null;
+  tail: TNode | null = null;
+  currentNodeCount: number = 0;
+  nodeMap: Map<number, TNode> = new Map();
 
   constructor(capacity: number) {
     this.capacity = capacity;
   }
 
-  public put(key: number, value: number) {
+  public put(key: number, value: number): void {
     const hasNode = this.nodeMap.get(key);
 
     if (hasNode) {
       hasNode.value = value;
-      this.moveToHead(hasNode);
+      this.setNodeAsHead(hasNode);
       return;
     }
 
-    const newNode = new DLNode(key, value);
-    this.currentNodeLength++;
-
+    const newNode = new TNode(key, value);
+    this.currentNodeCount++;
     this.nodeMap.set(key, newNode);
 
     if (!this.head) {
       this.head = newNode;
       this.tail = newNode;
-
-      this.evictNode();
       return;
     }
 
@@ -48,21 +45,24 @@ export class lRUCache {
     this.evictNode();
   }
 
-  public get(key: number) {
+  public get(key: number): number {
     const hasNode = this.nodeMap.get(key);
 
     if (!hasNode) {
       return -1;
     }
 
-    this.moveToHead(hasNode);
+    this.setNodeAsHead(hasNode);
     return hasNode.value;
   }
 
-  public logNodes() {
+  public logNodes(_node: TNode | null = null) {
     let currNode = this.head;
 
-    console.log('------------- start -----------------');
+    console.log('------------ start --------------');
+    if (_node) {
+      console.log('Middle Node: ', _node.key);
+    }
     while (currNode) {
       console.log(
         'key: ',
@@ -76,81 +76,84 @@ export class lRUCache {
       );
       currNode = currNode.next;
     }
-    console.log('------------- end -----------------');
+    console.log('------------ end --------------');
   }
 
-  private evictNode(): void {
-    if (this.currentNodeLength > this.capacity) {
-      if (!this.tail || !this.tail.prev) {
-        this.logNodes();
-        throw new Error('EVICT NO TAIL OR PREV');
-      }
-
-      this.nodeMap.delete(this.tail.key);
-
-      this.tail = this.tail.prev;
-      this.tail.next = null;
-    }
-  }
-
-  private moveToHead(dlNode: DLNode): void {
-    // HEAD
-    if (this.head === dlNode) {
+  private evictNode() {
+    if (this.currentNodeCount <= this.capacity) {
       return;
     }
 
-    if (!this.head) {
-      throw new Error('NO HEAD IN MOVE TO HEAD');
-    }
-
-    // TAIL
-    if (dlNode === this.tail) {
-      if (!dlNode.prev) {
-        this.logNodes();
-        throw new Error('NO PREV AND IS TAIL');
-      }
-
-      dlNode.prev.next = null;
-      this.tail = dlNode.prev;
-
-      dlNode.next = this.head;
-      this.head.prev = dlNode;
-
-      this.head = dlNode;
-      this.head.prev = null;
-
-      return;
-    }
-
-    // MIDDLE
-    if (!dlNode.prev || !dlNode.next) {
+    if (!this.tail || !this.tail.prev) {
       this.logNodes();
-      throw new Error('MIDDLE NO PREV OR NEXT');
+      throw new Error('in evict no tail or no tail prev');
     }
 
-    dlNode.prev.next = dlNode.next;
-    dlNode.next.prev = dlNode.prev;
+    this.nodeMap.delete(this.tail.key);
 
-    dlNode.next = this.head;
-    this.head.prev = dlNode;
+    const newTail = this.tail.prev;
 
-    dlNode.prev = null;
+    this.tail.prev = null;
+    this.tail = newTail;
+    this.tail.next = null;
+  }
 
-    this.head = dlNode;
+  private setNodeAsHead(tNode: TNode): void {
+    // Head
+    if (tNode === this.head) {
+      return;
+    }
+
+    // Tail
+    if (tNode === this.tail) {
+      if (!tNode.prev) {
+        this.logNodes();
+        throw new Error('setNodeAsHead tail section no prev');
+      }
+
+      tNode.prev.next = null;
+      this.tail = tNode.prev;
+
+      if (!this.head) {
+        this.logNodes();
+        throw new Error('setNodeAsHead tail section no head');
+      }
+
+      tNode.next = this.head;
+      this.head.prev = tNode;
+
+      this.head = tNode;
+      return;
+    }
+
+    if (!tNode.next || !tNode.prev || !this.head) {
+      this.logNodes(tNode);
+      throw new Error('setNodeAsHead middle section next or prev or no head');
+    }
+
+    // Middle
+    tNode.prev.next = tNode.next;
+    tNode.next.prev = tNode.prev;
+
+    tNode.prev = null;
+    tNode.next = this.head;
+    this.head.prev = tNode;
+
+    this.head = tNode;
   }
 }
 
-class DLNode {
+class TNode {
   value: number;
   key: number;
-  next: DLNode | null;
-  prev: DLNode | null;
+  next: TNode | null;
+  prev: TNode | null;
 
   constructor(
     key: number,
     value: number,
-    next: DLNode | null = null,
-    prev: DLNode | null = null
+    next: TNode | null = null,
+    prev: TNode | null = null
   ) {
     this.value = value;
     this.key = key;

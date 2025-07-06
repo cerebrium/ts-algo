@@ -5,6 +5,8 @@ exports.htmlParse = void 0;
 //   <p>Hello <b>world</b></p>
 // </div>
 function htmlParse(str) {
+    // @ts-ignore
+    const parser = new DOMParser();
     console.log('the str: ', str);
 }
 exports.htmlParse = htmlParse;
