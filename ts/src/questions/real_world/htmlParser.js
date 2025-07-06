@@ -1,210 +1,235 @@
+const exampleSsml = `
+<speak>
+  Hello, welcome to <emphasis level="strong">SSML</emphasis> parsing.
+  <break time="500ms"/>
+  Let me <prosody rate="slow" pitch="+2st">slow down<s>inside the slow down</s></prosody> for a moment.
+  <break strength="medium"/>
+  Now back to normal speed.
+  <p>
+    This is a new paragraph. <s>This is the first sentence.</s> <s>This is the second sentence.</s>
+  </p>
+  <say-as interpret-as="characters">SSML</say-as> is powerful!
+</speak>
+`;
+
 /**
  *
- * @params {string} str -> ssml string
+ * @param {string} str -> the ssml text
  *
  */
-async function parseSSML(str) {
+async function ssmlParser(str) {
   const domParser = new DOMParser();
-  const parsedSSML = domParser.parseFromString(str, 'application/xml');
+  const doc = domParser.parseFromString(str, 'application/xml');
 
   const synth = window.speechSynthesis;
+  const parsedElements = [];
+  getParsedElements(doc, parsedElements);
 
-  /**
-   *
-   * @type {HTMLElement[]} topLevelElements
-   *
-   */
-  const parsedNodes = [];
-  getParsedSSMLTextAndFunctionality(parsedSSML, parsedNodes);
-
-  console.log('parsedNodes: ', parsedNodes.length);
-
-  for (let i = 0; i < parsedNodes.length; i++) {
-    const utterance = parsedNodes[i];
-    console.log('utterance: ', utterance);
-
-    if (typeof utterance === 'number') {
-      console.log('utterance is num: ', utterance);
+  let currIdx = 0;
+  while (currIdx < parsedElements.length - 1) {
+    if (typeof parsedElements[currIdx] === 'number') {
       await new Promise((res, rej) => {
         setTimeout(() => {
-          res();
-        }, utterance);
+          res({waited: true});
+        }, parsedElements[currIdx]);
       });
+
+      currIdx++;
       continue;
     }
 
-    synth.speak(utterance);
+    synth.speak(parsedElements[currIdx]);
+    currIdx++;
   }
-
-  console.log('parsedNodes: ', parsedNodes);
 }
 
 /**
  *
  * @param {Document} doc
- * @param {HTMLElement[]} parsedNodes
  *
  */
-function getParsedSSMLTextAndFunctionality(doc, parsedNodes) {
+function getParsedElements(doc, parsedElements) {
   for (const child of doc.childNodes) {
     if (child.nodeType === Node.TEXT_NODE) {
-      const text = child.textContent.trim();
-      if (text) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        parsedNodes.push(utterance);
+      const text = getTextFromNode(child);
+
+      if (!text) {
+        continue;
       }
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      parsedElements.push(utterance);
       continue;
     }
 
-    // const exampleSsml = `
-    // <speak>
-    //   Hello, welcome to <emphasis level="strong">SSML</emphasis> parsing.
-    //   <break time="500ms"/>
-    //   Let me <prosody rate="slow" pitch="+2st">slow down</prosody> for a moment.
-    //   <break strength="medium"/>
-    //   Now back to normal speed.
-    //   <p>
-    //     This is a new paragraph. <s>This is the first sentence.</s> <s>This is the second sentence.</s>
-    //   </p>
-    //   <say-as interpret-as="characters">SSML</say-as> is powerful!
-    // </speak>
-    // `;
-
     if (child.nodeType === Node.ELEMENT_NODE) {
-      switch (child.nodeName.toLowerCase()) {
+      switch (child.nodeName) {
         case 'break':
-          const time = child.getAttribute('time');
+          const att = child.getAttribute('time');
+          const strength = child.getAttribute('strength');
 
-          if (!time) {
-            break;
+          if (!att && !strength) {
+            console.log('child: ', child);
+            throw new Error('break element no time attribute or strength');
           }
 
-          let timeUnits = '';
-          for (let i = time.length - 1; i > 0; i--) {
-            if (time[i].match(/[a-zA-Z]/)) {
-              timeUnits += time[i];
+          if (att) {
+            const duration = att.match(/\d+/);
+
+            if (!duration.length) {
+              throw new Error('break element duration has no digits');
+            }
+
+            if (att.match('ms').length) {
+              parsedElements.push(parseInt(duration[0]));
               continue;
             }
-            break;
+
+            parsedElements.push(parseInt(duration[0] * 1000));
+            continue;
           }
 
-          const timeAmount = time.match(/\d+/);
-
-          console.log('amount: ', timeAmount, '\nunits: ', timeUnits);
-
-          if (timeUnits.split('').reverse().join('') === 'ms') {
-            parsedNodes.push(parseInt(timeAmount));
-            break;
+          switch (strength) {
+            case 'medium':
+              parsedElements.push(500);
+              continue;
           }
 
-          parsedNodes.push(parseInt(timeAmount) * 1000);
-
-          break;
         case 'emphasis':
-          // Handle Emphasis
-          const emText = child.textContent.trim();
-
-          if (!emText) {
-            break;
+          const level = child.getAttribute('level');
+          if (!level) {
+            throw new Error('emphasis no level attribute');
           }
 
-          const emUtterance = new SpeechSynthesisUtterance(emText);
-          emUtterance.pitch = 2;
+          const emText = getTextFromNode(child);
+          if (!emText) {
+            continue;
+          }
 
-          parsedNodes.push(emUtterance);
-
+          const emUtterance = emphasize(level, emText);
+          parsedElements.push(emUtterance);
           break;
         case 'prosody':
-          const text = child.textContent.trim();
+          const proText = getTextFromNode(child);
 
-          if (!text.length) {
-            break;
+          if (!proText) {
+            throw new Error('no text in the prosody');
           }
 
-          const utterance = new SpeechSynthesisUtterance(text);
+          const rate = child.getAttribute('rate');
+          const pitch = child.getAttribute('pitch');
 
-          for (const att of child.attributes) {
-            switch (att.att) {
-              case 'rate':
-                utterance.rate = parseProsodyRate(att.val);
-                break;
-              case 'pitch':
-                utterance.pitch = parseProsodyPitch(att.val);
-            }
-          }
+          const proUtterance = handleProsody(rate, pitch, proText);
+          parsedElements.push(proUtterance);
 
-          parsedNodes.push(utterance);
           break;
         case 'say-as':
-          const sayAsText = child.textContent.trim();
+          const sayAsText = getTextFromNode(child);
 
           if (!sayAsText) {
-            break;
+            continue;
           }
-
           const interpreted = child.getAttribute('interpret-as');
 
           if (interpreted === 'characters') {
             for (let i = 0; i < sayAsText.length; i++) {
-              const utterance = new SpeechSynthesisUtterance(sayAsText[i]);
-              parsedNodes.push(utterance);
+              const sayUtterance = new SpeechSynthesisUtterance(
+                sayAsText.charAt(i)
+              );
+
+              parsedElements.push(sayUtterance);
             }
           }
 
-          break;
         default:
-          getParsedSSMLTextAndFunctionality(child, parsedNodes);
+          getParsedElements(child, parsedElements);
       }
     }
   }
 }
 
 /**
- * Parse SSML prosody rate (e.g., "slow", "fast", "1.2").
- * @param {string} rate
+ *
+ * @param {'strong' | 'weak' | 'normal'} level
+ * @param {string} text
+ *
+ * @returns {SpeechSynthesisUtterance}
  */
-function parseProsodyRate(rate) {
-  switch (rate) {
-    case 'x-slow':
-      return 0.5;
-    case 'slow':
-      return 0.75;
-    case 'medium':
-      return 1;
-    case 'fast':
-      return 1.25;
-    case 'x-fast':
-      return 1.5;
+function emphasize(level, text) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  switch (level) {
+    case 'strong':
+      utterance.pitch = 1.5;
+      utterance.volume = 1.5;
+      return utterance;
     default:
-      return parseFloat(rate) || 1;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+      return utterance;
   }
 }
 
 /**
- * Parse pitch in SSML format like "+2st" or "high"
- * @param {string} pitch
+ *
+ * @param {string | undefined} rate
+ * @param {string | undefined} pitch
+ * @param {string} text
+ *
+ * @returns {SpeechSynthesisUtterance}
  */
-function parseProsodyPitch(pitch) {
-  if (pitch.endsWith('st')) {
-    let val = h.match(/\d+/g);
-    if (!val.length) {
-      return 1;
-    }
-    val = parseFloat(val[0]);
-    return 1 + val * 0.1;
-  }
-  switch (pitch) {
-    case 'x-low':
-      return 0.5;
-    case 'low':
-      return 0.75;
+function handleProsody(rate, pitch, text) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  // Let me <prosody rate="slow" pitch="+2st">slow down</prosody> for a moment.
+  switch (rate) {
+    case 'slow':
+      utterance.rate = 0.1;
+      break;
     case 'medium':
-      return 1;
-    case 'high':
-      return 1.25;
-    case 'x-high':
-      return 1.5;
-    default:
-      return 1;
+      utterance.rate = 1.0;
+      break;
+    case 'fast':
+      utterance.rate = 1.5;
+      break;
   }
+
+  const isIncrease = !!(pitch.charAt(0) === '+');
+  const pitchModulationAmount = pitch.match(/\d+/);
+
+  if (!pitchModulationAmount.length) {
+    throw new Error('no pitchModulationAmount');
+  }
+
+  if (isIncrease) {
+    const modAmount = parseInt(pitchModulationAmount[0]);
+
+    if (typeof modAmount !== 'number') {
+      throw new Error('modAmount could not be converted to number');
+    }
+
+    utterance.pitch = 1 + Math.log(modAmount);
+    return utterance;
+  }
+  const modAmount = parseInt(pitchModulationAmount[0]);
+
+  if (typeof modAmount !== 'number') {
+    throw new Error('modAmount could not be converted to number');
+  }
+
+  utterance.pitch = 1 - Math.log(modAmount);
+  return utterance;
+}
+
+/**
+ *
+ * @param {HTMLElement} _node
+ *
+ */
+function getTextFromNode(_node) {
+  const text = _node.textContent.trim();
+
+  if (!text.length) {
+    return null;
+  }
+
+  return text;
 }
