@@ -3,15 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const auto_complete_1 = require("../../questions/trie/auto_complete");
 test('Autocomplete', () => {
     const autocomplete = new auto_complete_1.Autocomplete();
-    autocomplete.add_word('alphabet');
-    autocomplete.add_word('animal');
-    autocomplete.add_word('add');
-    autocomplete.add_word('advert');
-    autocomplete.add_word('angie');
-    const all_entries = autocomplete.retrieve_words('a');
-    const animal_and_angie = autocomplete.retrieve_words('an');
-    const add_and_advert = autocomplete.retrieve_words('ad');
-    const alphabet = autocomplete.retrieve_words('al');
+    autocomplete.push('alphabet');
+    autocomplete.push('animal');
+    autocomplete.push('add');
+    autocomplete.push('advert');
+    autocomplete.push('angie');
+    const all_entries = autocomplete.get('a');
+    const animal_and_angie = autocomplete.get('an');
+    const add_and_advert = autocomplete.get('ad');
+    const alphabet = autocomplete.get('al');
     const all_words = ['alphabet', 'animal', 'add', 'advert', 'angie'];
     for (let i = 0; i < all_words.length; i++) {
         expect(all_entries.includes(all_words[i])).toBeTruthy();
@@ -33,9 +33,9 @@ test('Autocomplete', () => {
     expect(alphabet.length).toBe(1);
     const end_word_check = ['barn', 'barnicle'];
     for (let i = 0; i < end_word_check.length; i++) {
-        autocomplete.add_word(end_word_check[i]);
+        autocomplete.push(end_word_check[i]);
     }
-    const retrieved_barn_words = autocomplete.retrieve_words('bar');
+    const retrieved_barn_words = autocomplete.get('bar');
     for (let i = 0; i < end_word_check.length; i++) {
         expect(retrieved_barn_words.includes(retrieved_barn_words[i])).toBeTruthy();
     }

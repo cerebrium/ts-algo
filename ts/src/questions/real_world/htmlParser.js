@@ -5,9 +5,11 @@ const exampleSsml = `
   Let me <prosody rate="slow" pitch="+2st">slow down<s>inside the slow down</s></prosody> for a moment.
   <break strength="medium"/>
   Now back to normal speed.
-  <p>
-    This is a new paragraph. <s>This is the first sentence.</s> <s>This is the second sentence.</s>
-  </p>
+  <prosody rate="slow">
+    <p>
+      This is a new paragraph. <s>This is the first sentence.</s> <s>This is the second sentence.</s>
+    </p>
+  </prosody>
   <say-as interpret-as="characters">SSML</say-as> is powerful!
 </speak>
 `;

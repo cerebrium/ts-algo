@@ -32,28 +32,28 @@
 // In the second case, only 1 additional diner is able to join the table, by sitting in any of the rst 3 seats.
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMaxAdditionalDinersCount = void 0;
-function getMaxAdditionalDinersCount(N, // Total number of seats
-K, // Distance required between diners
-M, // Current amount of diners
-S // Currently sitting spots
-) {
-    const freeRanges = [];
-    let totalExtraDiners = 0;
-    let currMin = 1;
-    let currMax = 1;
-    // Walk through the ranges that aren't available, combine in place... They are
-    // sorted. The min will point at the start of the unavailable range, the max will
-    // point at the end of the unavailable range. If there is space between the current
-    // point - K and the max, then we have a range that is accessible.
-    //
-    for (let i = 0; i < S.sort((a, b) => a - b).length; i++) {
-        if (S[i] - K > currMax + 1) {
-            freeRanges.push([currMax + 1, S[i] - K - 1]);
+function getMaxAdditionalDinersCount(N, K, M, S) {
+    S.sort((a, b) => a - b);
+    let additionalDiners = 0;
+    let prevEnd = 0;
+    for (let i = 0; i < M; i++) {
+        const left = S[i] - K;
+        const right = S[i] + K;
+        const start = prevEnd + 1;
+        const end = left - 1;
+        if (start <= end) {
+            const range = end - start + 1;
+            additionalDiners += Math.floor((range + K) / (K + 1));
         }
-        currMin = Math.min(S[i] - K, currMin);
-        currMax = Math.max(S[i] + K, currMax);
+        prevEnd = right;
     }
-    return M + totalExtraDiners;
+    if (prevEnd < N) {
+        const start = prevEnd + 1;
+        const end = N;
+        const range = end - start + 1;
+        additionalDiners += Math.floor((range + K) / (K + 1));
+    }
+    return additionalDiners;
 }
 exports.getMaxAdditionalDinersCount = getMaxAdditionalDinersCount;
 //# sourceMappingURL=cafeteria.js.map

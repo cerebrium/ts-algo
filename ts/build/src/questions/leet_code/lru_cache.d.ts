@@ -1,21 +1,21 @@
 export declare class lRUCache {
     capacity: number;
-    head: TNode | null;
-    tail: TNode | null;
-    currentNodeCount: number;
-    nodeMap: Map<number, TNode>;
+    nodeMap: Map<number, DLNode>;
+    currNodeCount: number;
+    head?: DLNode;
+    tail?: DLNode;
     constructor(capacity: number);
-    put(key: number, value: number): void;
     get(key: number): number;
-    logNodes(_node?: TNode | null): void;
-    private evictNode;
-    private setNodeAsHead;
+    put(key: number, value: number): void;
+    logNodes(): void;
+    private makeNodeHead;
+    private evictIfNeeded;
 }
-declare class TNode {
-    value: number;
+declare class DLNode {
     key: number;
-    next: TNode | null;
-    prev: TNode | null;
-    constructor(key: number, value: number, next?: TNode | null, prev?: TNode | null);
+    value: number;
+    next?: DLNode;
+    prev?: DLNode;
+    constructor(key: number, value: number, next?: DLNode, prev?: DLNode);
 }
 export {};

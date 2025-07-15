@@ -1,3 +1,8 @@
+declare class TNode {
+    isWord: boolean;
+    children: Map<string, TNode>;
+    constructor(isWord: boolean, children?: Map<any, any>);
+}
 /**
  *
  * The decision has been made to use arrays as the underlying data
@@ -13,9 +18,10 @@
  *
  */
 export declare class Autocomplete {
-    private trie;
+    data: Map<string, TNode>;
     constructor();
-    add_word(word: string): void;
-    retrieve_words(substring: string): Array<string>;
-    private _get_nested_words;
+    push(word: string): void;
+    get(prefix: string): string[];
+    private completeWords;
 }
+export {};

@@ -1,7 +1,11 @@
-interface TrieNode {
-  value: string;
-  decendents: Array<TrieNode>;
+class TNode {
   isWord: boolean;
+  children: Map<string, TNode>;
+
+  constructor(isWord: boolean, children = new Map()) {
+    this.isWord = isWord;
+    this.children = children;
+  }
 }
 
 /**
@@ -19,106 +23,75 @@ interface TrieNode {
  *
  */
 export class Autocomplete {
-  private trie: Array<TrieNode>;
+  data: Map<string, TNode> = new Map();
+  constructor() {}
 
-  constructor() {
-    this.trie = [];
-  }
+  public push(word: string) {
+    let currChildren = this.data;
+    let currNode: null | TNode = null;
 
-  // We could optimize this to use specific arrays of length
-  // if we had a arraylist implementation using typed arrays
-  public add_word(word: string): void {
-    let current_value = null;
-    let current_level = this.trie;
-    let current_node = null;
-
-    for (let letter = 0; letter < word.length; letter++) {
-      // Search current level in trie for letter
-      for (let i = 0; i < current_level.length; i++) {
-        if (current_level[i].value === word[letter]) {
-          current_value = current_level[i].value;
-          current_level = current_level[i].decendents;
-          current_node = current_level[i];
-
-          if (letter === word.length - 1) {
-            current_level[i].isWord = true;
-          }
-          // Only break inner loop
-          break;
-        }
+    let wordIdx = 0;
+    for (let i = 0; i < word.length; i++) {
+      const hasLetter = currChildren.get(word[i]);
+      if (!hasLetter) {
+        break;
       }
 
-      // Found the value continue to next letter
-      if (current_value && current_value === word[letter]) {
-        current_value = null;
-        if (letter === word.length - 1 && current_node) {
-          current_node.isWord = true;
+      if (i === word.length - 1) {
+        if (!currNode) {
+          throw new Error('Last letter, but no node');
         }
 
-        continue;
+        currNode.isWord = true;
       }
 
-      // Did not find value add value
-      current_level.push({
-        value: word[letter],
-        decendents: [],
-        isWord: letter === word.length - 1 ? true : false,
-      });
+      currChildren = hasLetter.children;
+      currNode = hasLetter;
+      wordIdx++;
 
-      // Re-ref to newly created element
-      current_level = current_level[current_level.length - 1].decendents;
-      current_value = null;
-    }
-  }
-
-  public retrieve_words(substring: string): Array<string> {
-    const possible_words: Array<string> = [];
-
-    let current_level = this.trie;
-    let current_value = null;
-
-    // Get to the correct starting point for the substring
-    for (let letter = 0; letter < substring.length; letter++) {
-      for (let i = 0; i < current_level.length; i++) {
-        if (current_level[i].value === substring[letter]) {
-          current_value = current_level[i].value;
-          current_level = current_level[i].decendents;
-
-          break;
-        }
-      }
-
-      if (current_value && current_value === substring[letter]) {
-        continue;
-      } else {
-        // At this point we have no saved words that match our prefix
-        return possible_words;
-      }
+      continue;
     }
 
-    // At this point, traverse all remaining possibilities
-    this._get_nested_words(current_level, possible_words, substring);
+    while (wordIdx < word.length) {
+      const newTNode = new TNode(wordIdx === word.length - 1);
+      currChildren.set(word[wordIdx], newTNode);
+      currChildren = newTNode.children;
+      wordIdx++;
+    }
+  }
+  public get(prefix: string): string[] {
+    const words: string[] = [];
 
-    return possible_words;
+    let currChildren = this.data;
+    let letterIdx = 0;
+
+    for (let i = 0; i < prefix.length; i++) {
+      const hasLetter = currChildren.get(prefix[i]);
+
+      if (!hasLetter) {
+        break;
+      }
+
+      letterIdx++;
+      currChildren = hasLetter.children;
+    }
+
+    this.completeWords(prefix.substring(0, letterIdx), currChildren, words);
+
+    return words;
   }
 
-  private _get_nested_words(
-    current_level: TrieNode[],
-    possible_words: string[],
-    prefix: string
+  private completeWords(
+    prefix: string,
+    currChildren: Map<string, TNode>,
+    words: string[]
   ) {
-    for (let i = 0; i < current_level.length; i++) {
-      if (current_level[i].isWord) {
-        // End of word
-        possible_words.push(prefix + current_level[i].value);
+    currChildren.forEach((_node, letter) => {
+      if (_node.isWord) {
+        words.push(prefix + letter);
       }
 
-      // Find all children
-      this._get_nested_words(
-        current_level[i].decendents,
-        possible_words,
-        prefix + current_level[i].value
-      );
-    }
+      this.completeWords(prefix + letter, _node.children, words);
+    });
   }
 }

@@ -1,0 +1,7 @@
+How do you determine if a drive is full?
+
+df -h -> shows the different places with their spaces
+free -m 
+
+du -h --max-depth=1 . -> will find what is using the most space
+du -k | awk '$1 > n' -> will return filetered list of dirs larger than n bytes

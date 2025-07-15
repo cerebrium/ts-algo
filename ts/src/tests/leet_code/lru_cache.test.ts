@@ -26,16 +26,12 @@ test('lru_cache', () => {
 
     const res = lruCache.get(inputs[i][0]);
 
-    if (res !== output[i]) {
-      lruCache.logNodes();
-    }
     expect(res).toEqual(output[i]);
   }
 });
 
+const lruCache = new lRUCache(2);
 test('lru_cache', () => {
-  const lruCache = new lRUCache(2);
-
   const operations = ['put', 'put', 'get', 'put', 'put', 'get'];
 
   const inputs = [[2, 1], [2, 2], [2], [1, 1], [4, 1], [2]];
@@ -47,7 +43,12 @@ test('lru_cache', () => {
       continue;
     }
 
-    expect(lruCache.get(inputs[i][0])).toEqual(output[i]);
+    const val = lruCache.get(inputs[i][0]);
+    if (val !== output[i]) {
+      lruCache.logNodes();
+      return;
+    }
+    expect(val).toEqual(output[i]);
   }
 });
 

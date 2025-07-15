@@ -31,30 +31,37 @@
 // In the second case, only 1 additional diner is able to join the table, by sitting in any of the rst 3 seats.
 
 export function getMaxAdditionalDinersCount(
-  N: number, // Total number of seats
-  K: number, // Distance required between diners
-  M: number, // Current amount of diners
-  S: number[] // Currently sitting spots
+  N: number,
+  K: number,
+  M: number,
+  S: number[]
 ): number {
-  const freeRanges: number[][] = [];
-  let totalExtraDiners = 0;
+  S.sort((a, b) => a - b);
 
-  let currMin = 1;
-  let currMax = 1;
+  let additionalDiners = 0;
+  let prevEnd = 0;
 
-  // Walk through the ranges that aren't available, combine in place... They are
-  // sorted. The min will point at the start of the unavailable range, the max will
-  // point at the end of the unavailable range. If there is space between the current
-  // point - K and the max, then we have a range that is accessible.
-  //
-  for (let i = 0; i < S.sort((a, b) => a - b).length; i++) {
-    if (S[i] - K > currMax + 1) {
-      freeRanges.push([currMax + 1, S[i] - K - 1]);
+  for (let i = 0; i < M; i++) {
+    const left = S[i] - K;
+    const right = S[i] + K;
+
+    const start = prevEnd + 1;
+    const end = left - 1;
+
+    if (start <= end) {
+      const range = end - start + 1;
+      additionalDiners += Math.floor((range + K) / (K + 1));
     }
 
-    currMin = Math.min(S[i] - K, currMin);
-    currMax = Math.max(S[i] + K, currMax);
+    prevEnd = right;
   }
 
-  return M + totalExtraDiners;
+  if (prevEnd < N) {
+    const start = prevEnd + 1;
+    const end = N;
+    const range = end - start + 1;
+    additionalDiners += Math.floor((range + K) / (K + 1));
+  }
+
+  return additionalDiners;
 }
