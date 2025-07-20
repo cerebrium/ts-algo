@@ -35,17 +35,16 @@ exports.binary_search = void 0;
 function binary_search(data, target) {
     let min = 0;
     let max = data.length;
-    while (min < max) {
-        const midPoint = Math.floor(min + (max - min) / 2);
-        const val = data[midPoint];
-        if (val === target) {
-            return midPoint;
+    while (min <= max) {
+        const midIdx = Math.floor((max - min) / 2 + min);
+        if (target === data[midIdx]) {
+            return midIdx;
         }
-        if (target > val) {
-            min = midPoint + 1;
+        if (data[midIdx] < target) {
+            min = midIdx + 1;
             continue;
         }
-        max = midPoint;
+        max = midIdx;
     }
     return null;
 }

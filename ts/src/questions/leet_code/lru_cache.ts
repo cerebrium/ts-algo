@@ -20,28 +20,28 @@ export class lRUCache {
   }
 
   public get(key: number): number {
-    const foundNode = this.nodeMap.get(key);
+    const hasNode = this.nodeMap.get(key);
 
-    if (!foundNode) {
+    if (!hasNode) {
       return -1;
     }
 
-    this.makeNodeHead(foundNode);
-    return foundNode.value;
+    this.makeNodeHead(hasNode);
+    return hasNode.value;
   }
 
   public put(key: number, value: number): void {
-    const foundNode = this.nodeMap.get(key);
+    const node = this.nodeMap.get(key);
 
-    if (foundNode) {
-      foundNode.value = value;
-      this.makeNodeHead(foundNode);
+    if (node) {
+      node.value = value;
+      this.makeNodeHead(node);
       return;
     }
 
     const newNode = new DLNode(key, value);
-    this.currNodeCount++;
     this.nodeMap.set(key, newNode);
+    this.currNodeCount++;
 
     if (!this.head) {
       this.head = newNode;
@@ -77,45 +77,42 @@ export class lRUCache {
   }
 
   private makeNodeHead(_node: DLNode): void {
-    if (!this.head || !this.tail) {
-      this.logNodes();
-      throw new Error('makeNodeHead NO TAIL OR HEAD');
-    }
-    if (this.head === _node) {
+    // Head
+    if (_node === this.head) {
       return;
     }
 
-    // NODE IS TAIL
-    if (this.tail === _node) {
-      if (!this.tail.prev) {
+    // Tail
+    if (_node === this.tail) {
+      if (!this.tail || !_node.prev! || !this.head) {
         this.logNodes();
-        throw new Error('IN TAIL MAKENODEHEAD NO TAIL OR PREV');
+        throw new Error('IN THE TAIL');
       }
 
-      this.tail.prev.next = undefined;
-      this.tail = this.tail.prev;
+      _node.prev.next = undefined;
+      this.tail = _node.prev;
 
       _node.prev = undefined;
       _node.next = this.head;
-
       this.head.prev = _node;
+
       this.head = _node;
       return;
     }
 
-    // NODE IS MIDDLE
-    if (!_node.prev || !_node.next) {
+    // Middle
+    if (!_node.next || !_node.prev || !this.head || !this.tail) {
       this.logNodes();
-      throw new Error('MIDDLE OF makeNodeHead NO PREV');
+      throw new Error('ERROR IN MIDDLE');
     }
 
     _node.prev.next = _node.next;
     _node.next.prev = _node.prev;
 
-    _node.next = this.head;
     _node.prev = undefined;
-
+    _node.next = this.head;
     this.head.prev = _node;
+
     this.head = _node;
   }
   private evictIfNeeded() {
@@ -123,20 +120,18 @@ export class lRUCache {
       return;
     }
 
-    if (!this.tail || !this.tail.prev) {
+    if (!this.tail || !this.tail.prev || this.tail.next) {
       this.logNodes();
-      throw new Error('EVICTION NO TAIL OR PREV');
+      throw new Error('EVICTION ERROR');
     }
 
-    this.nodeMap.delete(this.tail.key);
-
     this.currNodeCount--;
+    this.nodeMap.delete(this.tail.key);
 
     this.tail.prev.next = undefined;
     this.tail = this.tail.prev;
   }
 }
-
 class DLNode {
   key: number;
   value: number;

@@ -31,8 +31,8 @@ const coords: Array<[number, number]> = [
   [-1, 0],
 ];
 export function maze_solver(maze: string[][]): number[][] | null {
-  const visited: Set<string> = new Set();
   const path: number[][] = [];
+  const visited: Set<string> = new Set();
 
   for (let x = 0; x < maze.length; x++) {
     for (let y = 0; y < maze[x].length; y++) {
@@ -54,18 +54,17 @@ function walk(
   visited: Set<string>,
   path: number[][],
   currCoords: [number, number]
-): boolean {
+) {
   const [x, y] = currCoords;
-  const strCoords = `${x}_${y}`;
+  const strXy = `${x}_${y}`;
 
-  if (visited.has(strCoords)) {
+  if (visited.has(strXy)) {
     return false;
   }
 
-  visited.add(strCoords);
+  visited.add(strXy);
 
   const val = maze[x][y];
-
   if (val === '#') {
     return false;
   }

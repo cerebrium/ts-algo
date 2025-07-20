@@ -33,8 +33,8 @@ const coords = [
     [-1, 0],
 ];
 function maze_solver(maze) {
-    const visited = new Set();
     const path = [];
+    const visited = new Set();
     for (let x = 0; x < maze.length; x++) {
         for (let y = 0; y < maze[x].length; y++) {
             if (maze[x][y] === 'S') {
@@ -50,11 +50,11 @@ function maze_solver(maze) {
 exports.maze_solver = maze_solver;
 function walk(maze, visited, path, currCoords) {
     const [x, y] = currCoords;
-    const strCoords = `${x}_${y}`;
-    if (visited.has(strCoords)) {
+    const strXy = `${x}_${y}`;
+    if (visited.has(strXy)) {
         return false;
     }
-    visited.add(strCoords);
+    visited.add(strXy);
     const val = maze[x][y];
     if (val === '#') {
         return false;

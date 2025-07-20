@@ -28,7 +28,7 @@ export function adj_list_dfs(
   const path: number[] = [];
   const visited: Set<number> = new Set();
 
-  walk(graph, target, visited, path, start);
+  traverse(graph, visited, path, start, target);
 
   if (!path.length) {
     return null;
@@ -37,27 +37,29 @@ export function adj_list_dfs(
   return path;
 }
 
-function walk(
+function traverse(
   graph: number[][][],
-  target: number,
   visited: Set<number>,
   path: number[],
-  curr_node: number
+  currNode: number,
+  target: number
 ): boolean {
-  path.push(curr_node);
+  if (visited.has(currNode)) {
+    return false;
+  }
 
-  if (curr_node === target) {
+  visited.add(currNode);
+
+  path.push(currNode);
+
+  if (currNode === target) {
     return true;
   }
 
-  visited.add(curr_node);
+  const children = graph[currNode];
 
-  const children = graph[curr_node];
   for (const [child, _] of children) {
-    if (visited.has(child)) {
-      continue;
-    }
-    if (walk(graph, target, visited, path, child)) {
+    if (traverse(graph, visited, path, child, target)) {
       return true;
     }
   }

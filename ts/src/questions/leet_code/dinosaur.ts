@@ -1,7 +1,6 @@
 const path = require('path');
 import {open} from 'node:fs/promises';
 
-export type Diet = 'herbivore' | 'omnivore' | 'carnivore';
 export type Stance = 'quadrupedal' | 'bipedal';
 
 export type Dinosaur = {
@@ -9,7 +8,6 @@ export type Dinosaur = {
   legLength?: number;
   strideLength?: number;
   stance?: Stance;
-  diet?: Diet;
   speed?: number;
 };
 
@@ -23,154 +21,100 @@ export type Dinosaur = {
 // The first CSV file contains statistics about various dinosaurs, including their names, leg lengths, and diets.
 // The second file includes additional data such as stride lengths and stances.
 export async function dino(): Promise<string[]> {
-  // Extra back dir for build path
-  const filePathLegs = path.join(
-    __dirname,
-    '../../../../assets/dinosaur.leg_length.csv'
+  const dinoList: string[] = [];
+  const legLengthPath = path.join(
+    __dirname + '../../../../../assets/dinosaur.leg_length.csv'
   );
-  const filePathStride = path.join(
-    __dirname,
-    '../../../../assets/dinosaur.stride_length.csv'
+  const strideLengthPath = path.join(
+    __dirname + '../../../../../assets/dinosaur.stride_length.csv'
   );
+
+  const dinos: Map<string, Dinosaur> = new Map();
 
   try {
-    const dinosaurs: Map<string, Dinosaur> = new Map();
+    const legLengthFile = await open(legLengthPath);
+    const strideLengthFile = await open(strideLengthPath);
 
-    const legFile = await open(filePathLegs);
-    const strideFile = await open(filePathStride);
-
-    for await (const line of legFile.readLines()) {
-      const [name, legLength, diet] = line.split(',');
+    for await (const line of legLengthFile.readLines()) {
+      const [name, legLength, _] = line.split(',');
       if (name === 'NAME') {
         continue;
       }
-      const dino = dinosaurs.get(name);
 
-      if (!dino) {
-        dinosaurs.set(name, {
-          name,
-          legLength: parseFloat(legLength),
-          diet: diet as Diet,
-        });
+      const dino = dinos.get(name);
+      if (dino) {
+        dino.legLength = parseFloat(legLength);
         continue;
       }
 
-      dino.diet = diet as Diet;
-      dino.legLength = parseFloat(legLength);
+      dinos.set(name, {name, legLength: parseFloat(legLength)});
     }
 
-    for await (const line of strideFile.readLines()) {
+    for await (const line of strideLengthFile.readLines()) {
       const [name, strideLength, stance] = line.split(',');
       if (name === 'NAME') {
         continue;
       }
-      const dino = dinosaurs.get(name);
 
-      if (!dino) {
-        dinosaurs.set(name, {
-          name,
-          strideLength: parseFloat(strideLength),
-          stance: stance as Stance,
-        });
-        continue;
+      const dino = dinos.get(name);
+
+      if (dino && dino.legLength) {
+        dino.stance = stance as Stance;
+        dino.strideLength = parseFloat(strideLength);
+        dino.speed =
+          (dino.strideLength / dino.legLength - 1) *
+          Math.sqrt(dino.legLength * 9.8);
       }
-
-      dino.stance = stance as Stance;
-      dino.strideLength = parseFloat(strideLength);
     }
 
-    const maxDinoHeap = new MaxDinoHeap();
+    // Have map of speed dinos
+    const maxHeap = new MaxHeap();
 
-    dinosaurs.forEach(dino => maxDinoHeap.pushDino(dino));
-
-    const finalList: string[] = [];
-
-    while (maxDinoHeap.data.length) {
-      const popedDino = maxDinoHeap.popDino();
-      if (!popedDino) {
-        continue;
+    dinos.forEach(dino => {
+      if (dino.stance === 'bipedal') {
+        maxHeap.push(dino);
       }
-      finalList.push(popedDino.name);
+    });
+
+    while (maxHeap.data.length) {
+      dinoList.push(maxHeap.pop()!.name);
     }
 
-    return finalList;
+    return dinoList;
   } catch (e) {
-    console.log('error: ', e);
+    console.error(e);
     process.exit(1);
   }
 }
 
-type SpeedDino = [number, Dinosaur];
+class MaxHeap {
+  data: Dinosaur[] = [];
 
-class MaxDinoHeap {
-  data: SpeedDino[] = [];
   constructor() {}
 
-  public pushDino(dino: Dinosaur) {
-    const speedDino = this.getSpeedDino(dino);
-    if (!speedDino) {
-      return;
-    }
+  public push(dino: Dinosaur): void {
+    this.data.push(dino);
 
-    this.data.push(speedDino);
-
-    if (this.data.length < 2) {
+    if (this.data.length === 1) {
       return;
     }
 
     this.bubbleUp();
   }
 
-  public popDino(): null | Dinosaur {
-    if (this.data.length < 0) {
-      return null;
-    }
-
-    if (this.data.length === 1) {
-      return this.data.pop()![1];
-    }
-
-    const dinoToReturn = this.data[0][1];
-
-    this.data[0] = this.data.pop()!;
-    this.heapifyDown();
-
-    return dinoToReturn;
-  }
-
-  private heapifyDown(): void {
-    let currIdx = 0;
-    let largestChildIdx = this.getHighestChild(currIdx);
-
-    if (largestChildIdx < 0) {
-      return;
-    }
-
-    while (this.data[currIdx][0] < this.data[largestChildIdx][0]) {
-      this.swap(currIdx, largestChildIdx);
-
-      currIdx = largestChildIdx;
-      largestChildIdx = this.getHighestChild(currIdx);
-
-      if (largestChildIdx < 0) {
-        return;
-      }
-    }
-  }
-
   private bubbleUp(): void {
-    let currIdx = this.data.length - 1;
-    let parentIdx = this.getParent(currIdx);
+    let currIdx: number = this.data.length - 1;
+    let parentIdx: number = this.getParenIdx(currIdx);
 
     if (parentIdx < 0) {
       return;
     }
 
-    while (this.data[parentIdx][0] < this.data[currIdx][0]) {
-      this.swap(parentIdx, currIdx);
+    while (this.data[currIdx].speed! > this.data[parentIdx].speed!) {
+      this.swap(currIdx, parentIdx);
 
       currIdx = parentIdx;
-      parentIdx = this.getParent(currIdx);
+      parentIdx = this.getParenIdx(currIdx);
 
       if (parentIdx < 0) {
         return;
@@ -178,48 +122,70 @@ class MaxDinoHeap {
     }
   }
 
-  private getSpeedDino(dino: Dinosaur): SpeedDino | null {
-    if (!dino.strideLength || !dino.legLength || !dino.stance) {
-      console.log('No leg length or stride length: ' + dino.name);
+  public pop(): Dinosaur | null {
+    if (!this.data.length) {
       return null;
     }
+    const dino = this.data[0];
 
-    if (dino.stance !== 'bipedal') {
-      return null;
+    if (this.data.length === 1) {
+      this.data = [];
+      return dino;
     }
 
-    const speed =
-      (dino.strideLength / dino.legLength - 1) *
-      Math.sqrt(dino.legLength * 9.8);
-    return [speed, dino];
+    // @ts-ignore --> length check above solves this
+    this.data[0] = this.data.pop();
+
+    this.heapifyDown();
+
+    return dino;
   }
 
-  private getParent(idx: number): number {
-    const prospectiveParentIdx = Math.floor((idx - 1) / 2);
-    if (prospectiveParentIdx < 0) {
-      return -1;
+  private heapifyDown(): void {
+    let currIdx = 0;
+    let largestChildIdx = this.getHighestChildIdx(currIdx);
+
+    if (largestChildIdx < 0) {
+      return;
     }
 
-    return prospectiveParentIdx;
+    while (this.data[largestChildIdx].speed! > this.data[currIdx].speed!) {
+      this.swap(largestChildIdx, currIdx);
+
+      currIdx = largestChildIdx;
+      largestChildIdx = this.getHighestChildIdx(currIdx);
+
+      if (largestChildIdx < 0) {
+        return;
+      }
+    }
+  }
+
+  private getParenIdx(idx: number): number {
+    return Math.floor((idx - 1) / 2);
   }
 
   private getLeftChild(idx: number): number {
-    const prospectiveLeftIdx = idx * 2 + 1;
-    if (prospectiveLeftIdx > this.data.length - 1) {
+    const pIdx: number = Math.floor(idx * 2 + 1);
+
+    if (pIdx > this.data.length - 1) {
       return -1;
     }
-    return prospectiveLeftIdx;
+
+    return pIdx;
   }
 
   private getRightChild(idx: number): number {
-    const prospectiveRightIdx = idx * 2 + 2;
-    if (prospectiveRightIdx > this.data.length - 1) {
+    const pIdx: number = Math.floor(idx * 2 + 2);
+
+    if (pIdx > this.data.length - 1) {
       return -1;
     }
-    return prospectiveRightIdx;
+
+    return pIdx;
   }
 
-  private getHighestChild(idx: number): number {
+  private getHighestChildIdx(idx: number): number {
     const left = this.getLeftChild(idx);
     const right = this.getRightChild(idx);
 
@@ -235,7 +201,11 @@ class MaxDinoHeap {
       return left;
     }
 
-    return this.data[left][0] > this.data[right][0] ? left : right;
+    if (this.data[left].speed! > this.data[right].speed!) {
+      return left;
+    }
+
+    return right;
   }
 
   private swap(idxOne: number, idxTwo: number): void {

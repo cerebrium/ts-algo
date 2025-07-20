@@ -36,28 +36,28 @@ export function lowestCommonAncestorThree(
   p: _Node | null,
   q: _Node | null
 ): _Node | null {
-  if (!p || !q) {
-    return null;
+  if (!p) {
+    return q;
   }
 
-  if (p === q) {
+  if (!q) {
     return p;
   }
 
-  const traversedMap: Map<number, _Node> = new Map();
+  const pSet: Set<number> = new Set();
 
   while (p) {
-    traversedMap.set(p.val, p);
+    pSet.add(p.val);
     if (p === q) {
       return p;
     }
+
     p = p.parent;
   }
 
   while (q) {
-    const hasNode = traversedMap.get(q.val);
-    if (hasNode) {
-      return hasNode;
+    if (pSet.has(q.val)) {
+      return q;
     }
 
     q = q.parent;

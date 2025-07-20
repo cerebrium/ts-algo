@@ -23,19 +23,16 @@ exports.adj_list_bfs = void 0;
 function adj_list_bfs(data, target, start = 0) {
     const path = new Array(data.length).fill(-1);
     const visited = new Set();
-    const que = [start];
     let idx = 0;
+    const que = [start];
     while (idx < que.length) {
         const parent = que[idx];
         const children = data[parent];
-        if (!data || !data.length) {
+        if (!children || !children.length) {
             idx++;
             continue;
         }
         for (const [child, _] of children) {
-            if (typeof child !== 'number') {
-                continue;
-            }
             if (visited.has(child)) {
                 continue;
             }

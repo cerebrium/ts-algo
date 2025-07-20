@@ -1,26 +1,19 @@
 export class TreeNode {
-  val: number;
+  value: number;
   left: TreeNode | null;
   right: TreeNode | null;
-  constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
-    this.val = val === undefined ? 0 : val;
-    this.left = left === undefined ? null : left;
-    this.right = right === undefined ? null : right;
+
+  constructor(value: number) {
+    this.value = value;
+    this.left = null;
+    this.right = null;
   }
 }
 
 export function diameterOfBinaryTree(root: TreeNode | null): number {
-  if (!root) {
-    return 0;
-  }
-
-  if (!root.left && !root.right) {
-    return 0;
-  }
-
   let diameter: number = 0;
 
-  const traverse = (node: TreeNode | null): number => {
+  function traverse(node: TreeNode | null): number {
     if (!node) {
       return 0;
     }
@@ -28,8 +21,12 @@ export function diameterOfBinaryTree(root: TreeNode | null): number {
     const left = traverse(node.left);
     const right = traverse(node.right);
 
-    return Math.max(left, right) + 1;
-  };
+    diameter = Math.max(diameter, left + right);
+
+    return Math.max(left + right) + 1;
+  }
+
+  traverse(root);
 
   return diameter;
 }

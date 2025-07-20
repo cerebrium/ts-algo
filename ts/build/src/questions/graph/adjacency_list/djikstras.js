@@ -13,34 +13,33 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.djikstras = void 0;
 function djikstras(graph, target) {
-    const path = new Array(graph.length).fill(-1);
+    const visited = new Array(graph.length).fill(false);
     const distances = new Array(graph.length).fill(Number.MAX_SAFE_INTEGER);
     distances[0] = 0;
-    const visited = new Array(graph.length).fill(false);
+    const path = new Array(graph.length).fill(-1);
     while (visited.some((v, i) => !v && distances[i] !== Number.MAX_SAFE_INTEGER)) {
-        const parent = getLowestClosestChild(visited, distances);
-        const children = graph[parent];
+        const parent = findLowestClosestChild(visited, distances);
         visited[parent] = true;
-        for (const [child, weight] of children) {
-            const prospectiveValue = distances[parent] + weight;
-            if (prospectiveValue < distances[child]) {
+        for (const [child, weight] of graph[parent]) {
+            const prospectiveReplacmentWeight = weight + distances[parent];
+            if (distances[child] > prospectiveReplacmentWeight) {
                 path[child] = parent;
-                distances[child] = prospectiveValue;
+                distances[child] = prospectiveReplacmentWeight;
             }
         }
     }
     return createFinalPath(path, target);
 }
 exports.djikstras = djikstras;
-function getLowestClosestChild(visited, distances) {
+function findLowestClosestChild(visited, distances) {
     let idx = 0;
     let currMax = Number.MAX_SAFE_INTEGER;
     for (let i = 0; i < visited.length; i++) {
         if (!visited[i] &&
             distances[i] !== Number.MAX_SAFE_INTEGER &&
-            distances[i] < currMax) {
-            idx = i;
+            currMax > distances[i]) {
             currMax = distances[i];
+            idx = i;
         }
     }
     return idx;

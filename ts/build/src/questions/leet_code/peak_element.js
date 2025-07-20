@@ -24,35 +24,24 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.findPeakElement = void 0;
 function findPeakElement(nums) {
-    if (nums.length === 1) {
-        return 0;
-    }
-    if (nums.length === 2) {
-        if (nums[0] > nums[1]) {
-            return 0;
-        }
-        return 1;
-    }
-    let low = 0;
-    let high = nums.length - 1;
-    while (low <= high) {
-        const midIdx = Math.floor(low + (high - low) / 2);
-        const val = nums[midIdx];
-        if (midIdx === 0 && nums[midIdx + 1] < val) {
+    let min = 0;
+    let max = nums.length;
+    while (min <= max) {
+        const midIdx = Math.floor((max - min) / 2 + min);
+        if (midIdx === 0 && nums[midIdx + 1] < nums[midIdx]) {
             return midIdx;
         }
-        if (midIdx === nums.length - 1 && nums[midIdx - 1] < val) {
+        if (midIdx === nums.length - 1 && nums[midIdx - 1] < nums[midIdx]) {
             return midIdx;
         }
-        if (val > nums[midIdx - 1] && val > nums[midIdx + 1]) {
+        if (nums[midIdx - 1] < nums[midIdx] && nums[midIdx + 1] < nums[midIdx]) {
             return midIdx;
         }
-        // Ascending, check upper half
-        if (val > nums[midIdx - 1]) {
-            low = midIdx + 1;
+        if (nums[midIdx - 1] > nums[midIdx]) {
+            max = midIdx;
             continue;
         }
-        high = midIdx;
+        min = midIdx + 1;
     }
     return 0;
 }
