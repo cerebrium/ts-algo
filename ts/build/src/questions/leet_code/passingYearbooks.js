@@ -83,9 +83,7 @@ function findSignatureCounts(arr) {
         }
         sigCount.push(jumps);
     }
-    console.log('sigCount: ', sigCount);
     return sigCount;
 }
 exports.findSignatureCounts = findSignatureCounts;
-// hello
 //# sourceMappingURL=passingYearbooks.js.map
