@@ -30,6 +30,7 @@
     "test_ring_buffer": "npm run compile && jest ./build/src/tests/ring_buffer/ring_buffer.test.js -- --verbose=true --detectOpenHandles --forceExit",
     "test_maze_solver": "npm run compile && jest ./build/src/tests/graph/maze_solver.test.js -- --verbose=true --detectOpenHandles --forceExit",
     "test_quicksort": "npm run compile && jest ./build/src/tests/sorts/quicksort.test.js -- --verbose=true --detectOpenHandles --forceExit",
+    "user_ram": "npm run compile && node ./build/src/linux/userSpaceRam.js",
     "run": "npm run compile && node ./build/src/index.js",
     "fix": "gts fix",
     "prepare": "npm run compile",
