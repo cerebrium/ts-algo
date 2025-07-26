@@ -12,99 +12,103 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.lRUCache = void 0;
 class lRUCache {
     constructor(capacity) {
-        this.head = null;
-        this.tail = null;
-        this.currentDataLength = 0;
-        this.dataMap = new Map();
+        this.nodeMap = new Map();
+        this.currNodeCount = 0;
         this.capacity = capacity;
     }
     get(key) {
-        const lNode = this.dataMap.get(key);
-        if (!lNode) {
+        const hasNode = this.nodeMap.get(key);
+        if (!hasNode) {
             return -1;
         }
-        this.moveToFront(lNode);
-        return lNode.value;
-    }
-    moveToFront(lNode) {
-        if (this.currentDataLength < 2 || !lNode.prev) {
-            return;
-        }
-        // Need to remove the prev link to it
-        if (lNode.next && lNode.next.prev === lNode) {
-            lNode.next.prev = lNode.prev;
-        }
-        // point prev of lnode to next of lnode
-        lNode.prev.next = lNode.next;
-        if (!lNode.prev.next) {
-            this.tail = lNode.prev;
-        }
-        // point lnode next to head
-        lNode.next = this.head;
-        if (!this.head) {
-            throw new Error('no head move to front');
-        }
-        this.head.prev = lNode;
-        lNode.prev = null;
-        // set current head as lnode
-        this.head = lNode;
+        this.makeNodeHead(hasNode);
+        return hasNode.value;
     }
     put(key, value) {
-        const lNode = this.dataMap.get(key);
-        if (lNode) {
-            lNode.value = value;
-            this.moveToFront(lNode);
-            return null;
-        }
-        const newNode = this.createAndAppendNewNode(value, key);
-        this.dataMap.set(key, newNode);
-        // Evict if needed
-        this.checkAndEvict();
-        return null;
-    }
-    createAndAppendNewNode(value, key) {
-        const node = new LinkedNode(value, key);
-        if (!this.head) {
-            this.head = node;
-            this.tail = node;
-            this.currentDataLength++;
-            return node;
-        }
-        // Make node head
-        node.next = this.head;
-        this.head.prev = node;
-        this.head = node;
-        // Check if old head needs to be tail
-        if (!this.head.next) {
-            this.tail = this.head.next;
-        }
-        this.currentDataLength++;
-        return node;
-    }
-    checkAndEvict() {
-        if (this.currentDataLength <= this.capacity) {
+        const node = this.nodeMap.get(key);
+        if (node) {
+            node.value = value;
+            this.makeNodeHead(node);
             return;
         }
-        if (!this.tail) {
-            throw new Error('no tail, and nodes past capacity error');
+        const newNode = new DLNode(key, value);
+        this.nodeMap.set(key, newNode);
+        this.currNodeCount++;
+        if (!this.head) {
+            this.head = newNode;
+            this.tail = newNode;
+            return;
         }
-        if (!this.tail.prev) {
-            throw new Error('no tail.prev but at capacity');
+        newNode.next = this.head;
+        this.head.prev = newNode;
+        this.head = newNode;
+        this.evictIfNeeded();
+    }
+    logNodes() {
+        console.log('------------- START ----------------');
+        let currNode = this.head;
+        while (currNode) {
+            console.log('key: ', currNode.key, '\nvalue: ', currNode.value, '\nnext: ', currNode.next, '\nprev: ', currNode.prev);
+            currNode = currNode.next;
         }
-        this.dataMap.delete(this.tail.key);
-        const newTail = this.tail.prev;
-        this.tail = newTail;
-        newTail.next = null;
-        this.currentDataLength--;
+        console.log('------------- END ----------------');
+    }
+    makeNodeHead(_node) {
+        // Head
+        if (_node === this.head) {
+            return;
+        }
+        // Tail
+        if (_node === this.tail) {
+            if (!this.tail || !_node.prev || !this.head) {
+                this.logNodes();
+                throw new Error('IN THE TAIL');
+            }
+            _node.prev.next = undefined;
+            this.tail = _node.prev;
+            _node.prev = undefined;
+            _node.next = this.head;
+            this.head.prev = _node;
+            this.head = _node;
+            return;
+        }
+        // Middle
+        if (!_node.next || !_node.prev || !this.head || !this.tail) {
+            this.logNodes();
+            throw new Error('ERROR IN MIDDLE');
+        }
+        _node.prev.next = _node.next;
+        _node.next.prev = _node.prev;
+        _node.prev = undefined;
+        _node.next = this.head;
+        this.head.prev = _node;
+        this.head = _node;
+    }
+    evictIfNeeded() {
+        if (this.currNodeCount <= this.capacity) {
+            return;
+        }
+        if (!this.tail || !this.tail.prev || this.tail.next) {
+            this.logNodes();
+            throw new Error('EVICTION ERROR');
+        }
+        this.currNodeCount--;
+        this.nodeMap.delete(this.tail.key);
+        this.tail.prev.next = undefined;
+        this.tail = this.tail.prev;
     }
 }
 exports.lRUCache = lRUCache;
-class LinkedNode {
-    constructor(value, key, prev = null, next = null) {
-        this.value = value;
+class DLNode {
+    constructor(key, value, next, prev) {
         this.key = key;
-        this.prev = prev;
-        this.next = next;
+        this.value = value;
+        if (next) {
+            this.next = next;
+        }
+        if (prev) {
+            this.prev = prev;
+        }
     }
 }
 //# sourceMappingURL=lru_cache.js.map

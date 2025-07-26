@@ -10,7 +10,6 @@ exports.djikstras_fast = void 0;
 const min_heap_1 = require("./min_heap");
 function djikstras_fast(graph, target) {
     const min_heap = new min_heap_1.DjikHeap();
-    const visited = new Set();
     const path = new Array(graph.length).fill(-1);
     const distances = new Array(graph.length).fill(Number.MAX_SAFE_INTEGER);
     distances[0] = 0;
@@ -20,8 +19,10 @@ function djikstras_fast(graph, target) {
         if (!parent) {
             throw new Error('There is no parent');
         }
-        const [p_idx, _] = parent;
-        visited.add(p_idx);
+        const [p_idx, p_dist] = parent;
+        if (p_dist > distances[p_idx]) {
+            continue;
+        }
         const children = graph[p_idx];
         if (!children || !children.length) {
             continue;
@@ -31,11 +32,8 @@ function djikstras_fast(graph, target) {
             if (distances[child] > prospective_weight) {
                 distances[child] = prospective_weight;
                 path[child] = p_idx;
+                min_heap.add_node([child, distances[child]]);
             }
-            if (visited.has(child)) {
-                continue;
-            }
-            min_heap.add_node([child, distances[child]]);
         }
     }
     return create_path(target, path);

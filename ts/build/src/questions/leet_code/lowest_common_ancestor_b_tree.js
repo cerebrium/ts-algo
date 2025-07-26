@@ -16,7 +16,7 @@ class TreeNode {
 }
 exports.TreeNode = TreeNode;
 function lowestCommonAncestor(root, p, q) {
-    if (!root || p === root || q === root) {
+    if (!root || root === p || root === q) {
         return root;
     }
     const left = lowestCommonAncestor(root.left, p, q);

@@ -27,52 +27,47 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.maze_solver = void 0;
 const coords = [
-    [-1, 0],
     [0, 1],
-    [1, 0],
     [0, -1],
+    [1, 0],
+    [-1, 0],
 ];
 function maze_solver(maze) {
-    const visited = new Set();
     const path = [];
+    const visited = new Set();
     for (let x = 0; x < maze.length; x++) {
         for (let y = 0; y < maze[x].length; y++) {
             if (maze[x][y] === 'S') {
-                walk(maze, [x, y], path, visited);
+                walk(maze, visited, path, [x, y]);
             }
         }
     }
-    if (path.length) {
-        return path;
+    if (!path.length) {
+        return null;
     }
-    return null;
+    return path;
 }
 exports.maze_solver = maze_solver;
-function walk(maze, curr_coords, path, visited) {
-    const [x, y] = curr_coords;
-    if (visited.has(`${x}_${y}`)) {
+function walk(maze, visited, path, currCoords) {
+    const [x, y] = currCoords;
+    const strXy = `${x}_${y}`;
+    if (visited.has(strXy)) {
         return false;
     }
-    visited.add(`${x}_${y}`);
+    visited.add(strXy);
     const val = maze[x][y];
     if (val === '#') {
         return false;
     }
-    path.push([x, y]);
+    path.push(currCoords);
     if (val === 'E') {
         return true;
     }
-    const possible_directions = coords.map(([n_x, n_y]) => {
-        return [n_x + x, n_y + y];
-    });
-    for (const [n_x, n_y] of possible_directions) {
-        if (n_x < 0 ||
-            n_y < 0 ||
-            n_x > maze.length - 1 ||
-            n_y > maze[n_x].length - 1) {
+    for (const [nX, nY] of coords.map(([pX, pY]) => [pX + x, pY + y])) {
+        if (nX < 0 || nY < 0 || nX > maze.length - 1 || nY > maze[nX].length - 1) {
             continue;
         }
-        if (walk(maze, [n_x, n_y], path, visited)) {
+        if (walk(maze, visited, path, [nX, nY])) {
             return true;
         }
     }

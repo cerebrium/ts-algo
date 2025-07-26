@@ -25,25 +25,25 @@ exports.adj_list_dfs = void 0;
 function adj_list_dfs(graph, target, start = 0) {
     const path = [];
     const visited = new Set();
-    walk(graph, target, visited, path, start);
+    traverse(graph, visited, path, start, target);
     if (!path.length) {
         return null;
     }
     return path;
 }
 exports.adj_list_dfs = adj_list_dfs;
-function walk(graph, target, visited, path, curr_node) {
-    path.push(curr_node);
-    if (curr_node === target) {
+function traverse(graph, visited, path, currNode, target) {
+    if (visited.has(currNode)) {
+        return false;
+    }
+    visited.add(currNode);
+    path.push(currNode);
+    if (currNode === target) {
         return true;
     }
-    visited.add(curr_node);
-    const children = graph[curr_node];
+    const children = graph[currNode];
     for (const [child, _] of children) {
-        if (visited.has(child)) {
-            continue;
-        }
-        if (walk(graph, target, visited, path, child)) {
+        if (traverse(graph, visited, path, child, target)) {
             return true;
         }
     }

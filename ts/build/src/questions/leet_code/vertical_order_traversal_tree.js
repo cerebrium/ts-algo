@@ -15,42 +15,39 @@ function verticalOrder(root) {
     if (!root) {
         return [];
     }
-    const traversedNodes = [];
-    const nodeMap = new Map();
-    const minMax = [0, 0];
-    traverse(root, 0, 0, nodeMap, minMax);
-    const [min, max] = minMax;
-    for (let i = min; i <= max; i++) {
-        const nodes = nodeMap.get(i);
-        if (!nodes) {
-            throw new Error('i is here but not in map: ' + i);
+    const answer = [];
+    const verticalMap = new Map();
+    let min = 0;
+    let max = 0;
+    const que = [[0, root]];
+    let currIdx = 0;
+    while (currIdx < que.length) {
+        const [verIdx, _node] = que[currIdx];
+        const hasSubArray = verticalMap.get(verIdx);
+        if (!hasSubArray) {
+            verticalMap.set(verIdx, [_node.val]);
         }
-        const finalNodes = nodes.sort((a, b) => a.row - b.row).map(x => x.val);
-        traversedNodes.push(finalNodes);
+        else {
+            hasSubArray.push(_node.val);
+            verticalMap.set(verIdx, hasSubArray);
+        }
+        if (_node.left) {
+            que.push([verIdx - 1, _node.left]);
+            min = Math.min(verIdx - 1, min);
+        }
+        if (_node.right) {
+            que.push([verIdx + 1, _node.right]);
+            max = Math.max(verIdx + 1, max);
+        }
+        currIdx++;
     }
-    return traversedNodes;
+    for (let i = min; i <= max; i++) {
+        const subArray = verticalMap.get(i);
+        if (subArray && subArray.length) {
+            answer.push(subArray);
+        }
+    }
+    return answer;
 }
 exports.verticalOrder = verticalOrder;
-const traverse = (_node, column, row, nodeMap, minMax) => {
-    const [min, max] = minMax;
-    if (!_node) {
-        return;
-    }
-    if (min > column) {
-        minMax[0] = column;
-    }
-    if (max < column) {
-        minMax[1] = column;
-    }
-    const hasColumn = nodeMap.get(column);
-    if (hasColumn) {
-        hasColumn.push({ row, val: _node.val });
-        nodeMap.set(column, hasColumn);
-    }
-    else {
-        nodeMap.set(column, [{ row, val: _node.val }]);
-    }
-    traverse(_node.left, column - 1, row + 1, nodeMap, minMax);
-    traverse(_node.right, column + 1, row + 1, nodeMap, minMax);
-};
 //# sourceMappingURL=vertical_order_traversal_tree.js.map

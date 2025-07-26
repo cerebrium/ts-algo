@@ -33,19 +33,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.binary_search = void 0;
 function binary_search(data, target) {
-    let low = 0;
-    let high = data.length - 1;
-    while (low <= high) {
-        const midIdx = Math.floor(low + (high - low) / 2);
-        if (data[midIdx] === target) {
+    let min = 0;
+    let max = data.length;
+    while (min <= max) {
+        const midIdx = Math.floor((max - min) / 2 + min);
+        if (target === data[midIdx]) {
             return midIdx;
         }
-        // Check higher
         if (data[midIdx] < target) {
-            low = midIdx + 1;
+            min = midIdx + 1;
             continue;
         }
-        high = midIdx;
+        max = midIdx;
     }
     return null;
 }

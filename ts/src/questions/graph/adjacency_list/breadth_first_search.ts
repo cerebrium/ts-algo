@@ -25,15 +25,16 @@ export function adj_list_bfs(
 ): Array<number> | null {
   const path: number[] = new Array(data.length).fill(-1);
   const visited: Set<number> = new Set();
-  let curr_idx: number = 0;
+  let idx: number = 0;
   const que: number[] = [start];
 
-  while (curr_idx < que.length) {
-    const parent = que[curr_idx];
+  while (idx < que.length) {
+    const parent = que[idx];
     const children = data[parent];
 
     if (!children || !children.length) {
-      curr_idx++;
+      idx++;
+      continue;
     }
 
     for (const [child, _] of children) {
@@ -44,32 +45,33 @@ export function adj_list_bfs(
       visited.add(child);
 
       path[child] = parent;
+
       if (child === target) {
-        curr_idx = que.length + 1;
+        idx = que.length + 1;
         break;
       }
 
       que.push(child);
     }
 
-    curr_idx++;
+    idx++;
   }
 
-  return create_final_path(target, path);
+  return createFinalPath(path, target);
 }
 
-function create_final_path(target: number, path: number[]): number[] | null {
+function createFinalPath(path: number[], target: number): number[] | null {
   if (path[target] === -1) {
     return null;
   }
 
-  let curr_node = target;
-  const final_path: number[] = [curr_node];
+  let currNode: number = target;
+  const finalPath: number[] = [target];
 
-  while (path[curr_node] !== -1) {
-    final_path.push(path[curr_node]);
-    curr_node = path[curr_node];
+  while (path[currNode] !== -1) {
+    finalPath.push(path[currNode]);
+    currNode = path[currNode];
   }
 
-  return final_path.reverse();
+  return finalPath.reverse();
 }

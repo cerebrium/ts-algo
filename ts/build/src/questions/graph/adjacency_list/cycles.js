@@ -2,28 +2,37 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.find_cycles = void 0;
 function find_cycles(graph) {
-    let are_cycles = false;
-    graph.forEach((_, key) => {
-        if (are_cycles) {
+    let hasCycles = false;
+    graph.forEach((_, k) => {
+        if (hasCycles) {
             return;
         }
         const visited = [];
-        if (has_cycles(graph, key, visited)) {
-            are_cycles = true;
+        const visitedSet = new Set();
+        if (findCycle(graph, visited, k, visitedSet)) {
+            hasCycles = true;
             return;
         }
     });
-    return are_cycles;
+    return hasCycles;
 }
 exports.find_cycles = find_cycles;
-function has_cycles(graph, key, visited) {
-    if (visited.includes(key)) {
+function findCycle(graph, visited, node, visitedSet) {
+    if (visited.includes(node)) {
         return true;
     }
-    visited.push(key);
-    const children = graph.get(key);
+    if (visitedSet.has(node)) {
+        return false;
+    }
+    visited.push(node);
+    visitedSet.add(node);
+    // Recurse
+    const children = graph.get(node);
+    if (!children || !children.length) {
+        return false;
+    }
     for (const child of children) {
-        if (has_cycles(graph, child, visited)) {
+        if (findCycle(graph, visited, child, visitedSet)) {
             return true;
         }
     }

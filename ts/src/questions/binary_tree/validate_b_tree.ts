@@ -9,16 +9,12 @@ export function validate_b_tree(
     return true;
   }
 
-  if (node.val > max || node.val < min) {
+  if (node.val < min || node.val > max) {
     return false;
   }
 
-  if (
-    validate_b_tree(node.right, max, node.val) &&
-    validate_b_tree(node.left, node.val, min)
-  ) {
-    return true;
-  }
-
-  return false;
+  return (
+    validate_b_tree(node.left, node.val, min) &&
+    validate_b_tree(node.right, max, node.val)
+  );
 }

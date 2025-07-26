@@ -1,42 +1,51 @@
 export function find_cycles(graph: Map<string, string[]>): boolean {
-  let are_cycles = false;
+  let hasCycles = false;
 
-  graph.forEach((_, key) => {
-    if (are_cycles) {
+  graph.forEach((_, k) => {
+    if (hasCycles) {
       return;
     }
 
     const visited: string[] = [];
+    const visitedSet: Set<string> = new Set();
 
-    if (has_cycles(graph, key, visited)) {
-      are_cycles = true;
+    if (findCycle(graph, visited, k, visitedSet)) {
+      hasCycles = true;
       return;
     }
   });
-
-  return are_cycles;
+  return hasCycles;
 }
 
-function has_cycles(
+function findCycle(
   graph: Map<string, string[]>,
-  key: string,
-  visited: string[]
+  visited: string[],
+  node: string,
+  visitedSet: Set<string>
 ): boolean {
-  if (visited.includes(key)) {
+  if (visited.includes(node)) {
     return true;
   }
 
-  visited.push(key);
+  if (visitedSet.has(node)) {
+    return false;
+  }
 
-  const children = graph.get(key)!;
+  visited.push(node);
+  visitedSet.add(node);
+
+  // Recurse
+  const children = graph.get(node);
+  if (!children || !children.length) {
+    return false;
+  }
 
   for (const child of children) {
-    if (has_cycles(graph, child, visited)) {
+    if (findCycle(graph, visited, child, visitedSet)) {
       return true;
     }
   }
 
   visited.pop();
-
   return false;
 }

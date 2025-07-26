@@ -1,0 +1,5 @@
+What part of the TCP header does traceroute modify
+
+traceroute uses udp packets, and it modifies the ttl field
+in the headers. Each server along the path decrements the 
+ttl, when 0 it returns.

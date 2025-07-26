@@ -23,13 +23,14 @@ exports.adj_list_bfs = void 0;
 function adj_list_bfs(data, target, start = 0) {
     const path = new Array(data.length).fill(-1);
     const visited = new Set();
-    let curr_idx = 0;
+    let idx = 0;
     const que = [start];
-    while (curr_idx < que.length) {
-        const parent = que[curr_idx];
+    while (idx < que.length) {
+        const parent = que[idx];
         const children = data[parent];
         if (!children || !children.length) {
-            curr_idx++;
+            idx++;
+            continue;
         }
         for (const [child, _] of children) {
             if (visited.has(child)) {
@@ -38,26 +39,26 @@ function adj_list_bfs(data, target, start = 0) {
             visited.add(child);
             path[child] = parent;
             if (child === target) {
-                curr_idx = que.length + 1;
+                idx = que.length + 1;
                 break;
             }
             que.push(child);
         }
-        curr_idx++;
+        idx++;
     }
-    return create_final_path(target, path);
+    return createFinalPath(path, target);
 }
 exports.adj_list_bfs = adj_list_bfs;
-function create_final_path(target, path) {
+function createFinalPath(path, target) {
     if (path[target] === -1) {
         return null;
     }
-    let curr_node = target;
-    const final_path = [curr_node];
-    while (path[curr_node] !== -1) {
-        final_path.push(path[curr_node]);
-        curr_node = path[curr_node];
+    let currNode = target;
+    const finalPath = [target];
+    while (path[currNode] !== -1) {
+        finalPath.push(path[currNode]);
+        currNode = path[currNode];
     }
-    return final_path.reverse();
+    return finalPath.reverse();
 }
 //# sourceMappingURL=breadth_first_search.js.map

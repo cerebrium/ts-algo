@@ -16,58 +16,45 @@ export function verticalOrder(root: TreeNode | null): number[][] {
   if (!root) {
     return [];
   }
-  const traversedNodes: number[][] = [];
 
-  const nodeMap: Map<number, Array<{row: number; val: number}>> = new Map();
-  const minMax: [number, number] = [0, 0];
+  const answer: number[][] = [];
+  const verticalMap: Map<number, number[]> = new Map();
+  let min: number = 0;
+  let max: number = 0;
+  const que: Array<[number, TreeNode]> = [[0, root]];
+  let currIdx = 0;
 
-  traverse(root, 0, 0, nodeMap, minMax);
+  while (currIdx < que.length) {
+    const [verIdx, _node] = que[currIdx];
 
-  const [min, max] = minMax;
+    const hasSubArray = verticalMap.get(verIdx);
 
-  for (let i = min; i <= max; i++) {
-    const nodes = nodeMap.get(i);
-
-    if (!nodes) {
-      throw new Error('i is here but not in map: ' + i);
+    if (!hasSubArray) {
+      verticalMap.set(verIdx, [_node.val]);
+    } else {
+      hasSubArray.push(_node.val);
+      verticalMap.set(verIdx, hasSubArray);
     }
 
-    const finalNodes = nodes.sort((a, b) => a.row - b.row).map(x => x.val);
+    if (_node.left) {
+      que.push([verIdx - 1, _node.left]);
+      min = Math.min(verIdx - 1, min);
+    }
+    if (_node.right) {
+      que.push([verIdx + 1, _node.right]);
+      max = Math.max(verIdx + 1, max);
+    }
 
-    traversedNodes.push(finalNodes);
+    currIdx++;
   }
 
-  return traversedNodes;
+  for (let i = min; i <= max; i++) {
+    const subArray = verticalMap.get(i);
+
+    if (subArray && subArray.length) {
+      answer.push(subArray);
+    }
+  }
+
+  return answer;
 }
-
-const traverse = (
-  _node: TreeNode | null,
-  column: number,
-  row: number,
-  nodeMap: Map<number, Array<{row: number; val: number}>>,
-  minMax: [number, number]
-) => {
-  const [min, max] = minMax;
-  if (!_node) {
-    return;
-  }
-
-  if (min > column) {
-    minMax[0] = column;
-  }
-
-  if (max < column) {
-    minMax[1] = column;
-  }
-
-  const hasColumn = nodeMap.get(column);
-
-  if (hasColumn) {
-    hasColumn.push({row, val: _node.val});
-    nodeMap.set(column, hasColumn);
-  } else {
-    nodeMap.set(column, [{row, val: _node.val}]);
-  }
-  traverse(_node.left, column - 1, row + 1, nodeMap, minMax);
-  traverse(_node.right, column + 1, row + 1, nodeMap, minMax);
-};

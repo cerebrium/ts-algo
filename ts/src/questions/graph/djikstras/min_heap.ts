@@ -33,10 +33,10 @@ export class DjikHeap {
    *
    */
   public add_node(node: number[]) {
-    const [node_idx, weight] = node;
-    const djikNode: DjikNode = [node_idx, weight];
+    const [node_idx, weight] = node as DjikNode;
     this.map.set(node_idx, this.data.length);
-    this.data.push(djikNode);
+
+    this.data.push([node_idx, weight]);
 
     if (this.data.length === 1) {
       return;

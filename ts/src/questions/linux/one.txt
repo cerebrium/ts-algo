@@ -1,0 +1,112 @@
+q:
+ Every day,
+ at roughly the same time,
+ a process keeps crashing on one of the Linux servers in production. You look at the logs,
+ and the last line says Exception: Failed to allocate 1GB for .... It’s a Linux server,
+ and you quickly run the free -h command and find that the server actually has 1GB of memory free. Furthermore,
+ swapping has been disabled on the machine since it runs performance-critical applications,
+ and swapping would cause an unacceptable performance hit.
+ So the processes on this machine have been intentionally configured not to take advantage of disk memory via swapping.
+ How come the process can’t allocate 1GB even though 1GB is available?
+
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+A candidate with a deep understanding of fragmentation may recognize that,
+ even though 1GB appears "free,
+" the memory is scattered in smaller chunks. As a result,
+ the Linux kernel can’t find a contiguous 1GB block of memory for the allocation—typically due to physical fragmentation (especially relevant for huge pages),
+ though in rare cases virtual address space fragmentation can also play a role.

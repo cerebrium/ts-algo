@@ -9,7 +9,6 @@ import {DjikHeap} from './min_heap';
 
 export function djikstras_fast(graph: Array<number[][]>, target: number) {
   const min_heap = new DjikHeap();
-  const visited: Set<number> = new Set();
   const path: number[] = new Array(graph.length).fill(-1);
   const distances: number[] = new Array(graph.length).fill(
     Number.MAX_SAFE_INTEGER
@@ -25,8 +24,11 @@ export function djikstras_fast(graph: Array<number[][]>, target: number) {
       throw new Error('There is no parent');
     }
 
-    const [p_idx, _] = parent;
-    visited.add(p_idx);
+    const [p_idx, p_dist] = parent;
+
+    if (p_dist > distances[p_idx]) {
+      continue;
+    }
 
     const children = graph[p_idx];
 
@@ -40,13 +42,9 @@ export function djikstras_fast(graph: Array<number[][]>, target: number) {
       if (distances[child] > prospective_weight) {
         distances[child] = prospective_weight;
         path[child] = p_idx;
-      }
 
-      if (visited.has(child)) {
-        continue;
+        min_heap.add_node([child, distances[child]]);
       }
-
-      min_heap.add_node([child, distances[child]]);
     }
   }
 

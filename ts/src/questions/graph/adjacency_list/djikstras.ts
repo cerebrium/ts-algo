@@ -24,38 +24,36 @@ export function djikstras(
   while (
     visited.some((v, i) => !v && distances[i] !== Number.MAX_SAFE_INTEGER)
   ) {
-    const parent = find_lowest_closest_child(visited, distances);
-
+    const parent = findLowestClosestChild(visited, distances);
     visited[parent] = true;
-    const children = graph[parent];
 
-    for (const [child, weight] of children) {
-      const prospective_replacment = weight + distances[parent];
+    for (const [child, weight] of graph[parent]) {
+      const prospectiveReplacmentWeight = weight + distances[parent];
 
-      if (prospective_replacment < distances[child]) {
-        distances[child] = prospective_replacment;
+      if (distances[child] > prospectiveReplacmentWeight) {
         path[child] = parent;
+        distances[child] = prospectiveReplacmentWeight;
       }
     }
   }
 
-  return create_final_list(path, target);
+  return createFinalPath(path, target);
 }
 
-function find_lowest_closest_child(
+function findLowestClosestChild(
   visited: boolean[],
   distances: number[]
 ): number {
-  let idx = 0;
-  let curr_low = Number.MAX_SAFE_INTEGER;
+  let idx: number = 0;
+  let currMax: number = Number.MAX_SAFE_INTEGER;
 
   for (let i = 0; i < visited.length; i++) {
     if (
       !visited[i] &&
       distances[i] !== Number.MAX_SAFE_INTEGER &&
-      curr_low > distances[i]
+      currMax > distances[i]
     ) {
-      curr_low = distances[i];
+      currMax = distances[i];
       idx = i;
     }
   }
@@ -63,18 +61,18 @@ function find_lowest_closest_child(
   return idx;
 }
 
-function create_final_list(path: number[], target: number) {
+function createFinalPath(path: number[], target: number): number[] | null {
   if (path[target] === -1) {
     return null;
   }
 
-  let curr_idx = target;
-  const final_path: number[] = [curr_idx];
+  let currNode: number = target;
+  const finalPath: number[] = [target];
 
-  while (path[curr_idx] !== -1) {
-    final_path.push(path[curr_idx]);
-    curr_idx = path[curr_idx];
+  while (path[currNode] !== -1) {
+    finalPath.push(path[currNode]);
+    currNode = path[currNode];
   }
 
-  return final_path.reverse();
+  return finalPath.reverse();
 }
