@@ -14,88 +14,41 @@ function minLengthSubstring(s, t) {
     if (t.length > s.length) {
         return -1;
     }
-    const sLetCount = new Map();
+    let count = Number.MAX_SAFE_INTEGER;
     const tLetCount = new Map();
-    for (let i = 0; i < s.length; i++) {
-        const sLookup = sLetCount.get(s[i]);
-        if (!sLookup) {
-            sLetCount.set(s[i], 1);
-            continue;
-        }
-        sLetCount.set(s[i], sLookup + 1);
-    }
     for (let i = 0; i < t.length; i++) {
-        const tLookup = tLetCount.get(t[i]);
-        if (!tLookup) {
+        const hasT = tLetCount.get(t[i]);
+        if (!hasT) {
             tLetCount.set(t[i], 1);
             continue;
         }
-        tLetCount.set(t[i], tLookup + 1);
+        tLetCount.set(t[i], hasT + 1);
     }
-    let notEligible = false;
-    tLetCount.forEach((v, k) => {
-        if (notEligible) {
-            return;
-        }
-        const sLookup = sLetCount.get(k);
-        if (!sLookup || sLookup < v) {
-            notEligible = true;
-            return;
-        }
-    });
-    if (notEligible) {
-        return -1;
-    }
-    /*
-     *
-     create two pointer
-        1. 0 & end
-        2. increment starting pointer if
-            - not a letter thats included
-            - letter is accounted for elsewhere
-        3. decrement end pointer if
-            - not a letter thats included
-            - letter is accounted for elsewhere
-     *
-     */
     let start = 0;
-    let minSubArray = s.length;
-    let hasAll = 0;
-    const currentWindowCount = new Map();
+    let currCount = 0;
+    const currWindowCount = new Map();
     for (let end = 0; end < s.length; end++) {
-        const endLetter = s[end];
-        const needEndLetter = tLetCount.get(endLetter);
-        const currLetterCount = currentWindowCount.get(endLetter);
-        if (needEndLetter) {
-            if (!currLetterCount) {
-                currentWindowCount.set(endLetter, 1);
+        const tCount = tLetCount.get(s[end]);
+        if (tCount) {
+            currWindowCount.set(s[end], (currWindowCount.get(s[end]) || 0) + 1);
+            if (currWindowCount.get(s[end]) === tCount) {
+                currCount++;
             }
-            else {
-                currentWindowCount.set(endLetter, currLetterCount + 1);
-            }
-            hasAll++;
         }
-        console.log('hasAll: ', hasAll, '\tt.length: ', t.length, '\nstart: ', start, '\tend: ', end);
-        while (hasAll >= t.length) {
-            const tStartCount = tLetCount.get(s[start]);
-            if (!tStartCount) {
+        while (currCount === tLetCount.size) {
+            const hasTLet = tLetCount.get(s[start]);
+            if (!hasTLet) {
                 start++;
                 continue;
             }
-            const currStartLetter = currentWindowCount.get(s[start]);
-            if (!currStartLetter) {
-                throw new Error('no currStartLetter in while');
-            }
-            if (currStartLetter > tStartCount) {
-                start++;
-                currentWindowCount.set(s[start], currStartLetter - 1);
-                continue;
-            }
-            minSubArray = Math.min(minSubArray, end - start + 1);
+            count = Math.min(count, end - start + 1);
+            // Otherwise we have a letter that invalidates the window
+            currWindowCount.set(s[start], currWindowCount.get(s[start]) - 1);
+            currCount--;
             break;
         }
     }
-    return minSubArray;
+    return count === Number.MAX_SAFE_INTEGER ? -1 : count;
 }
 exports.minLengthSubstring = minLengthSubstring;
 //# sourceMappingURL=minimumLengthSubstring.js.map
