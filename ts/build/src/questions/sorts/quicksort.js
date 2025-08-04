@@ -2,27 +2,28 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.quicksort = void 0;
 function quicksort(data, start = 0, stop = data.length - 1) {
-    if (stop <= start) {
+    if (start >= stop) {
         return;
     }
-    const pivot = partition(data, start, stop);
+    const pivot = q_helper(data, start, stop);
     quicksort(data, start, pivot - 1);
     quicksort(data, pivot + 1, stop);
 }
 exports.quicksort = quicksort;
-function partition(data, start, stop) {
-    let idx = start - 1;
+function q_helper(data, start, stop) {
+    let compareVal = data[stop];
+    let placeIdx = start - 1;
     for (let i = start; i < stop; i++) {
-        if (data[i] < data[stop]) {
-            idx++;
-            swap(data, idx, i);
+        if (data[i] < compareVal) {
+            placeIdx++;
+            swap(data, i, placeIdx);
         }
     }
-    idx++;
-    swap(data, idx, stop);
-    return idx;
+    placeIdx++;
+    swap(data, stop, placeIdx);
+    return placeIdx;
 }
-function swap(data, start, end) {
-    [data[start], data[end]] = [data[end], data[start]];
+function swap(data, start, stop) {
+    [data[start], data[stop]] = [data[stop], data[start]];
 }
 //# sourceMappingURL=quicksort.js.map

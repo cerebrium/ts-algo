@@ -24,37 +24,37 @@ export function adj_list_bfs(
   start: number = 0
 ): Array<number> | null {
   const path: number[] = new Array(data.length).fill(-1);
-  const visited: Set<number> = new Set();
-  let idx: number = 0;
+  const visited: boolean[] = new Array(data.length).fill(false);
+  let currIdx = 0;
   const que: number[] = [start];
 
-  while (idx < que.length) {
-    const parent = que[idx];
+  while (currIdx < que.length) {
+    const parent = que[currIdx];
     const children = data[parent];
 
     if (!children || !children.length) {
-      idx++;
+      currIdx++;
       continue;
     }
 
     for (const [child, _] of children) {
-      if (visited.has(child)) {
+      if (visited[child]) {
         continue;
       }
 
-      visited.add(child);
+      visited[child] = true;
 
       path[child] = parent;
 
       if (child === target) {
-        idx = que.length + 1;
+        currIdx = que.length + 1;
         break;
       }
 
       que.push(child);
     }
 
-    idx++;
+    currIdx++;
   }
 
   return createFinalPath(path, target);
@@ -65,12 +65,12 @@ function createFinalPath(path: number[], target: number): number[] | null {
     return null;
   }
 
-  let currNode: number = target;
+  let currVal = target;
   const finalPath: number[] = [target];
 
-  while (path[currNode] !== -1) {
-    finalPath.push(path[currNode]);
-    currNode = path[currNode];
+  while (path[currVal] !== -1) {
+    finalPath.push(path[currVal]);
+    currVal = path[currVal];
   }
 
   return finalPath.reverse();

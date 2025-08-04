@@ -12,13 +12,13 @@ export declare class MinHeap {
     data: Array<number>;
     length: number;
     constructor();
-    add(node: number): void;
+    add(num: number): void;
+    private bubbleUp;
     pop(): number | null;
-    private bubble_up;
-    private heapify_down;
-    private find_lowest_child_idx;
-    private find_parent_idx;
-    private find_right_child_idx;
-    private find_left_child_idx;
+    private heapifyDown;
+    private getSmallestChild;
+    private getParentIdx;
+    private getLeftChildIdx;
+    private getRightChildIdx;
     private swap;
 }

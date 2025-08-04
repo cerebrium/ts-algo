@@ -18,35 +18,48 @@ int getBillionUsersDay(float[] growthRates)
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getBillionUsersDay = void 0;
 function getBillionUsersDay(growthRates) {
-    let day = 0;
-    const aBillion = 1000000000;
-    if (growthRates.length === 1) {
-        return Math.floor(Math.log(aBillion) / Math.log(growthRates[0]) + 1);
-    }
     let min = 1;
-    let max = Math.floor(Math.log(aBillion) / Math.log(Math.max(...growthRates)) + 1);
+    let max = Math.ceil(Math.log(1000000000) / Math.log(Math.max(...growthRates)));
+    const ABillion = 1000000000;
+    const preComputed = new Map(); // time -> users
     while (min < max) {
         const mid = Math.floor((max - min) / 2 + min);
-        const [curVal, tomVal] = getSums(growthRates, mid);
-        if (tomVal > aBillion && curVal < aBillion) {
-            return mid + 1;
+        let users = preComputed.get(mid);
+        if (!users) {
+            users = sumUsers(growthRates, mid);
+            preComputed.set(mid, users);
         }
-        if (curVal < aBillion) {
+        if (users < ABillion) {
+            let aboveUsers = preComputed.get(mid + 1);
+            if (!aboveUsers) {
+                aboveUsers = sumUsers(growthRates, mid + 1);
+            }
+            if (aboveUsers > ABillion) {
+                return mid + 1;
+            }
+            preComputed.set(mid + 1, aboveUsers);
             min = mid + 1;
             continue;
         }
+        let belowUsers = preComputed.get(mid - 1);
+        if (!belowUsers) {
+            belowUsers = sumUsers(growthRates, mid - 1);
+        }
+        if (belowUsers < ABillion) {
+            return mid;
+        }
+        preComputed.set(mid - 1, belowUsers);
         max = mid;
     }
-    return day;
+    // Should never be reached
+    return 0;
 }
 exports.getBillionUsersDay = getBillionUsersDay;
-function getSums(gRates, day) {
+function sumUsers(growthRates, time) {
     let sum = 0;
-    let sumTomorrow = 0;
-    for (let i = 0; i < gRates.length; i++) {
-        sum += Math.pow(gRates[i], day);
-        sumTomorrow += Math.pow(gRates[i], day + 1);
+    for (let i = 0; i < growthRates.length; i++) {
+        sum += Math.pow(growthRates[i], time);
     }
-    return [sum, sumTomorrow];
+    return sum;
 }
 //# sourceMappingURL=getBillionUsersDay.js.map

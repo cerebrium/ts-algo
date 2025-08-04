@@ -1,30 +1,46 @@
 import {lengthOfLongestSubstring} from '../../questions/leet_code/length_of_longest_substring';
 
 test('length_longest_substring', () => {
-  let answer = lengthOfLongestSubstring('abcabcbb');
+  const answer = lengthOfLongestSubstring('abcabcbb');
   expect(answer).toEqual(3);
+});
 
-  answer = lengthOfLongestSubstring('bbbbb');
+test('length_longest_substring', () => {
+  const answer = lengthOfLongestSubstring('bbbbb');
   expect(answer).toEqual(1);
+});
 
-  answer = lengthOfLongestSubstring('pwwkew');
+test('length_longest_substring', () => {
+  const answer = lengthOfLongestSubstring('pwwkew');
   expect(answer).toEqual(3);
+});
 
-  answer = lengthOfLongestSubstring(' ');
+test('length_longest_substring', () => {
+  const answer = lengthOfLongestSubstring(' ');
   expect(answer).toEqual(1);
+});
 
-  answer = lengthOfLongestSubstring('');
+test('length_longest_substring', () => {
+  const answer = lengthOfLongestSubstring('');
   expect(answer).toEqual(0);
+});
 
-  answer = lengthOfLongestSubstring('au');
+test('length_longest_substring', () => {
+  const answer = lengthOfLongestSubstring('au');
   expect(answer).toEqual(2);
+});
 
-  answer = lengthOfLongestSubstring('abba');
+test('length_longest_substring', () => {
+  const answer = lengthOfLongestSubstring('abba');
   expect(answer).toEqual(2);
+});
 
-  answer = lengthOfLongestSubstring('aab');
+test('length_longest_substring', () => {
+  const answer = lengthOfLongestSubstring('aab');
   expect(answer).toEqual(2);
+});
 
-  answer = lengthOfLongestSubstring('tmmzuxt');
+test('length_longest_substring', () => {
+  const answer = lengthOfLongestSubstring('tmmzuxt');
   expect(answer).toEqual(5);
 });

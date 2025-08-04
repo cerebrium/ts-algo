@@ -30,18 +30,22 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkSubarraySum = void 0;
 function checkSubarraySum(nums, k) {
-    const modMap = new Map();
-    modMap.set(0, -1); // To handle the case where the subarray starts at index 0
     let sum = 0;
+    let prev = -1;
+    const modMap = new Map();
     for (let i = 0; i < nums.length; i++) {
         sum += nums[i];
         const mod = sum % k;
-        if (!modMap.has(mod)) {
-            modMap.set(mod, i);
+        if ((i > 0 && !mod) || (!nums[i] && !prev)) {
+            return true;
         }
-        const prevIdx = modMap.get(mod);
-        // In the values before this idx
-        if (prevIdx < i - 1) {
+        prev = nums[i];
+        const foundMod = modMap.get(mod);
+        if (!foundMod) {
+            modMap.set(mod, i);
+            continue;
+        }
+        if (i - foundMod > 2) {
             return true;
         }
     }

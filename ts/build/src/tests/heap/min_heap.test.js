@@ -13,6 +13,7 @@ test('min_heap', () => {
     min_heap.add(3);
     min_heap.add(2);
     min_heap.add(1);
+    console.log('heap: ', min_heap.data);
     expect(min_heap.data.length).toBe(10);
     const pop_check = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     for (let i = 0; i < pop_check.length; i++) {

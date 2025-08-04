@@ -5,64 +5,189 @@
  *
  */
 
-import {DjikHeap} from './min_heap';
-
 export function djikstras_fast(graph: Array<number[][]>, target: number) {
-  const min_heap = new DjikHeap();
+  const minHeap = new MinHeap();
   const path: number[] = new Array(graph.length).fill(-1);
-  const distances: number[] = new Array(graph.length).fill(
+  const weights: number[] = new Array(graph.length).fill(
     Number.MAX_SAFE_INTEGER
   );
-  distances[0] = 0;
+  weights[0] = 0;
 
-  min_heap.add_node([0, 0]);
+  minHeap.add([0, 0]);
 
-  while (min_heap.has_nodes()) {
-    const parent = min_heap.remove_node();
+  while (minHeap.has_node()) {
+    const parent = minHeap.pop()!;
 
-    if (!parent) {
-      throw new Error('There is no parent');
-    }
-
-    const [p_idx, p_dist] = parent;
-
-    if (p_dist > distances[p_idx]) {
-      continue;
-    }
-
-    const children = graph[p_idx];
+    const [pIdx, _] = parent;
+    const children = graph[pIdx];
 
     if (!children || !children.length) {
       continue;
     }
 
     for (const [child, weight] of children) {
-      const prospective_weight = distances[p_idx] + weight;
+      const pWeight = weight + weights[pIdx];
 
-      if (distances[child] > prospective_weight) {
-        distances[child] = prospective_weight;
-        path[child] = p_idx;
+      if (pWeight < weights[child]) {
+        weights[child] = pWeight;
+        path[child] = pIdx;
 
-        min_heap.add_node([child, distances[child]]);
+        minHeap.add([child, weight]);
       }
     }
   }
 
-  return create_path(target, path);
+  return createFinalPath(target, path);
 }
 
-function create_path(target: number, path: number[]): number[] | null {
+function createFinalPath(target: number, path: number[]): null | number[] {
   if (path[target] === -1) {
     return null;
   }
 
-  let curr_node = target;
-  const final_list = [target];
+  let currNode: number = target;
+  const finalPath: number[] = [target];
 
-  while (path[curr_node] !== -1) {
-    final_list.push(path[curr_node]);
-    curr_node = path[curr_node];
+  while (path[currNode] !== -1) {
+    finalPath.push(path[currNode]);
+    currNode = path[currNode];
   }
 
-  return final_list.reverse();
+  return finalPath.reverse();
+}
+
+class MinHeap {
+  data: Array<[number, number]>; // [weight, node]
+
+  constructor() {
+    this.data = [];
+  }
+
+  public add(child: [number, number]) {
+    this.data.push(child);
+
+    if (this.data.length < 2) {
+      return;
+    }
+
+    this.bubbleUp();
+  }
+  private bubbleUp() {
+    let currIdx: number = this.data.length - 1;
+    let parentIdx: number = this.getParentIdx(currIdx);
+
+    if (parentIdx < 0) {
+      return;
+    }
+
+    console.log('data: ', this.data, '\nparentIdx: ', parentIdx);
+    while (this.data[currIdx][0] < this.data[parentIdx][0]) {
+      this.swap(currIdx, parentIdx);
+      currIdx = parentIdx;
+      parentIdx = this.getParentIdx(currIdx);
+
+      if (parentIdx < 0) {
+        return;
+      }
+    }
+  }
+
+  public has_node() {
+    return !!this.data.length;
+  }
+
+  public pop(): null | [number, number] {
+    if (!this.data.length) {
+      return null;
+    }
+
+    const valToReturn = this.data[0];
+
+    if (this.data.length === 1) {
+      this.data = [];
+      return valToReturn;
+    }
+
+    this.data[0] = this.data.pop()!;
+
+    if (this.data.length === 1) {
+      return valToReturn;
+    }
+
+    this.heapifyDown();
+
+    return valToReturn;
+  }
+  private heapifyDown() {
+    let currIdx: number = 0;
+    let smallestChildIdx: number = this.getLowestChildIdx(currIdx);
+
+    if (smallestChildIdx < 0) {
+      return;
+    }
+
+    while (this.data[smallestChildIdx][0] < this.data[currIdx][0]) {
+      this.swap(smallestChildIdx, currIdx);
+
+      currIdx = smallestChildIdx;
+      smallestChildIdx = this.getLowestChildIdx(currIdx);
+
+      if (smallestChildIdx < 0) {
+        return;
+      }
+    }
+  }
+
+  private getParentIdx(idx: number): number {
+    const prosParent = Math.floor((idx - 1) / 2);
+
+    if (prosParent < 0) {
+      return -1;
+    }
+
+    return prosParent;
+  }
+
+  private getRightChild(idx: number): number {
+    const prosRight = idx * 2 + 2;
+
+    if (prosRight > this.data.length - 1) {
+      return -1;
+    }
+
+    return prosRight;
+  }
+
+  private getLeftChild(idx: number): number {
+    const prosLeft = idx * 2 + 1;
+
+    if (prosLeft > this.data.length - 1) {
+      return -1;
+    }
+
+    return prosLeft;
+  }
+
+  private getLowestChildIdx(idx: number): number {
+    const left = this.getLeftChild(idx);
+    const right = this.getRightChild(idx);
+
+    if (left < 0 && right < 0) {
+      return -1;
+    }
+
+    if (left < 0) {
+      return right;
+    }
+
+    if (right < 0) {
+      return left;
+    }
+
+    return this.data[left][0] < this.data[right][0] ? left : right;
+  }
+
+  private swap(curr: number, target: number): void {
+    [this.data[curr], this.data[target]] = [this.data[target], this.data[curr]];
+  }
 }

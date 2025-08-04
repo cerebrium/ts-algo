@@ -14,54 +14,58 @@ export function djikstras(
   graph: Array<number[][]>,
   target: number
 ): null | number[] {
+  const path: number[] = new Array(graph.length).fill(-1);
   const visited: boolean[] = new Array(graph.length).fill(false);
-  const distances: number[] = new Array(graph.length).fill(
+  const weights: number[] = new Array(graph.length).fill(
     Number.MAX_SAFE_INTEGER
   );
-  distances[0] = 0;
-  const path: number[] = new Array(graph.length).fill(-1);
+
+  weights[0] = 0;
 
   while (
-    visited.some((v, i) => !v && distances[i] !== Number.MAX_SAFE_INTEGER)
+    visited.some((v, idx) => !v && weights[idx] !== Number.MAX_SAFE_INTEGER)
   ) {
-    const parent = findLowestClosestChild(visited, distances);
+    const parent = findLowestClosestNode(weights, visited);
     visited[parent] = true;
 
-    for (const [child, weight] of graph[parent]) {
-      const prospectiveReplacmentWeight = weight + distances[parent];
+    const children = graph[parent];
 
-      if (distances[child] > prospectiveReplacmentWeight) {
+    if (!children || !children.length) {
+      continue;
+    }
+
+    for (const [child, weight] of children) {
+      const prospectiveWeight = weights[parent] + weight;
+
+      if (weights[child] > prospectiveWeight) {
         path[child] = parent;
-        distances[child] = prospectiveReplacmentWeight;
+        weights[child] = prospectiveWeight;
       }
     }
   }
 
-  return createFinalPath(path, target);
+  return createFinalPath(target, path);
 }
 
-function findLowestClosestChild(
-  visited: boolean[],
-  distances: number[]
-): number {
-  let idx: number = 0;
-  let currMax: number = Number.MAX_SAFE_INTEGER;
+function findLowestClosestNode(weights: number[], visited: boolean[]): number {
+  let idx = 0;
+  let currWeight = Number.MAX_SAFE_INTEGER;
 
   for (let i = 0; i < visited.length; i++) {
     if (
       !visited[i] &&
-      distances[i] !== Number.MAX_SAFE_INTEGER &&
-      currMax > distances[i]
+      weights[i] !== Number.MAX_SAFE_INTEGER &&
+      weights[i] < currWeight
     ) {
-      currMax = distances[i];
       idx = i;
+      currWeight = weights[i];
     }
   }
 
   return idx;
 }
 
-function createFinalPath(path: number[], target: number): number[] | null {
+function createFinalPath(target: number, path: number[]): null | number[] {
   if (path[target] === -1) {
     return null;
   }

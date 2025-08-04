@@ -35,10 +35,10 @@ const coords = [
 function maze_solver(maze) {
     const path = [];
     const visited = new Set();
-    for (let x = 0; x < maze.length; x++) {
-        for (let y = 0; y < maze[x].length; y++) {
-            if (maze[x][y] === 'S') {
-                walk(maze, visited, path, [x, y]);
+    for (let row = 0; row < maze.length; row++) {
+        for (let column = 0; column < maze[row].length; column++) {
+            if (maze[row][column] === 'S') {
+                walk(maze, path, visited, [row, column]);
             }
         }
     }
@@ -48,14 +48,14 @@ function maze_solver(maze) {
     return path;
 }
 exports.maze_solver = maze_solver;
-function walk(maze, visited, path, currCoords) {
-    const [x, y] = currCoords;
-    const strXy = `${x}_${y}`;
-    if (visited.has(strXy)) {
+function walk(maze, path, visited, currCoords) {
+    const [row, column] = currCoords;
+    const strCoords = `${row}_${column}`;
+    if (visited.has(strCoords)) {
         return false;
     }
-    visited.add(strXy);
-    const val = maze[x][y];
+    visited.add(strCoords);
+    const val = maze[row][column];
     if (val === '#') {
         return false;
     }
@@ -63,11 +63,14 @@ function walk(maze, visited, path, currCoords) {
     if (val === 'E') {
         return true;
     }
-    for (const [nX, nY] of coords.map(([pX, pY]) => [pX + x, pY + y])) {
-        if (nX < 0 || nY < 0 || nX > maze.length - 1 || nY > maze[nX].length - 1) {
+    for (const [n_row, n_col] of coords.map(([x, y]) => [x + row, y + column])) {
+        if (n_row < 0 ||
+            n_col < 0 ||
+            n_row > maze.length - 1 ||
+            n_col > maze[n_row].length - 1) {
             continue;
         }
-        if (walk(maze, visited, path, [nX, nY])) {
+        if (walk(maze, path, visited, [n_row, n_col])) {
             return true;
         }
     }

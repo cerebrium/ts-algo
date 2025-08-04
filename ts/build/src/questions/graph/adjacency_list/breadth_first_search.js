@@ -22,29 +22,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.adj_list_bfs = void 0;
 function adj_list_bfs(data, target, start = 0) {
     const path = new Array(data.length).fill(-1);
-    const visited = new Set();
-    let idx = 0;
+    const visited = new Array(data.length).fill(false);
+    let currIdx = 0;
     const que = [start];
-    while (idx < que.length) {
-        const parent = que[idx];
+    while (currIdx < que.length) {
+        const parent = que[currIdx];
         const children = data[parent];
         if (!children || !children.length) {
-            idx++;
+            currIdx++;
             continue;
         }
         for (const [child, _] of children) {
-            if (visited.has(child)) {
+            if (visited[child]) {
                 continue;
             }
-            visited.add(child);
+            visited[child] = true;
             path[child] = parent;
             if (child === target) {
-                idx = que.length + 1;
+                currIdx = que.length + 1;
                 break;
             }
             que.push(child);
         }
-        idx++;
+        currIdx++;
     }
     return createFinalPath(path, target);
 }
@@ -53,11 +53,11 @@ function createFinalPath(path, target) {
     if (path[target] === -1) {
         return null;
     }
-    let currNode = target;
+    let currVal = target;
     const finalPath = [target];
-    while (path[currNode] !== -1) {
-        finalPath.push(path[currNode]);
-        currNode = path[currNode];
+    while (path[currVal] !== -1) {
+        finalPath.push(path[currVal]);
+        currVal = path[currVal];
     }
     return finalPath.reverse();
 }

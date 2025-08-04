@@ -12,28 +12,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.lRUCache = void 0;
 class lRUCache {
     constructor(capacity) {
+        this.head = null;
+        this.tail = null;
+        this.currentLength = 0;
         this.nodeMap = new Map();
-        this.currNodeCount = 0;
         this.capacity = capacity;
     }
-    get(key) {
-        const hasNode = this.nodeMap.get(key);
-        if (!hasNode) {
-            return -1;
-        }
-        this.makeNodeHead(hasNode);
-        return hasNode.value;
-    }
     put(key, value) {
+        // has node
         const node = this.nodeMap.get(key);
         if (node) {
             node.value = value;
             this.makeNodeHead(node);
             return;
         }
-        const newNode = new DLNode(key, value);
+        const newNode = new LNode(key, value);
         this.nodeMap.set(key, newNode);
-        this.currNodeCount++;
+        this.currentLength++;
         if (!this.head) {
             this.head = newNode;
             this.tail = newNode;
@@ -42,73 +37,83 @@ class lRUCache {
         newNode.next = this.head;
         this.head.prev = newNode;
         this.head = newNode;
-        this.evictIfNeeded();
+        return this.possibleEvict();
+    }
+    get(key) {
+        const node = this.nodeMap.get(key);
+        if (node) {
+            this.makeNodeHead(node);
+            return node.value;
+        }
+        return -1;
     }
     logNodes() {
-        console.log('------------- START ----------------');
+        console.log('\n -------------- LOGGING -------------- \n');
         let currNode = this.head;
         while (currNode) {
-            console.log('key: ', currNode.key, '\nvalue: ', currNode.value, '\nnext: ', currNode.next, '\nprev: ', currNode.prev);
+            console.log('\nkey: ', currNode.key, '|nvalue: ', currNode.value, '\nnext: ', currNode.next, '\nprev: ', currNode.prev);
             currNode = currNode.next;
         }
-        console.log('------------- END ----------------');
+        console.log('\n -------------- END LOGGING -------------- \n');
     }
-    makeNodeHead(_node) {
-        // Head
-        if (_node === this.head) {
+    makeNodeHead(node) {
+        // If head
+        if (node === this.head) {
             return;
         }
-        // Tail
-        if (_node === this.tail) {
-            if (!this.tail || !_node.prev || !this.head) {
+        // If tail
+        if (node === this.tail) {
+            if (!node.prev || !this.head) {
                 this.logNodes();
-                throw new Error('IN THE TAIL');
+                throw new Error('IN TAIL NO HEAD OR PREV');
             }
-            _node.prev.next = undefined;
-            this.tail = _node.prev;
-            _node.prev = undefined;
-            _node.next = this.head;
-            this.head.prev = _node;
-            this.head = _node;
+            // prev
+            node.prev.next = null;
+            this.tail = node.prev;
+            node.prev = null;
+            // head
+            node.next = this.head;
+            this.head.prev = node;
+            this.head = node;
             return;
         }
-        // Middle
-        if (!_node.next || !_node.prev || !this.head || !this.tail) {
+        // If middle
+        if (!this.head || !this.tail || !node.prev || !node.next) {
             this.logNodes();
-            throw new Error('ERROR IN MIDDLE');
+            throw new Error('MIDDLE ERROR WITH NODE');
         }
-        _node.prev.next = _node.next;
-        _node.next.prev = _node.prev;
-        _node.prev = undefined;
-        _node.next = this.head;
-        this.head.prev = _node;
-        this.head = _node;
+        // middle
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+        node.next = null;
+        node.prev = null;
+        // head
+        node.next = this.head;
+        this.head.prev = node;
+        this.head = node;
+        return;
     }
-    evictIfNeeded() {
-        if (this.currNodeCount <= this.capacity) {
+    possibleEvict() {
+        if (this.currentLength <= this.capacity) {
             return;
         }
-        if (!this.tail || !this.tail.prev || this.tail.next) {
+        if (!this.tail || !this.tail.prev) {
             this.logNodes();
-            throw new Error('EVICTION ERROR');
+            throw new Error('IN EVICT TAIL ISSUE');
         }
-        this.currNodeCount--;
+        // evict from map
         this.nodeMap.delete(this.tail.key);
-        this.tail.prev.next = undefined;
+        this.tail.prev.next = null;
         this.tail = this.tail.prev;
     }
 }
 exports.lRUCache = lRUCache;
-class DLNode {
-    constructor(key, value, next, prev) {
+class LNode {
+    constructor(key, value) {
+        this.next = null;
+        this.prev = null;
         this.key = key;
         this.value = value;
-        if (next) {
-            this.next = next;
-        }
-        if (prev) {
-            this.prev = prev;
-        }
     }
 }
 //# sourceMappingURL=lru_cache.js.map

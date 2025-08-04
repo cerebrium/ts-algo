@@ -30,23 +30,18 @@ class _Node {
 }
 exports._Node = _Node;
 function lowestCommonAncestorThree(p, q) {
-    if (!p) {
-        return q;
-    }
-    if (!q) {
-        return p;
-    }
-    const pSet = new Set();
+    const pVisited = new Map();
     while (p) {
-        pSet.add(p.val);
         if (p === q) {
             return p;
         }
+        pVisited.set(p.val, p);
         p = p.parent;
     }
     while (q) {
-        if (pSet.has(q.val)) {
-            return q;
+        const hasQ = pVisited.get(q.val);
+        if (hasQ) {
+            return hasQ;
         }
         q = q.parent;
     }

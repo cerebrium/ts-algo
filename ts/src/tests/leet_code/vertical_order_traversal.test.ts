@@ -69,59 +69,57 @@ function makeTreeNodes(nums: Array<number | null>) {
 
 // Given the root of a binary tree, return the vertical order traversal of its nodes' values. (i.e., from top to bottom, column by column).
 // If two nodes are in the same row and column, the order should be from left to right.
-// test('vertical_order_traversal_tree', () => {
-//   const root = makeTreeNodes([3, 9, 20, null, null, 15, 7]);
-//   const expectedOutput = [[9], [3, 15], [20], [7]];
-//   const verticalTraversal = verticalOrder(root);
-//
-//   console.log('verticalTraversal: ', verticalTraversal);
-//
-//   expect(verticalTraversal.length).toEqual(expectedOutput.length);
-//   if (verticalTraversal.length !== expectedOutput.length) {
-//     return;
-//   }
-//
-//   for (let x = 0; x < verticalTraversal.length; x++) {
-//     const expectedSubarray = expectedOutput[x];
-//     const givenSubarray = verticalTraversal[x];
-//
-//     expect(expectedSubarray.length).toEqual(givenSubarray.length);
-//
-//     if (expectedSubarray.length !== givenSubarray.length) {
-//       return;
-//     }
-//
-//     for (let i = 0; i < givenSubarray.length; i++) {
-//       expect(givenSubarray[i]).toEqual(expectedSubarray[i]);
-//     }
-//   }
-// });
-//
-// test('vertical_order_traversal_tree', () => {
-//   const root = makeTreeNodes([3, 9, 8, 4, 0, 1, 7]);
-//   const expectedOutput = [[4], [9], [3, 0, 1], [8], [7]];
-//   const verticalTraversal = verticalOrder(root);
-//
-//   expect(verticalTraversal.length).toEqual(expectedOutput.length);
-//   if (verticalTraversal.length !== expectedOutput.length) {
-//     return;
-//   }
-//
-//   for (let x = 0; x < verticalTraversal.length; x++) {
-//     const expectedSubarray = expectedOutput[x];
-//     const givenSubarray = verticalTraversal[x];
-//
-//     expect(expectedSubarray.length).toEqual(givenSubarray.length);
-//
-//     if (expectedSubarray.length !== givenSubarray.length) {
-//       return;
-//     }
-//
-//     for (let i = 0; i < givenSubarray.length; i++) {
-//       expect(givenSubarray[i]).toEqual(expectedSubarray[i]);
-//     }
-//   }
-// });
+test('vertical_order_traversal_tree', () => {
+  const root = makeTreeNodes([3, 9, 20, null, null, 15, 7]);
+  const expectedOutput = [[9], [3, 15], [20], [7]];
+  const verticalTraversal = verticalOrder(root);
+
+  expect(verticalTraversal.length).toEqual(expectedOutput.length);
+  if (verticalTraversal.length !== expectedOutput.length) {
+    return;
+  }
+
+  for (let x = 0; x < verticalTraversal.length; x++) {
+    const expectedSubarray = expectedOutput[x];
+    const givenSubarray = verticalTraversal[x];
+
+    expect(expectedSubarray.length).toEqual(givenSubarray.length);
+
+    if (expectedSubarray.length !== givenSubarray.length) {
+      return;
+    }
+
+    for (let i = 0; i < givenSubarray.length; i++) {
+      expect(givenSubarray[i]).toEqual(expectedSubarray[i]);
+    }
+  }
+});
+
+test('vertical_order_traversal_tree', () => {
+  const root = makeTreeNodes([3, 9, 8, 4, 0, 1, 7]);
+  const expectedOutput = [[4], [9], [3, 0, 1], [8], [7]];
+  const verticalTraversal = verticalOrder(root);
+
+  expect(verticalTraversal.length).toEqual(expectedOutput.length);
+  if (verticalTraversal.length !== expectedOutput.length) {
+    return;
+  }
+
+  for (let x = 0; x < verticalTraversal.length; x++) {
+    const expectedSubarray = expectedOutput[x];
+    const givenSubarray = verticalTraversal[x];
+
+    expect(expectedSubarray.length).toEqual(givenSubarray.length);
+
+    if (expectedSubarray.length !== givenSubarray.length) {
+      return;
+    }
+
+    for (let i = 0; i < givenSubarray.length; i++) {
+      expect(givenSubarray[i]).toEqual(expectedSubarray[i]);
+    }
+  }
+});
 
 test('vertical_order_traversal_tree', () => {
   const root = makeTreeNodes([
@@ -144,11 +142,35 @@ test('vertical_order_traversal_tree', () => {
     6,
   ]);
 
-  const expectedOutput = [[4], [2, 5], [1, 10, 9, 6], [3], [11]];
+  const expectedOutput = [[4], [2, 5], [1, 9, 10, 6], [3], [11]];
   const verticalTraversal = verticalOrder(root);
 
-  console.log('verticalTraversal: ', verticalTraversal);
-  console.log('expected: ', expectedOutput);
+  expect(verticalTraversal.length).toEqual(expectedOutput.length);
+  if (verticalTraversal.length !== expectedOutput.length) {
+    return;
+  }
+
+  for (let x = 0; x < verticalTraversal.length; x++) {
+    const expectedSubarray = expectedOutput[x];
+    const givenSubarray = verticalTraversal[x];
+
+    expect(expectedSubarray.length).toEqual(givenSubarray.length);
+
+    if (expectedSubarray.length !== givenSubarray.length) {
+      return;
+    }
+
+    for (let i = 0; i < givenSubarray.length; i++) {
+      expect(givenSubarray[i]).toEqual(expectedSubarray[i]);
+    }
+  }
+});
+
+test('vertical_order_traversal_tree', () => {
+  const root = makeTreeNodes([1, 2, 3, 4, 6, 5, 7]);
+
+  const expectedOutput = [[4], [2], [1, 5, 6], [3], [7]];
+  const verticalTraversal = verticalOrder(root);
 
   expect(verticalTraversal.length).toEqual(expectedOutput.length);
   if (verticalTraversal.length !== expectedOutput.length) {

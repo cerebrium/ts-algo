@@ -12,75 +12,14 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.max_subarray = void 0;
-function max_subarray(target, nums) {
-    /*
-     * We need to see if the numbers and all sub numbers and combinations
-     * of the array add up to the lowest number possible to get the target
-     * or above
-     *
-     */
-    return 1;
+function max_subarray(nums) {
+    let localMax = 0;
+    let globalMax = 0;
+    for (let i = 0; i < nums.length; i++) {
+        localMax = Math.max(nums[i], localMax + nums[i]);
+        globalMax = Math.max(localMax, globalMax);
+    }
+    return globalMax;
 }
 exports.max_subarray = max_subarray;
-/*
- * This is kadanes
- export function max_subarray(target: number, data: number[]): number {
-  let idx = 0;
-  let local_max = data[0];
-  let global_max = data[0];
-
-  for (let i = 1; i < data.length; i++) {
-    local_max = Math.max(data[i], local_max + data[i]);
-    if (local_max > global_max) {
-      global_max = local_max;
-    }
-  }
-
-  return 0;
-}
-*/
-/*
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- * // export function max_subarray(target: number, nums: number[]): number {
-//   let currentSum = 0;
-//   let minLength = nums.length + 1;
-//
-//   // Set the starting points for the sliding window
-//   for (let start = 0, end = 0; start < nums.length; ++start) {
-//     // Add the current number to the current sum
-//     currentSum += nums[start];
-//
-//     // Check all subarrays
-//     while (currentSum >= target) {
-//       minLength = Math.min(minLength, start - end + 1);
-//
-//       currentSum -= nums[end];
-//
-//       ++end;
-//     }
-//   }
-//
-//   // If minLength was not updated, it means no valid subarray was found, so return 0
-//   // Otherwise, return the minLength found
-//   return minLength === nums.length + 1 ? 0 : minLength;
-// }
-*/
 //# sourceMappingURL=max_subarray.js.map

@@ -37,19 +37,21 @@ export function binary_search(
   let min: number = 0;
   let max: number = data.length;
 
-  while (min <= max) {
-    const midIdx: number = Math.floor((max - min) / 2 + min);
+  while (min < max) {
+    const mid = Math.floor((max - min) / 2 + min);
+    const val = data[mid];
 
-    if (target === data[midIdx]) {
-      return midIdx;
+    if (target === val) {
+      return mid;
     }
 
-    if (data[midIdx] < target) {
-      min = midIdx + 1;
+    if (target < val) {
+      // go down
+      max = mid;
       continue;
     }
 
-    max = midIdx;
+    min = mid + 1;
   }
 
   return null;

@@ -18,116 +18,144 @@ export class MinHeap {
     this.length = 0;
   }
 
-  public add(node: number): void {
-    this.data.push(node);
-
-    if (this.data.length === 1) {
+  public add(num: number): void {
+    this.data.push(num);
+    return this.bubbleUp();
+  }
+  /*
+   *
+   * Look at the last value (just added), if it is
+   * smaller than the parent, then swap.. Continue
+   * process until reached smaller element or head
+   *
+   */
+  private bubbleUp(): void {
+    if (this.data.length < 2) {
       return;
     }
 
-    return this.bubble_up();
+    let currIdx = this.data.length - 1;
+    let parentIdx = this.getParentIdx(currIdx);
+
+    if (parentIdx < 0) {
+      return;
+    }
+
+    while (this.data[currIdx] < this.data[parentIdx]) {
+      this.swap(currIdx, parentIdx);
+
+      currIdx = parentIdx;
+      parentIdx = this.getParentIdx(currIdx);
+
+      if (parentIdx < 0) {
+        return;
+      }
+    }
   }
 
   public pop(): number | null {
-    if (this.data.length < 1) {
+    if (!this.data.length) {
       return null;
     }
 
-    let return_val = this.data[0];
-    const new_head = this.data.pop();
+    const valToReturn = this.data[0];
 
-    if (!new_head) {
-      throw new Error('There is an issue with pop');
+    if (this.data.length === 1) {
+      this.data.pop();
+      return valToReturn;
     }
 
-    if (this.data.length < 1) {
-      return return_val;
-    }
+    this.data[0] = this.data.pop()!;
 
-    this.data[0] = new_head;
-    this.heapify_down();
+    this.heapifyDown();
 
-    return return_val;
+    return valToReturn;
   }
 
-  private bubble_up() {
-    let curr_idx = this.data.length - 1;
-    let parent = this.find_parent_idx(curr_idx);
+  /*
+   *
+   * Take the first value and compare it to its two
+   * children. Whichever is smaller, if is is smaller
+   * than current value, swap, and continue down until
+   * the smallest child is larger than current element
+   *
+   */
+  private heapifyDown(): void {
+    if (this.data.length < 2) {
+      return;
+    }
 
-    while (parent !== null && this.data[parent] > this.data[curr_idx]) {
-      this.swap(curr_idx, parent);
+    let currIdx = 0;
+    let smallestChildIdx = this.getSmallestChild(currIdx);
 
-      curr_idx = parent;
-      parent = this.find_parent_idx(curr_idx);
+    if (smallestChildIdx < 0) {
+      return;
+    }
+
+    while (this.data[smallestChildIdx] < this.data[currIdx]) {
+      this.swap(smallestChildIdx, currIdx);
+
+      currIdx = smallestChildIdx;
+      smallestChildIdx = this.getSmallestChild(currIdx);
+
+      if (smallestChildIdx < 0) {
+        return;
+      }
     }
   }
 
-  private heapify_down() {
-    let curr_idx = 0;
-    let lowest_child = this.find_lowest_child_idx(curr_idx);
+  private getSmallestChild(idx: number): number {
+    const left = this.getLeftChildIdx(idx);
+    const right = this.getRightChildIdx(idx);
 
-    while (
-      lowest_child !== null &&
-      this.data[lowest_child] < this.data[curr_idx]
-    ) {
-      this.swap(curr_idx, lowest_child);
-
-      curr_idx = lowest_child;
-      lowest_child = this.find_lowest_child_idx(curr_idx);
+    if (left < 0 && right < 0) {
+      return -1;
     }
+
+    if (left < 0) {
+      return right;
+    }
+
+    if (right < 0) {
+      return left;
+    }
+
+    return this.data[left] < this.data[right] ? left : right;
   }
 
-  private find_lowest_child_idx(idx: number): null | number {
-    const left_child = this.find_left_child_idx(idx);
-    const right_child = this.find_right_child_idx(idx);
-
-    if (!left_child && !right_child) {
-      return null;
+  private getParentIdx(idx: number): number {
+    const pParent = Math.floor((idx - 1) / 2);
+    if (pParent < 0) {
+      return -1;
     }
 
-    if (!left_child) {
-      return right_child;
-    }
-
-    if (!right_child) {
-      return left_child;
-    }
-
-    if (this.data[left_child] < this.data[right_child]) {
-      return left_child;
-    }
-
-    return right_child;
+    return pParent;
   }
 
-  private find_parent_idx(idx: number): null | number {
-    // We go up
-    const proposed_parent_idx = Math.floor((idx - 1) / 2);
+  private getLeftChildIdx(idx: number): number {
+    const pLeftChild = Math.floor(idx * 2 + 1);
 
-    if (proposed_parent_idx < 0) {
-      return null;
+    if (pLeftChild > this.data.length - 1) {
+      return -1;
     }
 
-    return proposed_parent_idx;
+    return pLeftChild;
   }
-  private find_right_child_idx(idx: number) {
-    const proposed_right_child_idx = idx * 2 + 2;
-    if (proposed_right_child_idx > this.data.length - 1) {
-      return null;
+
+  private getRightChildIdx(idx: number): number {
+    const pRightChild = Math.floor(idx * 2 + 2);
+
+    if (pRightChild > this.data.length - 1) {
+      return -1;
     }
 
-    return proposed_right_child_idx;
+    return pRightChild;
   }
 
-  private find_left_child_idx(idx: number) {
-    const proposed_left_child_idx = idx * 2 + 1;
-    if (proposed_left_child_idx > this.data.length - 1) {
-      return null;
-    }
-
-    return proposed_left_child_idx;
-  }
-  private swap(x: number, y: number): void {
-    [this.data[x], this.data[y]] = [this.data[y], this.data[x]];
+  private swap(idxOne: number, idxTwo: number): void {
+    [this.data[idxOne], this.data[idxTwo]] = [
+      this.data[idxTwo],
+      this.data[idxOne],
+    ];
   }
 }

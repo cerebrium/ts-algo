@@ -40,41 +40,22 @@ using the shifting window approach, this is essentially kadanes
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.lengthOfLongestSubstring = void 0;
 function lengthOfLongestSubstring(s) {
-    if (s.length === 1) {
-        return 1;
-    }
-    if (s.length === 0) {
-        return 0;
-    }
-    if (!s) {
-        return 0;
-    }
-    let global_max = 0;
-    let local_max = 0;
+    const visitedMap = new Map();
     let start = 0;
-    let end = 0;
-    const used_letters = new Map();
-    while (end < s.length) {
-        const found_idx = used_letters.get(s[end]);
-        // Found char
-        if (found_idx !== undefined && found_idx >= start) {
-            global_max = Math.max(local_max, global_max);
-            // we need to reset our start to the index of the value
-            start = found_idx + 1;
-            // we need to remove the value from the set
-            used_letters.set(s[end], end);
-            end++;
-            local_max = end - start;
+    let longestSubString = 0;
+    for (let end = 0; end < s.length; end++) {
+        const hasLetter = visitedMap.get(s[end]);
+        if (typeof hasLetter !== 'number') {
+            visitedMap.set(s[end], end);
+            longestSubString = Math.max(longestSubString, end - start + 1);
             continue;
         }
-        // Add the val to the map
-        used_letters.set(s[end], end);
-        local_max++;
-        // increment end
-        end++;
+        for (let idx = start; idx < hasLetter; idx++) {
+            visitedMap.delete(s[idx]);
+        }
+        start = hasLetter + 1;
     }
-    // In the case where there aren't any repeats, the local is higher, and correct
-    return Math.max(global_max, local_max);
+    return longestSubString;
 }
 exports.lengthOfLongestSubstring = lengthOfLongestSubstring;
 //# sourceMappingURL=length_of_longest_substring.js.map
